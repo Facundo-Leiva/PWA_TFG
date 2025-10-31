@@ -21,20 +21,20 @@ export default function WelcomeScreen({ onLogin, onRegister, onExplore }: Props)
                 </div>
                 
                 <p className="text-blue-100 mb-8 leading-relaxed font-bold">
-                Reporta incidencias urbanas, colabora con tu comunidad y ayuda a mejorar tu ciudad.
-                Cada reporte cuenta para crear espacios más seguros y funcionales.
+                    Reporta incidencias urbanas, colabora con tu comunidad y ayuda a mejorar tu ciudad.
+                    Cada reporte cuenta para crear espacios más seguros y funcionales.
                 </p>
                 
                 <div className="space-y-4">
                     <button
                         onClick={onLogin}
-                        className="w-full bg-white text-blue-600 py-3 px-6 rounded-lg font-bold hover:bg-blue-50 transition-colors font"
+                        className="w-full border-3 border-white text-white py-3 px-6 rounded-lg font-bold hover:bg-white hover:text-blue-600 transition-colors"
                     >
                         Iniciar Sesión
                     </button>
                     <button
                         onClick={onRegister}
-                        className="w-full border-2 border-white text-white py-3 px-6 rounded-lg font-bold hover:bg-white hover:text-blue-600 transition-colors"
+                        className="w-full border-3 border-white text-white py-3 px-6 rounded-lg font-bold hover:bg-white hover:text-blue-600 transition-colors"
                     >
                         Registrarse
                     </button>
