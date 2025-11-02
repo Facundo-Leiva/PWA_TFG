@@ -14,12 +14,133 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model usuarios {
-  id                Int            @id @default(autoincrement())
-  nombre            String
-  apellido          String
-  documento         Int
-  id_direccion      Int
-  email             String         @unique
-  contrasena        String         @unique
+model Usuario {
+  id         Int    @id @default(autoincrement())
+  nombre     String
+  apellido   String
+  documento  Int
+  email      String @unique
+  contrasena String @unique
+
+  // Relaciones
+  ubicacion    Ubicacion    @relation(fields: [id_ubicacion], references: [id])
+  id_ubicacion Int
+  reportes     Reporte[]
+  comentarios  Comentario[]
+}
+
+model Reporte {
+  id            Int      @id @default(autoincrement())
+  descripcion   String
+  fechaCreacion DateTime
+  estado        String
+
+  // Relaciones
+  usuario             Usuario          @relation(fields: [id_usuario], references: [id])
+  id_usuario          Int
+  ubicacion           Ubicacion        @relation(fields: [id_ubicacion], references: [id])
+  id_ubicacion        Int
+  tipoDeIncidencia    TipoDeIncidencia @relation(fields: [id_tipoDeIncidencia], references: [id])
+  id_tipoDeIncidencia Int
+  soporteGrafico      SoporteGrafico   @relation(fields: [id_soporteGrafico], references: [id])
+  id_soporteGrafico   Int
+  mapaReportes        MapaReporte[]
+  indicesReportes     IndiceReporte[]
+}
+
+model Ubicacion {
+  id        Int    @id @default(autoincrement())
+  latitud   Int
+  longitud  Int
+  direccion String
+  ciudad    String
+  barrio    String
+
+  // Relaciones
+  usuarios Usuario[]
+  reportes Reporte[]
+  mapas    MapaGeografico[]
+}
+
+model TipoDeIncidencia {
+  id          Int    @id @default(autoincrement())
+  categoria   String
+  descripcion String
+
+  // Relaciones
+  indiceMapa IndiceMapa[]
+  reportes   Reporte[]
+}
+
+model Notificacion {
+  id         Int      @id @default(autoincrement())
+  contenido  String
+  fechaEnvio DateTime
+  estado     String
+}
+
+model Comentario {
+  id           Int      @id @default(autoincrement())
+  contenido    String
+  fechaEmision DateTime
+
+  // Relaciones
+  usuario           Usuario        @relation(fields: [id_usuario], references: [id])
+  id_usuario        Int
+  soporteGrafico    SoporteGrafico @relation(fields: [id_soporteGrafico], references: [id])
+  id_soporteGrafico Int
+}
+
+model SoporteGrafico {
+  id      Int    @id @default(autoincrement())
+  tipo    String
+  archivo String
+
+  // Relaciones
+  reportes    Reporte[]
+  comentarios Comentario[]
+}
+
+model MapaGeografico {
+  id   Int @id @default(autoincrement())
+  zoom Int
+
+  // Relaciones
+  ubicacion     Ubicacion     @relation(fields: [id_ubicacion], references: [id])
+  id_ubicacion  Int
+  indiceMapa    IndiceMapa    @relation(fields: [id_indiceMapa], references: [id])
+  id_indiceMapa Int
+  mapaReportes  MapaReporte[]
+}
+
+model MapaReporte {
+  id Int @id @default(autoincrement())
+
+  // Relaciones
+  mapaGeografico    MapaGeografico @relation(fields: [id_mapaGeografico], references: [id])
+  id_mapaGeografico Int
+  reporte           Reporte        @relation(fields: [id_reporte], references: [id])
+  id_reporte        Int
+}
+
+model IndiceMapa {
+  id     Int    @id @default(autoincrement())
+  ciudad String
+  barrio String
+
+  // Relaciones
+  tipoDeIncidencia    TipoDeIncidencia @relation(fields: [id_tipoDeIncidencia], references: [id])
+  id_tipoDeIncidencia Int
+  mapas               MapaGeografico[]
+  indicesReportes     IndiceReporte[]
+}
+
+model IndiceReporte {
+  id Int @id @default(autoincrement())
+
+  // Relaciones
+  indiceMapa    IndiceMapa @relation(fields: [id_indiceMapa], references: [id])
+  id_indiceMapa Int
+  reporte       Reporte    @relation(fields: [id_reporte], references: [id])
+  id_reporte    Int
 }
