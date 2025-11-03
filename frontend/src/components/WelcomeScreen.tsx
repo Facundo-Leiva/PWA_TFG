@@ -3,10 +3,9 @@ import React from "react";
 interface Props {
     onLogin: () => void;
     onRegister: () => void;
-    onExplore: () => void;
 }
 
-export default function WelcomeScreen({ onLogin, onRegister, onExplore }: Props) {
+export default function WelcomeScreen({ onLogin, onRegister }: Props) {
     return (
         <div className="min-h-screen bg-linear-to-br from-blue-600 via-blue-700 to-green-600 flex items-center justify-center p-4">        
             <div className="text-center text-white max-w-md mx-auto animate-fade-in">
@@ -37,12 +36,6 @@ export default function WelcomeScreen({ onLogin, onRegister, onExplore }: Props)
                         className="w-full border-3 border-white text-white py-3 px-6 rounded-lg font-bold hover:bg-white hover:text-blue-600 transition-colors"
                     >
                         Registrarse
-                    </button>
-                    <button
-                        onClick={onExplore}
-                        className="w-full text-blue-100 py-2 underline hover:text-white transition-colors font-bold"
-                    >
-                        Explorar Reportes
                     </button>
                 </div>
             </div>

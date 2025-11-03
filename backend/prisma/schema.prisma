@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -20,7 +19,8 @@ model Usuario {
   apellido   String
   documento  Int
   email      String @unique
-  contrasena String @unique
+  password   String @unique
+  direccion  String
 
   // Relaciones
   ubicacion    Ubicacion    @relation(fields: [id_ubicacion], references: [id])

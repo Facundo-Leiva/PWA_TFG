@@ -12,13 +12,7 @@ function App() {
   const [screen, setScreen] = useState<"welcome" | "login" | "register" | "create" | "profile" | "detail" | "dashboard">("welcome");
   const [selectedReport, setSelectedReport] = useState<Report | null>(null);
 
-  const handleLogin = (credentials: { email: string; password: string }) => {
-    console.log("Sesión Iniciada:", credentials);
-    setScreen("dashboard");
-  };
-
-  const handleRegister = (formData: { name: string; email: string; password: string }) => {
-    console.log("Registro Exitoso:", formData);
+  const handleLogin = () => {
     setScreen("dashboard");
   };
 
@@ -28,7 +22,6 @@ function App() {
         <WelcomeScreen
           onLogin={() => setScreen("login")}
           onRegister={() => setScreen("register")}
-          onExplore={() => setScreen("dashboard")}
         />
       )}
 
@@ -42,7 +35,6 @@ function App() {
       {screen === "register" && (
         <RegisterModal
           onClose={() => setScreen("welcome")}
-          onSubmit={handleRegister}
         />
       )}
 

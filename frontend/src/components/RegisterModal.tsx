@@ -1,20 +1,47 @@
-import React from "react";
+import React, { useState } from "react";
+import { registrarUsuario } from "../api";
 
 interface Props {
     onClose: () => void;
-    onSubmit: (formData: { name: string; document: string; adress: string; email: string; password: string }) => void;
 }
 
-export default function RegisterModal({ onClose, onSubmit }: Props) {
-    const [name, setName] = React.useState("");
-    const [document, setDocument] = React.useState("");
-    const [adress, setAdress] = React.useState("");
-    const [email, setEmail] = React.useState("");
-    const [password, setPassword] = React.useState("");
+export default function RegisterModal({ onClose }: Props) {
+    const [nombre, setNombre] = useState("");
+    const [apellido, setApellido] = useState("");
+    const [documento, setDocumento] = useState("");
+    const [direccion, setDireccion] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        onSubmit({ name, document, adress, email, password });
+        try {
+            await registrarUsuario({
+            nombre,
+            apellido,
+            documento: parseInt(documento),
+            email,
+            password,
+            direccion,
+            id_ubicacion: 1,
+            });
+
+            alert("✅ Usuario creado exitosamente");
+
+            // Limpiar Campos
+            setNombre("");
+            setApellido("");
+            setDocumento("");
+            setDireccion("");
+            setEmail("");
+            setPassword("");
+            setError("");
+
+            onClose();
+        } catch (err: any) {
+            setError(err.response?.data?.message || "Error al registrar");
+        }
     };
 
     return (
@@ -24,25 +51,33 @@ export default function RegisterModal({ onClose, onSubmit }: Props) {
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <input
                         type="text"
-                        placeholder="Nombre y Apellido"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
+                        placeholder="Nombre"
+                        value={nombre}
+                        onChange={(e) => setNombre(e.target.value)}
+                        className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        required
+                    />
+                    <input
+                        type="text"
+                        placeholder="Apellido"
+                        value={apellido}
+                        onChange={(e) => setApellido(e.target.value)}
                         className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         required
                     />
                     <input
                         type="text"
                         placeholder="Número de Documento"
-                        value={document}
-                        onChange={(e) => setDocument(e.target.value)}
+                        value={documento}
+                        onChange={(e) => setDocumento(e.target.value)}
                         className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         required
                     />
                     <input
                         type="text"
                         placeholder="Dirección"
-                        value={adress}
-                        onChange={(e) => setAdress(e.target.value)}
+                        value={direccion}
+                        onChange={(e) => setDireccion(e.target.value)}
                         className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         required
                     />
@@ -62,6 +97,7 @@ export default function RegisterModal({ onClose, onSubmit }: Props) {
                         className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         required
                     />
+                    {error && <p className="text-red-500 text-sm">{error}</p>}
                     <button
                         type="submit"
                         className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition-colors"
