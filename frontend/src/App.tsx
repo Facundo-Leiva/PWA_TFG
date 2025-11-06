@@ -42,7 +42,6 @@ function App() {
 
       {screen === "dashboard" && (
         <Dashboard 
-          onCreateReport={() => setScreen("create")} 
           onShowProfile={() => setScreen("profile")}
           onShowDetail={(report) => {
             setSelectedReport(report);

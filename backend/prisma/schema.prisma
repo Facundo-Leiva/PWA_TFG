@@ -33,8 +33,9 @@ model Usuario {
 
 model Reporte {
   id            Int      @id @default(autoincrement())
+  titulo        String
   descripcion   String
-  fechaCreacion DateTime
+  fechaCreacion DateTime @default(now())
   estado        String
 
   // Relaciones

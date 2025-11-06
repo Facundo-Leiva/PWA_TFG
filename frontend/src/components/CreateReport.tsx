@@ -61,11 +61,11 @@ export default function CreateReport({ onBack, onSubmit }: Props) {
                                 required
                             >
                                 <option value="">Selecciona una Categoría</option>
-                                <option value="trafico">🚗 Tráfico</option>
-                                <option value="residuos">🗑️ Residuos</option>
-                                <option value="alumbrado">💡 Alumbrado</option>
-                                <option value="vandalismo">🏢 Vandalismo</option>
-                                <option value="otros">📋 Otros</option>
+                                <option value="1">🚗 Tráfico</option>
+                                <option value="2">🗑️ Residuos</option>
+                                <option value="3">💡 Alumbrado</option>
+                                <option value="4">🏢 Vandalismo</option>
+                                <option value="5">📋 Otros</option>
                             </select>
                         </div>
 
@@ -83,18 +83,14 @@ export default function CreateReport({ onBack, onSubmit }: Props) {
 
                         <div>
                             <label className="block text-sm font-medium text-gray-800 mb-2">Ubicación</label>
-                            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                                <svg className="w-12 h-12 mx-auto mb-3 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-                                </svg>
-                                <p className="text-gray-600 mb-2">Selecciona la ubicación del problema</p>
-                                <button
-                                    type="button"
-                                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                            <select
+                                value={location}
+                                onChange={(e) => setLocation(e.target.value)}
+                                className="border rounded px-4 py-2 w-full"
                                 >
-                                    📍 Usar mi ubicación
-                                </button>
-                            </div>
+                                <option value="">Seleccionar ubicación</option>
+                                <option value="1">Nueva Cordoba</option>
+                            </select>
                         </div>
 
                         <div>

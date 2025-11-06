@@ -19,6 +19,5 @@ export async function registrarUsuario(data: {
 export async function iniciarSesion(email: string, password: string) {
     const res = await axios.post(`${BASE_URL}/auth/login`, { email, password });
     const { token, usuario } = res.data;
-    localStorage.setItem('token', token);
-    return usuario;
+    return { token, usuario };
 }

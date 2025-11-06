@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import ReportCard from "./ReportCard";
 import ReportDetail from "./ReportDetail";
+import CreateReport from "./CreateReport";
 
 interface Props {
-    onCreateReport: () => void;
     onShowProfile: () => void;
     onShowDetail: (report: Report) => void;
 }
@@ -77,7 +77,7 @@ const sampleReports: Report[] = [
     },
 ];
 
-export default function Dashboard({ onCreateReport, onShowProfile, onShowDetail }: Props) {
+export default function Dashboard({ onShowProfile, onShowDetail }: Props) {
     const [view, setView] = useState<"list" | "map" | "create">("list");
     const [filter, setFilter] = useState<string>("todos");
     const [selectedReport, setSelectedReport] = useState<Report | null>(null);
@@ -86,6 +86,48 @@ export default function Dashboard({ onCreateReport, onShowProfile, onShowDetail 
         filter === "todos"
         ? sampleReports
         : sampleReports.filter((r) => r.category === filter);
+
+    async function handleCreateReportSubmit(report: {
+        title: string;
+        category: string;
+        description: string;
+        location: string;
+        file?: File;
+    }) {
+        const formData = new FormData();
+        formData.append("title", report.title);
+        formData.append("category", report.category);
+        formData.append("description", report.description);
+        formData.append("location", report.location);
+        if (report.file) {
+            formData.append("file", report.file);
+        }
+
+        try {
+            const res = await fetch("http://localhost:3000/reportes", {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+                },
+                body: formData,
+            });
+
+            if (!res.ok) {
+                const error = await res.json();
+                console.error("❌ Error al crear reporte:", error);
+                alert("No se pudo crear el reporte: " + error.message);
+                return;
+            }
+
+            const data = await res.json();
+            console.log("✅ Reporte creado:", data);
+            alert("Reporte creado exitosamente");
+            setView("list");
+        } catch (err) {
+            console.error("❌ Error de red:", err);
+            alert("Error de conexión con el servidor");
+        }
+    }
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -130,7 +172,7 @@ export default function Dashboard({ onCreateReport, onShowProfile, onShowDetail 
                             🗺️ Ver Mapa
                         </button>
                         <button
-                            onClick={onCreateReport}
+                            onClick={() => setView("create")}
                             className="px-6 py-3 rounded-lg bg-linear-to-r from-orange-500 to-red-500 text-white font-semibold shadow-md hover:from-orange-600 hover:to-red-600 transition-all"
                         >
                             ➕ Crear Reporte
@@ -195,6 +237,13 @@ export default function Dashboard({ onCreateReport, onShowProfile, onShowDetail 
                             Volver a Lista
                         </button>
                     </div>
+                )}
+
+                {view === "create" && (
+                    <CreateReport
+                        onBack={() => setView("list")}
+                        onSubmit={handleCreateReportSubmit}
+                    />
                 )}
             </div>
         </div>

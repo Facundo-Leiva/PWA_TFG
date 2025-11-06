@@ -3,14 +3,15 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import * as argon2 from 'argon2';
-import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class AuthService {
     constructor (
         private prisma: PrismaService,
-        private config: ConfigService
+        private config: ConfigService,
+        private jwtService: JwtService,
     ) {}
 
     async register(data: RegisterDto) {
@@ -60,12 +61,8 @@ export class AuthService {
             },
         });
 
-        const secret = this.config.get<string>('jwtSecret');
-        if (!secret) throw new Error("JWT_SECRET no está definida");
-
-        const token = jwt.sign({ id: usuario.id, email: usuario.email }, secret, {
-            expiresIn: '1d',
-        });
+        const payload = { sub: usuario.id, email: usuario.email };
+        const token = this.jwtService.sign(payload);
 
         return { token, usuario };
     }

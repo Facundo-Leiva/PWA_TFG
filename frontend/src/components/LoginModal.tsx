@@ -14,15 +14,16 @@ export default function LoginModal({ onClose, onSubmit }: Props) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const usuario = await iniciarSesion(email, password);
-      localStorage.setItem("token", usuario.token);
+      const respuesta = await iniciarSesion(email, password);
+      localStorage.setItem("token", respuesta.token);       
       alert("✅ Sesión iniciada correctamente");
       onClose();
-      onSubmit(usuario);
+      onSubmit(respuesta.usuario);                           
     } catch (err: any) {
       setError(err.response?.data?.message || "Error al iniciar sesión");
     }
   };
+
 
   return (
     <div className="min-h-screen bg-linear-to-br from-blue-600 via-blue-700 to-green-600 flex items-center justify-center p-4">        
