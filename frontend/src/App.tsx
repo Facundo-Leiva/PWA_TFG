@@ -7,9 +7,10 @@ import CreateReport from "./components/CreateReport";
 import UserProfile from "./components/UserProfile";
 import ReportDetail from "./components/ReportDetail";
 import type { Report } from "./components/ReportCard";
+import DashboardSecundario from "./components/DashboardSecundario";
 
 function App() {
-  const [screen, setScreen] = useState<"welcome" | "login" | "register" | "create" | "profile" | "detail" | "dashboard">("welcome");
+  const [screen, setScreen] = useState<"welcome" | "login" | "register" | "create" | "profile" | "detail" | "detailSecundario" | "dashboardSecundario" | "dashboard">("welcome");
   const [selectedReport, setSelectedReport] = useState<Report | null>(null);
 
   const handleLogin = () => {
@@ -22,6 +23,7 @@ function App() {
         <WelcomeScreen
           onLogin={() => setScreen("login")}
           onRegister={() => setScreen("register")}
+          onExplore={() => setScreen("dashboardSecundario")}
         />
       )}
 
@@ -49,6 +51,15 @@ function App() {
         />
       )}
 
+      {screen === "dashboardSecundario" && (
+        <DashboardSecundario
+          onShowDetail={(report) => {
+            setSelectedReport(report);
+            setScreen("detailSecundario");
+          }}
+        />
+      )}
+
       {screen === "create" && (
         <CreateReport
           onBack={() => setScreen("dashboard")}
@@ -71,6 +82,16 @@ function App() {
           onBack={() => {
             setSelectedReport(null);
             setScreen("dashboard");
+          }}
+        />
+      )}
+
+      {screen === "detailSecundario" && selectedReport && (
+        <ReportDetail
+          report={selectedReport}
+          onBack={() => {
+            setSelectedReport(null);
+            setScreen("dashboardSecundario");
           }}
         />
       )}

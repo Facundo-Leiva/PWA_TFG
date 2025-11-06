@@ -14,13 +14,15 @@ datasource db {
 }
 
 model Usuario {
-  id         Int    @id @default(autoincrement())
-  nombre     String
-  apellido   String
-  documento  Int
-  email      String @unique
-  password   String @unique
-  direccion  String
+  id               Int       @id @default(autoincrement())
+  nombre           String
+  apellido         String
+  documento        Int       @unique
+  email            String    @unique
+  password         String    @unique
+  direccion        String
+  intentosFallidos Int       @default(0)
+  bloqueadoHasta   DateTime?
 
   // Relaciones
   ubicacion    Ubicacion    @relation(fields: [id_ubicacion], references: [id])

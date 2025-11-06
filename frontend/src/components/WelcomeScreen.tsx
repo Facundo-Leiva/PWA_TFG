@@ -3,9 +3,10 @@ import React from "react";
 interface Props {
     onLogin: () => void;
     onRegister: () => void;
+    onExplore: () => void;
 }
 
-export default function WelcomeScreen({ onLogin, onRegister }: Props) {
+export default function WelcomeScreen({ onLogin, onRegister, onExplore }: Props) {
     return (
         <div className="min-h-screen bg-linear-to-br from-blue-600 via-blue-700 to-green-600 flex items-center justify-center p-4">        
             <div className="text-center text-white max-w-md mx-auto animate-fade-in">
@@ -16,10 +17,10 @@ export default function WelcomeScreen({ onLogin, onRegister }: Props) {
                         </svg>
                     </div>
                     <h1 className="text-4xl font-bold mb-2">Ciudad Colaborativa</h1>
-                    <p className="text-blue-100 text-lg font-bold">Juntos Construimos Una Ciudad Mejor</p>
+                    <p className="text-blue-50 text-lg font-bold">Juntos Construimos Una Ciudad Mejor</p>
                 </div>
                 
-                <p className="text-blue-100 mb-8 leading-relaxed font-bold">
+                <p className="text-blue-50 mb-8 leading-relaxed font-bold">
                     Reporta incidencias urbanas, colabora con tu comunidad y ayuda a mejorar tu ciudad.
                     Cada reporte cuenta para crear espacios más seguros y funcionales.
                 </p>
@@ -36,6 +37,12 @@ export default function WelcomeScreen({ onLogin, onRegister }: Props) {
                         className="w-full border-3 border-white text-white py-3 px-6 rounded-lg font-bold hover:bg-white hover:text-blue-600 transition-colors"
                     >
                         Registrarse
+                    </button>
+                    <button
+                        onClick={onExplore}
+                        className="w-full font-semibold text-blue-50 py-2 underline hover:text-white transition-colors"
+                    >
+                        Solo Quiero Explorar Reportes
                     </button>
                 </div>
             </div>
