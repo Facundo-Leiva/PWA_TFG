@@ -5,6 +5,7 @@ import { envValidationSchema } from './config/env.validation';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { ReportesModule } from './reporte/report.module';
+import { TipoDeIncidenciaModule } from './reporte/incidencia.module';
 
 @Module({
     imports: [
@@ -15,7 +16,8 @@ import { ReportesModule } from './reporte/report.module';
         }),
         PrismaModule,
         AuthModule,
-        ReportesModule
+        ReportesModule,
+        TipoDeIncidenciaModule,
     ],
 })
 export class AppModule {}

@@ -53,8 +53,8 @@ model Reporte {
 
 model Ubicacion {
   id        Int    @id @default(autoincrement())
-  latitud   Int
-  longitud  Int
+  latitud   Float
+  longitud  Float
   direccion String
   ciudad    String
   barrio    String

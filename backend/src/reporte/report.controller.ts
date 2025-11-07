@@ -1,4 +1,4 @@
-import { Controller, Post, UseGuards, UseInterceptors, UploadedFile, Body, Req } from '@nestjs/common';
+import { Controller, Post, UseGuards, UseInterceptors, UploadedFile, Body, Req, UnauthorizedException } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ReportService } from './report.service';
@@ -22,18 +22,33 @@ export class ReportController {
     ) {
         const usuarioId = req.user?.id;
         if (!usuarioId) {
-            throw new Error('Usuario no autenticado');
+            throw new UnauthorizedException('Usuario no autenticado');
         }
 
-        // Guardar el archivo multimedia
-        const soporteGrafico = await this.soporteService.guardar(file);
-        console.log('Archivo recibido:', file);
+        if (!data.location) {
+            throw new Error("Ubicación no proporcionada");
+        }
 
-        // Crear el reporte con relaciones
+        let ubicacionData;
+        try {
+            ubicacionData = JSON.parse(data.location);
+        } catch (err) {
+            throw new Error("Ubicación inválida");
+        }
+
+        let ubicacion = await this.reportService.buscarUbicacionExistente(ubicacionData);
+
+        if (!ubicacion) {
+            ubicacion = await this.reportService.crearUbicacion(ubicacionData);
+        }
+
+        const soporteGrafico = await this.soporteService.guardar(file);
+
         const reporte = await this.reportService.crear(
             data,
             usuarioId,
-            soporteGrafico.id
+            soporteGrafico.id,
+            ubicacion.id
         );
 
         return {

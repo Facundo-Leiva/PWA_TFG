@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import LocationSearch from "./LocationSearch";
 
 interface Props {
     onBack: () => void;
@@ -11,16 +12,62 @@ interface Props {
     }) => void;
 }
 
+interface UbicacionData {
+    latitud: number;
+    longitud: number;
+    direccion: string;
+    ciudad: string;
+    barrio: string;
+}
+
 export default function CreateReport({ onBack, onSubmit }: Props) {
     const [title, setTitle] = useState("");
     const [category, setCategory] = useState("");
     const [description, setDescription] = useState("");
-    const [location, setLocation] = useState("");
     const [file, setFile] = useState<File | undefined>();
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+    const [categorias, setCategorias] = useState<{ id: number; categoria: string }[]>([]);
+    const [ubicacion, setUbicacion] = useState<UbicacionData | null>(null);
+
+    useEffect(() => {
+        async function fetchCategorias() {
+            try {
+                const res = await fetch("http://localhost:3000/tipos-incidencia");
+                const data = await res.json();
+                setCategorias(data);
+            } catch (err) {
+                console.error("Error al cargar categorías:", err);
+            }
+        }
+
+        fetchCategorias();
+    }, []);
+
+    useEffect(() => {
+        return () => {
+            if (previewUrl) {
+                URL.revokeObjectURL(previewUrl);
+            }
+        };
+    }, [previewUrl]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        onSubmit({ title, category, description, location, file });
+
+        if (!ubicacion) {
+            alert("Seleccioná una ubicación válida");
+            return;
+        }
+
+        const reportData = {
+            title,
+            category,
+            description,
+            location: JSON.stringify(ubicacion),
+            file,
+        };
+
+        onSubmit(reportData);
     };
 
     return (
@@ -61,11 +108,11 @@ export default function CreateReport({ onBack, onSubmit }: Props) {
                                 required
                             >
                                 <option value="">Selecciona una Categoría</option>
-                                <option value="1">🚗 Tráfico</option>
-                                <option value="2">🗑️ Residuos</option>
-                                <option value="3">💡 Alumbrado</option>
-                                <option value="4">🏢 Vandalismo</option>
-                                <option value="5">📋 Otros</option>
+                                    {categorias.map((cat) => (
+                                        <option key={cat.id} value={cat.id}>
+                                            {getCategoryIcon(cat.id)} {capitalize(cat.categoria)}
+                                        </option>
+                                    ))}
                             </select>
                         </div>
 
@@ -83,14 +130,12 @@ export default function CreateReport({ onBack, onSubmit }: Props) {
 
                         <div>
                             <label className="block text-sm font-medium text-gray-800 mb-2">Ubicación</label>
-                            <select
-                                value={location}
-                                onChange={(e) => setLocation(e.target.value)}
-                                className="border rounded px-4 py-2 w-full"
-                                >
-                                <option value="">Seleccionar ubicación</option>
-                                <option value="1">Nueva Cordoba</option>
-                            </select>
+                            <LocationSearch onSelect={setUbicacion} />
+                            {ubicacion && (
+                                <p className="mt-2 text-sm text-gray-600">
+                                    📍 {ubicacion.direccion} ({ubicacion.barrio}, {ubicacion.ciudad})
+                                </p>
+                            )}
                         </div>
 
                         <div>
@@ -103,7 +148,16 @@ export default function CreateReport({ onBack, onSubmit }: Props) {
                                 <input
                                     type="file"
                                     accept="image/*,video/*"
-                                    onChange={(e) => setFile(e.target.files?.[0])}
+                                    onChange={(e) => {
+                                        const selectedFile = e.target.files?.[0];
+                                        setFile(selectedFile);
+                                        if (selectedFile) {
+                                            const url = URL.createObjectURL(selectedFile);
+                                            setPreviewUrl(url);
+                                        } else {
+                                            setPreviewUrl(null);
+                                        }
+                                    }}
                                     className="hidden"
                                     id="file-upload"
                                 />
@@ -113,6 +167,15 @@ export default function CreateReport({ onBack, onSubmit }: Props) {
                                 >
                                     Seleccionar Archivo
                                 </label>
+                                {previewUrl && (
+                                    <div className="mt-4">
+                                        <img
+                                            src={previewUrl}
+                                            alt="Vista previa"
+                                            className="max-w-full h-auto rounded-lg shadow-md"
+                                        />
+                                    </div>
+                                )}
                             </div>
                         </div>
 
@@ -128,3 +191,18 @@ export default function CreateReport({ onBack, onSubmit }: Props) {
         </div>
     );
 }
+
+    // Helpers
+    function getCategoryIcon(id: number) {
+        return {
+            1: "🚗",
+            2: "🗑️",
+            3: "💡",
+            4: "🏢",
+            5: "📋",
+        }[id] || "📌";
+    }
+
+    function capitalize(text: string) {
+        return text.charAt(0).toUpperCase() + text.slice(1);
+    }

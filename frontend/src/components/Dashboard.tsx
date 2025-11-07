@@ -252,15 +252,15 @@ export default function Dashboard({ onShowProfile, onShowDetail }: Props) {
 
     // Helpers
     function getCategoryIcon(cat: string) {
-    return {
-        trafico: "🚗",
-        residuos: "🗑️",
-        alumbrado: "💡",
-        vandalismo: "🏢",
-        todos: "📋",
-    }[cat] || "📌";
+        return {
+            trafico: "🚗",
+            residuos: "🗑️",
+            alumbrado: "💡",
+            vandalismo: "🏢",
+            todos: "📋",
+        }[cat] || "📌";
     }
 
     function capitalize(text: string) {
-    return text.charAt(0).toUpperCase() + text.slice(1);
-}
+        return text.charAt(0).toUpperCase() + text.slice(1);
+    }
