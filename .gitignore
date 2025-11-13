@@ -21,12 +21,6 @@ frontend/dist/
 # === VSCode ===
 .vscode/
 
-# === Archivos a no versionar ===
-# Evita subir locks locales de npm/yarn
-package-lock.json
-frontend/package-lock.json
-backend/package-lock.json
-
 # === Otros opcionales ===
 # Ignorar archivos temporales del sistema
 .DS_Store

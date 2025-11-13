@@ -75,13 +75,6 @@ model TipoDeIncidencia {
   reportes   Reporte[]
 }
 
-model Notificacion {
-  id         Int      @id @default(autoincrement())
-  contenido  String
-  fechaEnvio DateTime
-  estado     String
-}
-
 model Comentario {
   id           Int      @id @default(autoincrement())
   contenido    String
