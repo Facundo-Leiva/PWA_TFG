@@ -4,6 +4,8 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { ReportService } from './report.service';
 import { SoporteService } from 'src/soporte/soporte.service';
 import { CreateReporteDto } from './dto/create.reporte.dto';
+import { diskStorage } from 'multer';
+import * as path from 'path';
 
 @Controller('reportes')
 export class ReportController {
@@ -14,7 +16,17 @@ export class ReportController {
 
     @UseGuards(AuthGuard('jwt'))
     @Post()
-    @UseInterceptors(FileInterceptor('file'))
+    @UseInterceptors(FileInterceptor('file', {
+        storage: diskStorage({
+            destination: './uploads',
+            filename: (req, file, cb) => {
+                const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+                const ext = path.extname(file.originalname);
+                cb(null, `${file.fieldname}-${uniqueSuffix}${ext}`);
+            },
+        }),
+    }))
+
     async crearReporte(
         @Body() data: CreateReporteDto,
         @UploadedFile() file: Express.Multer.File,
