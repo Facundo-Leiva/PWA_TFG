@@ -1,4 +1,5 @@
 import React from "react";
+import { formatDateToLocal } from '../utils/date';
 
 interface Props {
     onBack: () => void;

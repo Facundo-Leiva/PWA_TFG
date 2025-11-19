@@ -16,6 +16,5 @@ export class CreateReporteDto {
 
     @IsString()
     @IsNotEmpty()
-    @IsNumberString()
     location: string;
 }

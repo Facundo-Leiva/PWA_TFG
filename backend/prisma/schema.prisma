@@ -37,6 +37,7 @@ model Reporte {
   descripcion   String
   fechaCreacion DateTime @default(now())
   estado        String
+  likes         Int      @default(0)
 
   // Relaciones
   usuario             Usuario          @relation(fields: [id_usuario], references: [id])
@@ -47,6 +48,7 @@ model Reporte {
   id_tipoDeIncidencia Int
   soporteGrafico      SoporteGrafico   @relation(fields: [id_soporteGrafico], references: [id])
   id_soporteGrafico   Int
+  comentarios         Comentario[]
   mapaReportes        MapaReporte[]
   indicesReportes     IndiceReporte[]
 }
@@ -85,6 +87,7 @@ model Comentario {
   id_usuario        Int
   soporteGrafico    SoporteGrafico @relation(fields: [id_soporteGrafico], references: [id])
   id_soporteGrafico Int
+  Reporte           Reporte[]
 }
 
 model SoporteGrafico {

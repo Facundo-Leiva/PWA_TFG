@@ -1,4 +1,4 @@
-import { Controller, Post, UseGuards, UseInterceptors, UploadedFile, Body, Req, UnauthorizedException } from '@nestjs/common';
+import { Controller, Post, UseGuards, UseInterceptors, UploadedFile, Body, Req, UnauthorizedException, Get } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ReportService } from './report.service';
@@ -13,6 +13,11 @@ export class ReportController {
         private readonly reportService: ReportService,
         private readonly soporteService: SoporteService
     ) {}
+
+    @Get()
+    async getReports() {
+        return this.reportService.getAllReports();
+    }
 
     @UseGuards(AuthGuard('jwt'))
     @Post()

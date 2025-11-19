@@ -192,17 +192,17 @@ export default function CreateReport({ onBack, onSubmit }: Props) {
     );
 }
 
-    // Helpers
-    function getCategoryIcon(id: number) {
-        return {
-            1: "🚗",
-            2: "🗑️",
-            3: "💡",
-            4: "🏢",
-            5: "📋",
-        }[id] || "📌";
-    }
+// Helpers
+function getCategoryIcon(id: number) {
+    return {
+        1: "🚗",
+        2: "🗑️",
+        3: "💡",
+        4: "🏢",
+        5: "📋",
+    }[id] || "📌";
+}
 
-    function capitalize(text: string) {
-        return text.charAt(0).toUpperCase() + text.slice(1);
-    }
+function capitalize(text: string) {
+    return text.charAt(0).toUpperCase() + text.slice(1);
+}

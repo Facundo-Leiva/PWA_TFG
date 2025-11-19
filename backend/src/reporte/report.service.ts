@@ -6,12 +6,17 @@ import { CreateReporteDto } from "./dto/create.reporte.dto";
 export class ReportService {
     constructor(private readonly prisma: PrismaService) {}
 
-    async crear(data: CreateReporteDto, usuarioId: number, soporteGraficoId: number, ubicacionId: number) {
+    async crear(
+        data: CreateReporteDto,
+        usuarioId: number,
+        soporteGraficoId: number,
+        ubicacionId: number
+    ) {
         const id_tipoDeIncidencia = parseInt(data.category);
 
         if (isNaN(id_tipoDeIncidencia)) {
             throw new BadRequestException("Categoría inválida");
-        }  
+        }
 
         return this.prisma.reporte.create({
             data: {
@@ -24,7 +29,43 @@ export class ReportService {
                 id_tipoDeIncidencia: id_tipoDeIncidencia,
                 id_soporteGrafico: soporteGraficoId,
             },
+            include: {
+                usuario: true,
+                ubicacion: true,
+                tipoDeIncidencia: true,
+                soporteGrafico: true,
+                comentarios: true,
+            },
         });
+    }
+
+    async getAllReports() {
+        const reportes = await this.prisma.reporte.findMany({
+        include: {
+            usuario: true,
+            comentarios: true,
+            ubicacion: true,
+            tipoDeIncidencia: true,
+            soporteGrafico: true,
+        },
+        orderBy: { fechaCreacion: 'desc' },
+        });
+
+        return reportes.map((r) => ({
+            id: r.id,
+            title: r.titulo,
+            category: r.tipoDeIncidencia.id, 
+            description: r.descripcion,
+            author: r.usuario.nombre + " " + r.usuario.apellido,
+            date: r.fechaCreacion.toISOString(),
+            location: r.ubicacion.direccion,
+            likes: r.likes,
+            comments: r.comentarios.length,
+            estado: r.estado,
+            image: r.soporteGrafico?.archivo
+                ? `http://localhost:3000/uploads/${r.soporteGrafico.archivo.replace(/^\/?uploads\/?/, '')}`
+                : null,
+        }));
     }
 
     async buscarUbicacionExistente(data: { latitud: number; longitud: number }) {
@@ -61,5 +102,4 @@ export class ReportService {
             },
         });
     }
-
 }

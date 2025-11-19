@@ -1,93 +1,64 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReportCard from "./ReportCard";
 import ReportDetail from "./ReportDetail";
+import type { Report } from "./ReportCard";
 
 interface Props {
     onShowDetail: (report: Report) => void;
 }
 
-type Report = {
-    id: number;
-    title: string;
-    category: string;
-    description: string;
-    author: string;
-    date: string;
-    location: string;
-    likes: number;
-    comments: number;
-    verified: boolean;
-    image: boolean;
-};
-
-const sampleReports: Report[] = [
-    {
-        id: 1,
-        title: "Bache profundo en Av. Principal",
-        category: "trafico",
-        description: "Hay un bache muy profundo que puede dañar los vehículos. Está justo frente al semáforo.",
-        author: "María González",
-        date: "Hace 2 horas",
-        location: "Av. Principal 1234",
-        likes: 15,
-        comments: 3,
-        verified: false,
-        image: true,
-    },
-    {
-        id: 2,
-        title: "Luminaria fundida en parque",
-        category: "alumbrado",
-        description: "La luminaria del parque central no funciona desde hace una semana. El área queda muy oscura.",
-        author: "Carlos Ruiz",
-        date: "Hace 5 horas",
-        location: "Parque Central",
-        likes: 8,
-        comments: 1,
-        verified: false,
-        image: true,
-    },
-    {
-        id: 3,
-        title: "Acumulación de basura",
-        category: "residuos",
-        description: "Se acumula basura en la esquina, necesita recolección urgente. Hay riesgo sanitario.",
-        author: "Ana López",
-        date: "Hace 1 día",
-        location: "Calle 5 esquina 12",
-        likes: 23,
-        comments: 7,
-        verified: false,
-        image: true,
-    },
-    {
-        id: 4,
-        title: "Grafiti en edificio público",
-        category: "vandalismo",
-        description: "Aparecieron grafitis en la fachada del centro comunitario. Se requiere limpieza.",
-        author: "Pedro Martín",
-        date: "Hace 2 días",
-        location: "Centro Comunitario Norte",
-        likes: 12,
-        comments: 4,
-        verified: true,
-        image: true,
-    },
-];
-
 export default function DashboardSecundario({ onShowDetail }: Props) {
     const [view, setView] = useState<"list" | "map" | "create">("list");
-    const [filter, setFilter] = useState<string>("todos");
+    const [filter, setFilter] = useState<string | number>("todos");
     const [selectedReport, setSelectedReport] = useState<Report | null>(null);
+    const [reports, setReports] = useState<Report[]>([]);
+    const [categories, setCategories] = useState<{ id: number; categoria: string }[]>([]);
+
+    useEffect(() => {
+        fetchReports();
+        fetchCategories();
+    }, []);
+
+    async function fetchCategories() {
+        try {
+            const res = await fetch("http://localhost:3000/tipos-incidencia", {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+                },
+            });
+            if (!res.ok) throw new Error("Error al obtener categorías");
+            const data = await res.json();
+            setCategories(data);
+        } catch (err) {
+            console.error("❌ Error cargando categorías:", err);
+            alert("No se pudieron cargar las categorías");
+        }
+    }
+
+    async function fetchReports() {
+        try {
+            const res = await fetch("http://localhost:3000/reportes", {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+                },
+            });
+            if (!res.ok) throw new Error("Error al obtener reportes");
+            const data = await res.json();
+            setReports(data);
+        } catch (err) {
+            console.error("❌ Error cargando reportes:", err);
+            alert("No se pudieron cargar los reportes");
+        }
+    }
 
     const filteredReports =
-        filter === "todos"
-        ? sampleReports
-        : sampleReports.filter((r) => r.category === filter);
+    filter === "todos"
+        ? reports
+        : reports.filter((r) => r.category === filter);
 
     return (
         <div className="min-h-screen bg-gray-50">
-            {/* Header */}
+        {/* Header */}
             <header className="bg-linear-to-r from-blue-600 to-green-600 shadow-lg sticky top-0 z-50">
                 <div className="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
                     <div className="flex items-center space-x-3">
@@ -122,25 +93,36 @@ export default function DashboardSecundario({ onShowDetail }: Props) {
                             🗺️ Ver Mapa
                         </button>
                     </div>
-
                     {/* Filtros */}
                     {view === "list" && (
                         <div className="bg-white rounded-lg p-4 shadow-sm">
                             <h3 className="text-lg font-semibold text-gray-800 mb-3">🔍 Buscar reportes</h3>
-                            <div className="flex flex-wrap gap-3">
-                                {["todos", "trafico", "residuos", "alumbrado", "vandalismo"].map((cat) => (
-                                <button
-                                    key={cat}
-                                    onClick={() => setFilter(cat)}
-                                    className={`category-filter px-4 py-2 rounded-full font-medium transition-colors ${
-                                    filter === cat
+
+                            <div className="flex gap-3 overflow-x-auto whitespace-nowrap scrollbar-hide px-1 pb-2">
+                            <button
+                                onClick={() => setFilter("todos")}
+                                className={`px-4 py-2 rounded-full font-medium transition-colors ${
+                                    filter === "todos"
                                         ? "bg-blue-600 text-white"
                                         : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                                    }`}
+                                }`}
+                            >
+                                📋 Todos
+                            </button>
+
+                            {categories.map((cat) => (
+                                <button
+                                key={cat.id}
+                                onClick={() => setFilter(cat.id)}
+                                className={`px-4 py-2 rounded-full font-medium transition-colors ${
+                                    filter === cat.id
+                                    ? "bg-blue-600 text-white"
+                                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                                }`}
                                 >
-                                    {getCategoryIcon(cat)} {capitalize(cat)}
+                                {getCategoryIcon(cat.id)} {cat.categoria}
                                 </button>
-                                ))}
+                            ))}
                             </div>
                         </div>
                     )}
@@ -185,19 +167,15 @@ export default function DashboardSecundario({ onShowDetail }: Props) {
             </div>
         </div>
     );
-    }
+}    
 
-    // Helpers
-    function getCategoryIcon(cat: string) {
+// Helpers
+function getCategoryIcon(id: number) {
     return {
-        trafico: "🚗",
-        residuos: "🗑️",
-        alumbrado: "💡",
-        vandalismo: "🏢",
-        todos: "📋",
-    }[cat] || "📌";
-    }
-
-    function capitalize(text: string) {
-    return text.charAt(0).toUpperCase() + text.slice(1);
+        1: "🚗",
+        2: "🗑️",
+        3: "💡",
+        4: "🏢",
+        5: "📋",
+    }[id] || "📌";
 }
