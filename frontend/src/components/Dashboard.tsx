@@ -3,13 +3,15 @@ import ReportCard from "./ReportCard";
 import ReportDetail from "./ReportDetail";
 import CreateReport from "./CreateReport";
 import type { Report } from "./ReportCard";
+import type { UbicacionData } from "../api";
 
 interface Props {
     onShowProfile: () => void;
     onShowDetail: (report: Report) => void;
+    onCreateReport: () => void;
 }
 
-export default function Dashboard({ onShowProfile, onShowDetail }: Props) {
+export default function Dashboard({ onShowProfile, onShowDetail, onCreateReport }: Props) {
     const [view, setView] = useState<"list" | "map" | "create">("list");
     const [filter, setFilter] = useState<string | number>("todos");
     const [selectedReport, setSelectedReport] = useState<Report | null>(null);
@@ -62,37 +64,40 @@ export default function Dashboard({ onShowProfile, onShowDetail }: Props) {
         title: string;
         category: string;
         description: string;
-        location: string;
+        location: UbicacionData; // 👈 objeto, no string
         file?: File;
     }) {
-        const formData = new FormData();
-        formData.append("title", report.title);
-        formData.append("category", report.category);
-        formData.append("description", report.description);
-        formData.append("location", report.location);
-        if (report.file) {
-            formData.append("file", report.file);
-        }
-
         try {
+            const formData = new FormData();
+            formData.append("title", report.title);
+            formData.append("category", report.category);
+            formData.append("description", report.description);
+
+            formData.append("location", JSON.stringify(report.location));
+
+            if (report.file) {
+            formData.append("file", report.file);
+            }
+
             const res = await fetch("http://localhost:3000/reportes", {
-                method: "POST",
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
-                },
-                body: formData,
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+            },
+            body: formData,
             });
 
             if (!res.ok) {
-                const error = await res.json();
-                console.error("❌ Error al crear reporte:", error);
-                alert("No se pudo crear el reporte: " + error.message);
-                return;
+            const error = await res.json();
+            console.error("❌ Error al crear reporte:", error);
+            alert("No se pudo crear el reporte: " + error.message);
+            return;
             }
 
             const data = await res.json();
             console.log("✅ Reporte creado:", data);
             alert("Reporte creado exitosamente");
+
             setView("list");
             fetchReports();
         } catch (err) {

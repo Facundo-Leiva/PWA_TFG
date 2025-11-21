@@ -7,7 +7,7 @@ interface Props {
         title: string;
         category: string;
         description: string;
-        location: string;
+        location: UbicacionData;
         file?: File;
     }) => void;
 }
@@ -63,7 +63,7 @@ export default function CreateReport({ onBack, onSubmit }: Props) {
             title,
             category,
             description,
-            location: JSON.stringify(ubicacion),
+            location: ubicacion,
             file,
         };
 

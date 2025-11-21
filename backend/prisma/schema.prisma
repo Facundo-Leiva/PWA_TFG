@@ -23,6 +23,7 @@ model Usuario {
   direccion        String
   intentosFallidos Int       @default(0)
   bloqueadoHasta   DateTime?
+  fechaAlta        DateTime  @default(now())
 
   // Relaciones
   ubicacion    Ubicacion    @relation(fields: [id_ubicacion], references: [id])

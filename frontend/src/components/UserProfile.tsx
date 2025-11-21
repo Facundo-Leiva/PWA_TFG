@@ -1,35 +1,66 @@
-import React from "react";
-import { formatDateToLocal } from '../utils/date';
+import React, { useEffect, useState } from "react";
+import { formatDateToLocal } from "../utils/date";
 
-interface Props {
-    onBack: () => void;
+interface Props { onBack: () => void; }
+
+interface Report {
+    title: string;
+    category: number;
+    status: string;
+    date: string;
+    }
+
+interface User {
+    name: string;
+    joined: string;
+    avatar: string;
+    stats: {
+        created: number;
+        verified: number;
+        reputation: number;
+    };
+    reports: Report[];
 }
 
 export default function UserProfile({ onBack }: Props) {
-    const user = {
-        name: "Usuario Demo",
-        joined: "Enero 2024",
-        avatar: "U",
-        stats: {
-            created: 12,
-            verified: 8,
-            reputation: 156,
-        },
-        reports: [
-            {
-                title: "Bache en Av. Principal",
-                category: "trafico",
-                status: "En revisión",
-                date: "Hace 2 días",
-            },
-            {
-                title: "Luminaria fundida",
-                category: "alumbrado",
-                status: "Resuelto",
-                date: "Hace 5 días",
-            },
-        ],
-    };
+    const [user, setUser] = useState<User | null>(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => { fetchUserProfile(); }, []);
+
+    async function fetchUserProfile() {
+        try {
+            const res = await fetch("http://localhost:3000/usuarios/perfil", {
+                headers: { Authorization: `Bearer ${localStorage.getItem("token") || ""}` },
+            });
+            if (!res.ok) throw new Error("Error al obtener perfil");
+            const data: User = await res.json();
+            setUser(data);
+        } catch (err) {
+            console.error("❌ Error cargando perfil:", err);
+            alert("No se pudo cargar el perfil del usuario");
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-linear-to-br from-blue-300 via-white to-green-300 flex items-center justify-center">
+                <p className="text-gray-700">Cargando perfil...</p>
+            </div>
+        );
+    }
+
+    if (!user) {
+        return (
+            <div className="min-h-screen bg-linear-to-br from-blue-300 via-white to-green-300 flex items-center justify-center">
+                <p className="text-red-600">No se pudo cargar el perfil</p>
+            </div>
+        );
+    }
+
+    const isAvatarUrl = user.avatar.startsWith("http");
 
     return (
         <div className="min-h-screen bg-linear-to-br from-blue-300 via-white to-green-300 flex items-center justify-center px-4 py-8">
@@ -50,12 +81,18 @@ export default function UserProfile({ onBack }: Props) {
                     {/* Perfil básico */}
                     <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
                         <div className="flex items-center space-x-6 mb-6">
-                            <div className="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center text-white text-2xl font-bold">
+                            {isAvatarUrl ? (
+                                <img src={user.avatar} alt="Avatar" className="w-20 h-20 rounded-full object-cover" />
+                            ) : (
+                                <div className="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center text-white text-2xl font-bold">
                                 {user.avatar}
-                            </div>
+                                </div>
+                            )}
                             <div>
                                 <h2 className="text-2xl font-bold text-gray-800">{user.name}</h2>
-                                <p className="text-gray-600">Miembro desde {user.joined}</p>
+                                <p className="text-gray-600">
+                                    Miembro desde {formatDateToLocal(user.joined)}
+                                </p>
                                 <div className="flex items-center mt-2">
                                     <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
                                         ⭐ Colaborador Activo
@@ -86,20 +123,19 @@ export default function UserProfile({ onBack }: Props) {
                         <h3 className="text-lg font-semibold text-gray-800 mb-4">Mis Reportes Recientes</h3>
                         <div className="space-y-4">
                             {user.reports.map((report, index) => (
-                                <div
-                                    key={index}
-                                    className="flex items-center justify-between p-4 border border-gray-200 rounded-lg"
-                                >
+                                <div key={index} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
                                     <div>
                                         <h4 className="font-medium text-gray-800">{report.title}</h4>
                                         <p className="text-sm text-gray-600">
-                                            {getCategoryIcon(report.category)} {capitalize(report.category)} • {report.date}
+                                            {getCategoryIcon(report.category)} • {formatDateToLocal(report.date)}
                                         </p>
                                     </div>
                                     <span
                                         className={`px-3 py-1 rounded-full text-sm ${
-                                            report.status === "Resuelto"
+                                        report.status === "Resuelto"
                                             ? "bg-green-100 text-green-800"
+                                            : report.status === "Verificado"
+                                            ? "bg-blue-100 text-blue-800"
                                             : "bg-yellow-100 text-yellow-800"
                                         }`}
                                     >
@@ -115,17 +151,13 @@ export default function UserProfile({ onBack }: Props) {
     );
 }
 
-// Helpers
-function getCategoryIcon(cat: string) {
+// Helpers (idénticos a los tuyos)
+function getCategoryIcon(id: number) {
     return {
-        trafico: "🚗",
-        residuos: "🗑️",
-        alumbrado: "💡",
-        vandalismo: "🏢",
-        otros: "📋",
-    }[cat] || "📌";
-}
-
-function capitalize(text: string) {
-    return text.charAt(0).toUpperCase() + text.slice(1);
+        1: "🚗",
+        2: "🗑️",
+        3: "💡",
+        4: "🏢",
+        5: "📋",
+    }[id] || "📌";
 }

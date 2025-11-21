@@ -41,12 +41,13 @@ function App() {
       )}
 
       {screen === "dashboard" && (
-        <Dashboard 
+        <Dashboard
           onShowProfile={() => setScreen("profile")}
           onShowDetail={(report) => {
             setSelectedReport(report);
             setScreen("detail");
           }}
+          onCreateReport={() => setScreen("create")}
         />
       )}
 

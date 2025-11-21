@@ -4,6 +4,7 @@ import { CreateReporteDto } from "./dto/create.reporte.dto";
 
 @Injectable()
 export class ReportService {
+    reportService: any;
     constructor(private readonly prisma: PrismaService) {}
 
     async crear(
@@ -11,32 +12,36 @@ export class ReportService {
         usuarioId: number,
         soporteGraficoId: number,
         ubicacionId: number
-    ) {
+        ) {
+
         const id_tipoDeIncidencia = parseInt(data.category);
 
         if (isNaN(id_tipoDeIncidencia)) {
+            console.error("❌ Categoría inválida:", data.category);
             throw new BadRequestException("Categoría inválida");
         }
 
-        return this.prisma.reporte.create({
+        const reporte = await this.prisma.reporte.create({
             data: {
-                titulo: data.title,
-                descripcion: data.description,
-                estado: 'pendiente',
-                fechaCreacion: new Date(),
-                id_usuario: usuarioId,
-                id_ubicacion: ubicacionId,
-                id_tipoDeIncidencia: id_tipoDeIncidencia,
-                id_soporteGrafico: soporteGraficoId,
+            titulo: data.title,
+            descripcion: data.description,
+            estado: "pendiente",
+            fechaCreacion: new Date(),
+            id_usuario: usuarioId,
+            id_ubicacion: ubicacionId,
+            id_tipoDeIncidencia: id_tipoDeIncidencia,
+            id_soporteGrafico: soporteGraficoId,
             },
             include: {
-                usuario: true,
-                ubicacion: true,
-                tipoDeIncidencia: true,
-                soporteGrafico: true,
-                comentarios: true,
+            usuario: true,
+            ubicacion: true,
+            tipoDeIncidencia: true,
+            soporteGrafico: true,
+            comentarios: true,
             },
         });
+
+        return reporte;
     }
 
     async getAllReports() {

@@ -7,5 +7,11 @@ export class RegisterDto {
     email: string;
     password: string;
     direccion: string;
-    id_ubicacion: number;
+    ubicacion: {
+        latitud: number;
+        longitud: number;
+        direccion: string;
+        ciudad: string;
+        barrio: string;
+    };
 }

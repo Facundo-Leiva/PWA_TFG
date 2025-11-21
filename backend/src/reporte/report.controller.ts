@@ -33,8 +33,8 @@ export class ReportController {
     }))
 
     async crearReporte(
-        @Body() data: CreateReporteDto,
         @UploadedFile() file: Express.Multer.File,
+        @Body() data: CreateReporteDto,
         @Req() req: any
     ) {
         const usuarioId = req.user?.id;

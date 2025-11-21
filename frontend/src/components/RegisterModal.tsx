@@ -1,8 +1,17 @@
 import React, { useState } from "react";
 import { registrarUsuario } from "../api";
+import LocationSearch from "./LocationSearch";
 
 interface Props {
     onClose: () => void;
+}
+
+interface UbicacionData {
+    latitud: number;
+    longitud: number;
+    direccion: string;
+    ciudad: string;
+    barrio: string;
 }
 
 function esContrasenaValida(password: string): boolean {
@@ -29,6 +38,7 @@ export default function RegisterModal({ onClose }: Props) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
+    const [ubicacion, setUbicacion] = useState<UbicacionData | null>(null);
     const [passwordRules, setPasswordRules] = useState({
         longitud: false,
         mayuscula: false,
@@ -56,6 +66,11 @@ export default function RegisterModal({ onClose }: Props) {
             return;
         }
 
+        if (!ubicacion) {
+            alert("Seleccioná una ubicación válida");
+            return;
+        }
+
         try {
             await registrarUsuario({
             nombre,
@@ -64,18 +79,19 @@ export default function RegisterModal({ onClose }: Props) {
             email,
             password,
             direccion,
-            id_ubicacion: 1,
+            ubicacion,
             });
 
             alert("✅ Usuario creado exitosamente");
 
-            // Limpiar Campos
+            // Limpiar campos
             setNombre("");
             setApellido("");
             setDocumento("");
             setDireccion("");
             setEmail("");
             setPassword("");
+            setUbicacion(null);
             setError("");
 
             onClose();
@@ -113,14 +129,19 @@ export default function RegisterModal({ onClose }: Props) {
                         className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         required
                     />
-                    <input
-                        type="text"
-                        placeholder="Dirección"
-                        value={direccion}
-                        onChange={(e) => setDireccion(e.target.value)}
-                        className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        required
-                    />
+                    <div>
+                        <LocationSearch
+                            onSelect={(ubicacionSeleccionada) => {
+                            setUbicacion(ubicacionSeleccionada);
+                            setDireccion(ubicacionSeleccionada.direccion);
+                            }}
+                        />
+                        {ubicacion && (
+                            <p className="mt-2 text-sm text-gray-600">
+                            📍 {ubicacion.direccion} ({ubicacion.barrio}, {ubicacion.ciudad})
+                            </p>
+                        )}
+                    </div>
                     <input
                         type="email"
                         placeholder="Correo Electrónico"

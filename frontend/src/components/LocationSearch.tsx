@@ -63,7 +63,7 @@ export default function LocationSearch({ onSelect }: { onSelect: (data: Ubicacio
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Buscar dirección..."
+            placeholder="Dirección"
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
         />
         {results.length > 0 && (
