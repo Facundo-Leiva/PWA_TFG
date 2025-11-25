@@ -1,13 +1,57 @@
-import React from "react";
+import { useState } from "react";
 import type { Report } from "./ReportCard";
 import { formatDateToLocal } from '../utils/date';
 
 interface Props {
     report: Report;
     onBack: () => void;
+    currentUser?: string;
+    onViewUser?: (userId: number) => void;
 }
 
-export default function ReportDetail({ report, onBack }: Props) {
+export default function ReportDetail({ report, onBack, currentUser, onViewUser }: Props) {
+    const [likes, setLikes] = useState(report.likes);
+    const [liked, setLiked] = useState(false);
+
+    const handleLike = async () => {
+        if (report.author === currentUser) {
+            alert("No puedes dar like a tu propio reporte.");
+            return;
+        }
+        if (liked) {
+            alert("Ya diste like a este reporte.");
+            return;
+        }
+
+        const token = localStorage.getItem("token");
+
+        try {
+            const res = await fetch(`http://localhost:3000/reportes/${report.id}/like`, {
+                method: "POST",
+                headers: { 
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                }
+            });
+            if (!res.ok) {
+                const errText = await res.text();
+                try {
+                    const err = JSON.parse(errText);
+                    alert(err.message || "Error al dar like");
+                } catch {
+                    alert(errText || "Error al dar like");
+                }
+                return;
+            }
+            const data = await res.json();
+            setLikes(data.likes);
+            setLiked(true);
+        } catch (err) {
+            console.error(err);
+            alert("Error de conexión");
+        }
+    };
+    
     return (
         <div className="min-h-screen bg-linear-to-br from-blue-300 via-white to-green-300 flex items-center justify-center px-4 py-8">
             <div className="w-full max-w-2xl bg-white rounded-xl shadow-xl p-8">
@@ -26,17 +70,17 @@ export default function ReportDetail({ report, onBack }: Props) {
                 <div className="max-w-4xl mx-auto px-4 py-6">
                     <div className="bg-white rounded-lg shadow-sm overflow-hidden">
                         {report.image ? (
-                        <img
-                            src={report.image}
-                            alt={report.title}
-                            className="h-48 w-full object-cover"
-                        />
+                            <img
+                                src={report.image}
+                                alt={report.title}
+                                className="h-48 w-full object-cover"
+                            />
                         ) : (
-                        <div className="h-48 bg-linear-to-br from-gray-200 to-gray-300 flex items-center justify-center">
-                            <svg className="w-12 h-12 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                        </div>
+                            <div className="h-48 bg-linear-to-br from-gray-200 to-gray-300 flex items-center justify-center">
+                                <svg className="w-12 h-12 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                            </div>
                         )}
                         <div className="p-6 space-y-4">
                             <div className="flex items-center justify-between">
@@ -51,11 +95,30 @@ export default function ReportDetail({ report, onBack }: Props) {
                             <div className="text-sm text-gray-500 space-y-1">
                                 <p>📍 <strong>Ubicación:</strong> {report.location}</p>
                                 <p>🕒 <strong>Fecha:</strong> {formatDateToLocal(report.date)}</p>
-                                <p>👤 <strong>Reportado por:</strong> {report.author}</p>
+                                <p>
+                                    👤 <strong>Reportado por:</strong>{" "}
+                                    <button
+                                        onClick={() => onViewUser?.(report.authorId)}
+                                        className="font-semibold text-blue-600 hover:underline"
+                                    >
+                                        {report.author}
+                                    </button>
+                                </p>
                             </div>
 
                             <div className="flex items-center space-x-6 pt-4 border-t border-gray-200 text-sm text-gray-600">
-                                <span>👍 {report.likes} Me gusta</span>
+                                <button
+                                    onClick={handleLike}
+                                    disabled={liked || report.author === currentUser}
+                                    className={`flex items-center space-x-2 px-3 py-1 rounded-full font-medium transition ${
+                                        liked
+                                            ? "bg-blue-100 text-blue-700 border border-blue-400"
+                                            : "bg-emerald-100 text-emerald-700 border border-emerald-400 hover:bg-emerald-200"
+                                    }`}
+                                >
+                                    <span>👍</span>
+                                    <span>{likes} Me gusta</span>
+                                </button>
                                 <span>💬 {report.comments} Comentarios</span>
                                 <span>🛠️ Estado: {report.estado}</span>
                             </div>

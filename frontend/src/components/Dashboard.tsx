@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import ReportCard from "./ReportCard";
 import ReportDetail from "./ReportDetail";
 import CreateReport from "./CreateReport";
@@ -8,10 +8,9 @@ import type { UbicacionData } from "../api";
 interface Props {
     onShowProfile: () => void;
     onShowDetail: (report: Report) => void;
-    onCreateReport: () => void;
 }
 
-export default function Dashboard({ onShowProfile, onShowDetail, onCreateReport }: Props) {
+export default function Dashboard({ onShowProfile, onShowDetail }: Props) {
     const [view, setView] = useState<"list" | "map" | "create">("list");
     const [filter, setFilter] = useState<string | number>("todos");
     const [selectedReport, setSelectedReport] = useState<Report | null>(null);
@@ -27,15 +26,15 @@ export default function Dashboard({ onShowProfile, onShowDetail, onCreateReport 
         try {
             const res = await fetch("http://localhost:3000/tipos-incidencia", {
                 headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+                    Authorization: `Bearer ${localStorage.getItem("token") || ""}`
                 },
             });
-            if (!res.ok) throw new Error("Error al obtener categorías");
+            if (!res.ok) throw new Error("Error al obtener categorías.");
             const data = await res.json();
             setCategories(data);
         } catch (err) {
             console.error("❌ Error cargando categorías:", err);
-            alert("No se pudieron cargar las categorías");
+            alert("No se pudieron cargar las categorías.");
         }
     }
 
@@ -46,25 +45,25 @@ export default function Dashboard({ onShowProfile, onShowDetail, onCreateReport 
                     Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
                 },
             });
-            if (!res.ok) throw new Error("Error al obtener reportes");
+            if (!res.ok) throw new Error("Error al obtener reportes.");
             const data = await res.json();
             setReports(data);
         } catch (err) {
             console.error("❌ Error cargando reportes:", err);
-            alert("No se pudieron cargar los reportes");
+            alert("No se pudieron cargar los reportes.");
         }
     }
 
     const filteredReports =
-    filter === "todos"
-        ? reports
-        : reports.filter((r) => r.category === filter);
+        filter === "todos"
+            ? reports
+            : reports.filter((r) => r.category === filter);
 
     async function handleCreateReportSubmit(report: {
         title: string;
         category: string;
         description: string;
-        location: UbicacionData; // 👈 objeto, no string
+        location: UbicacionData;
         file?: File;
     }) {
         try {
@@ -76,22 +75,22 @@ export default function Dashboard({ onShowProfile, onShowDetail, onCreateReport 
             formData.append("location", JSON.stringify(report.location));
 
             if (report.file) {
-            formData.append("file", report.file);
+                formData.append("file", report.file);
             }
 
             const res = await fetch("http://localhost:3000/reportes", {
-            method: "POST",
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
-            },
-            body: formData,
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+                },
+                body: formData,
             });
 
             if (!res.ok) {
-            const error = await res.json();
-            console.error("❌ Error al crear reporte:", error);
-            alert("No se pudo crear el reporte: " + error.message);
-            return;
+                const error = await res.json();
+                console.error("❌ Error al crear reporte:", error);
+                alert("No se pudo crear el reporte: " + error.message);
+                return;
             }
 
             const data = await res.json();
@@ -123,7 +122,7 @@ export default function Dashboard({ onShowProfile, onShowDetail, onCreateReport 
                         onClick={onShowProfile}
                         className="w-8 h-8 bg-white rounded-full flex items-center justify-center text-blue-600 font-semibold hover:bg-blue-50"
                     >
-                        U
+                        P
                     </button>
                 </div>
             </header>
@@ -159,32 +158,31 @@ export default function Dashboard({ onShowProfile, onShowDetail, onCreateReport 
                     {view === "list" && (
                         <div className="bg-white rounded-lg p-4 shadow-sm">
                             <h3 className="text-lg font-semibold text-gray-800 mb-3">🔍 Buscar reportes</h3>
-
                             <div className="flex gap-3 overflow-x-auto whitespace-nowrap scrollbar-hide px-1 pb-2">
-                            <button
-                                onClick={() => setFilter("todos")}
-                                className={`px-4 py-2 rounded-full font-medium transition-colors ${
-                                    filter === "todos"
-                                        ? "bg-blue-600 text-white"
-                                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                                }`}
-                            >
-                                📋 Todos
-                            </button>
-
-                            {categories.map((cat) => (
                                 <button
-                                key={cat.id}
-                                onClick={() => setFilter(cat.id)}
-                                className={`px-4 py-2 rounded-full font-medium transition-colors ${
-                                    filter === cat.id
-                                    ? "bg-blue-600 text-white"
-                                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                                }`}
+                                    onClick={() => setFilter("todos")}
+                                    className={`px-4 py-2 rounded-full font-medium transition-colors ${
+                                        filter === "todos"
+                                            ? "bg-blue-600 text-white"
+                                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                                    }`}
                                 >
-                                {getCategoryIcon(cat.id)} {cat.categoria}
+                                    📋 Todos
                                 </button>
-                            ))}
+
+                                {categories.map((cat) => (
+                                    <button
+                                        key={cat.id}
+                                        onClick={() => setFilter(cat.id)}
+                                        className={`px-4 py-2 rounded-full font-medium transition-colors ${
+                                            filter === cat.id
+                                            ? "bg-blue-600 text-white"
+                                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                                        }`}
+                                    >
+                                        {getCategoryIcon(cat.id)} {cat.categoria}
+                                    </button>
+                                ))}
                             </div>
                         </div>
                     )}

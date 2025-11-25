@@ -16,11 +16,11 @@ export default function LoginModal({ onClose, onSubmit }: Props) {
     try {
       const respuesta = await iniciarSesion(email, password);
       localStorage.setItem("token", respuesta.token);       
-      alert("✅ Sesión iniciada correctamente");
+      alert("✅ Sesión iniciada correctamente.");
       onClose();
       onSubmit(respuesta.usuario);                           
     } catch (err: any) {
-      setError(err.response?.data?.message || "Error al iniciar sesión");
+      setError(err.response?.data?.message || "❌ Error al iniciar sesión.");
     }
   };
 

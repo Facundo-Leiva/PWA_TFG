@@ -1,0 +1,151 @@
+import { useEffect, useState } from "react";
+import { formatDateToLocal } from "../utils/date";
+
+interface Props {
+    onBack: () => void; userId: number;
+}
+
+interface Report {
+    title: string;
+    category: number;
+    status: string;
+    date: string;
+}
+
+interface User {
+    name: string;
+    joined: string;
+    avatar: string;
+    stats: {
+        created: number;
+        verified: number;
+        reputation: number;
+    };
+    reports: Report[];
+}
+
+export default function OtherUserProfile({ onBack, userId }: Props) {
+    const [user, setUser] = useState<User | null>(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => { fetchUserProfile(); }, [userId]);
+
+    async function fetchUserProfile() {
+        try {
+            const res = await fetch(`http://localhost:3000/usuarios/${userId}/perfil`, {
+                headers: { 
+                    Authorization: `Bearer ${localStorage.getItem("token") || ""}`
+                },
+            });
+            if (!res.ok) throw new Error("Error al obtener perfil.");
+            const data: User = await res.json();
+            setUser(data);
+        } catch (err) {
+            console.error("❌ Error cargando perfil:", err);
+            alert("No se pudo cargar el perfil del usuario.");
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    if (loading) return <p>Cargando perfil...</p>;
+    if (!user) return <p>No se pudo cargar el perfil.</p>;
+
+    const isAvatarUrl = user.avatar.startsWith("http");
+
+    return (
+        <div className="min-h-screen bg-linear-to-br from-blue-300 via-white to-green-300 flex items-center justify-center px-4 py-8">
+            <div className="w-full max-w-2xl bg-white rounded-xl shadow-xl p-8">
+                <header className="bg-white shadow-sm border-b border-gray-200">
+                    <div onClick={onBack} className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+                        <button className="text-gray-600 hover:text-gray-800">
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                            </svg>
+                        </button>
+                        <h1 className="text-xl font-semibold text-gray-800">Perfil de Usuario</h1>
+                        <div className="w-6" />
+                    </div>
+                </header>
+
+                <div className="max-w-4xl mx-auto px-4 py-6">
+                    <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+                        <div className="flex items-center space-x-6 mb-6">
+                            {isAvatarUrl ? (
+                                <img src={user.avatar} alt="Avatar" className="w-20 h-20 rounded-full object-cover" />
+                            ) : (
+                                <div className="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center text-white text-2xl font-bold">
+                                {user.avatar}
+                                </div>
+                            )}
+                            <div>
+                                <h2 className="text-2xl font-bold text-gray-800">{user.name}</h2>
+                                <p className="text-gray-600">Miembro desde {formatDateToLocal(user.joined)}</p>
+                                <div className="flex items-center mt-2">
+                                    <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                                        ⭐ Colaborador Activo
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {/* Estadísticas */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                            <div className="text-center p-4 bg-blue-50 rounded-lg">
+                                <div className="text-2xl font-bold text-blue-600">{user.stats.created}</div>
+                                <div className="text-gray-600">Reportes Creados</div>
+                            </div>
+                            <div className="text-center p-4 bg-green-50 rounded-lg">
+                                <div className="text-2xl font-bold text-green-600">{user.stats.verified}</div>
+                                <div className="text-gray-600">Reportes Verificados</div>
+                            </div>
+                            <div className="text-center p-4 bg-purple-50 rounded-lg">
+                                <div className="text-2xl font-bold text-purple-600">{user.stats.reputation}</div>
+                                <div className="text-gray-600">Puntos de Reputación</div>
+                            </div>
+                        </div>
+
+                        {/* Reportes recientes */}
+                        <div className="bg-white rounded-lg shadow-sm p-6">
+                            <h3 className="text-lg font-semibold text-gray-800 mb-4">Reportes Recientes</h3>
+                            <div className="space-y-4">
+                                {user.reports.map((report, index) => (
+                                    <div key={index} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                                        <div>
+                                            <h4 className="font-medium text-gray-800">{report.title}</h4>
+                                            <p className="text-sm text-gray-600">
+                                                {getCategoryIcon(report.category)} • {formatDateToLocal(report.date)}
+                                            </p>
+                                        </div>
+                                        <span
+                                            className={`px-3 py-1 rounded-full text-sm ${
+                                                report.status === "Resuelto"
+                                                    ? "bg-green-100 text-green-800"
+                                                    : report.status === "Verificado"
+                                                    ? "bg-blue-100 text-blue-800"
+                                                    : "bg-yellow-100 text-yellow-800"
+                                            }`}
+                                        >
+                                            {report.status}
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+// Helpers
+function getCategoryIcon(id: number) {
+    return {
+        1: "🚗",
+        2: "🗑️",
+        3: "💡",
+        4: "🏢",
+        5: "📋",
+    }[id] || "📌";
+}

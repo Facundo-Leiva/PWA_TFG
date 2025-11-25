@@ -28,6 +28,7 @@ export default function CreateReport({ onBack, onSubmit }: Props) {
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [categorias, setCategorias] = useState<{ id: number; categoria: string }[]>([]);
     const [ubicacion, setUbicacion] = useState<UbicacionData | null>(null);
+    const [query, setQuery] = useState("");
 
     useEffect(() => {
         async function fetchCategorias() {
@@ -55,7 +56,7 @@ export default function CreateReport({ onBack, onSubmit }: Props) {
         e.preventDefault();
 
         if (!ubicacion) {
-            alert("Seleccioná una ubicación válida");
+            alert("Seleccioná una ubicación válida.");
             return;
         }
 
@@ -129,11 +130,17 @@ export default function CreateReport({ onBack, onSubmit }: Props) {
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-800 mb-2">Ubicación</label>
-                            <LocationSearch onSelect={setUbicacion} />
+                            <label className="block text-sm font-medium text-gray-800 mb-2">
+                                Ubicación
+                            </label>
+                            <LocationSearch
+                                value={query}
+                                onChange={setQuery}
+                                onSelect={setUbicacion}
+                            />
                             {ubicacion && (
-                                <p className="mt-2 text-sm text-gray-600">
-                                    📍 {ubicacion.direccion} ({ubicacion.barrio}, {ubicacion.ciudad})
+                                <p className="mt-2 text-sm font-semibold text-blue-800">
+                                    Dirección seleccionada: {ubicacion.direccion} ({ubicacion.barrio}, {ubicacion.ciudad})
                                 </p>
                             )}
                         </div>

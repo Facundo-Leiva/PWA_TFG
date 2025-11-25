@@ -30,6 +30,7 @@ model Usuario {
   id_ubicacion Int
   reportes     Reporte[]
   comentarios  Comentario[]
+  likes        Like[]
 }
 
 model Reporte {
@@ -38,7 +39,6 @@ model Reporte {
   descripcion   String
   fechaCreacion DateTime @default(now())
   estado        String
-  likes         Int      @default(0)
 
   // Relaciones
   usuario             Usuario          @relation(fields: [id_usuario], references: [id])
@@ -52,6 +52,7 @@ model Reporte {
   comentarios         Comentario[]
   mapaReportes        MapaReporte[]
   indicesReportes     IndiceReporte[]
+  likes               Like[]
 }
 
 model Ubicacion {
@@ -89,6 +90,16 @@ model Comentario {
   soporteGrafico    SoporteGrafico @relation(fields: [id_soporteGrafico], references: [id])
   id_soporteGrafico Int
   Reporte           Reporte[]
+}
+
+model Like {
+  id        Int     @id @default(autoincrement())
+  usuario   Usuario @relation(fields: [usuarioId], references: [id])
+  usuarioId Int
+  reporte   Reporte @relation(fields: [reporteId], references: [id])
+  reporteId Int
+
+  @@unique([usuarioId, reporteId])
 }
 
 model SoporteGrafico {

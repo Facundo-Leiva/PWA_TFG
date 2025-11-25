@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { formatDateToLocal } from "../utils/date";
 
 interface Props { onBack: () => void; }
@@ -132,11 +132,11 @@ export default function UserProfile({ onBack }: Props) {
                                     </div>
                                     <span
                                         className={`px-3 py-1 rounded-full text-sm ${
-                                        report.status === "Resuelto"
-                                            ? "bg-green-100 text-green-800"
-                                            : report.status === "Verificado"
-                                            ? "bg-blue-100 text-blue-800"
-                                            : "bg-yellow-100 text-yellow-800"
+                                            report.status === "Resuelto"
+                                                ? "bg-green-100 text-green-800"
+                                                : report.status === "Verificado"
+                                                ? "bg-blue-100 text-blue-800"
+                                                : "bg-yellow-100 text-yellow-800"
                                         }`}
                                     >
                                         {report.status}
@@ -151,7 +151,7 @@ export default function UserProfile({ onBack }: Props) {
     );
 }
 
-// Helpers (idénticos a los tuyos)
+// Helpers
 function getCategoryIcon(id: number) {
     return {
         1: "🚗",

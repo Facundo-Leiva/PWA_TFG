@@ -1,4 +1,4 @@
-import { Controller, Post, UseGuards, UseInterceptors, UploadedFile, Body, Req, UnauthorizedException, Get } from '@nestjs/common';
+import { Controller, Post, UseGuards, UseInterceptors, UploadedFile, Body, Req, UnauthorizedException, Get, InternalServerErrorException, BadRequestException, Param } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ReportService } from './report.service';
@@ -43,34 +43,45 @@ export class ReportController {
         }
 
         if (!data.location) {
-            throw new Error("Ubicación no proporcionada");
+            throw new BadRequestException('Ubicación no proporcionada');
         }
 
         let ubicacionData;
         try {
             ubicacionData = JSON.parse(data.location);
         } catch (err) {
-            throw new Error("Ubicación inválida");
+            throw new BadRequestException('Ubicación inválida');
         }
 
-        let ubicacion = await this.reportService.buscarUbicacionExistente(ubicacionData);
+        try {
+            let ubicacion = await this.reportService.buscarUbicacionExistente(ubicacionData);
 
-        if (!ubicacion) {
-            ubicacion = await this.reportService.crearUbicacion(ubicacionData);
+            if (!ubicacion) {
+                ubicacion = await this.reportService.crearUbicacion(ubicacionData);
+            }
+
+            const soporteGrafico = await this.soporteService.guardar(file);
+
+            const reporte = await this.reportService.crear(
+                data,
+                usuarioId,
+                soporteGrafico.id,
+                ubicacion.id
+            );
+
+            return {
+                mensaje: '✅ Reporte creado exitosamente.',
+                reporte,
+            };
+        } catch (err) {
+            console.error('❌ Error al crear el reporte:', err);
+            throw new InternalServerErrorException('❌ Error al crear el reporte.');
         }
+    }
 
-        const soporteGrafico = await this.soporteService.guardar(file);
-
-        const reporte = await this.reportService.crear(
-            data,
-            usuarioId,
-            soporteGrafico.id,
-            ubicacion.id
-        );
-
-        return {
-            mensaje: 'Reporte creado exitosamente',
-            reporte,
-        };
+    @UseGuards(AuthGuard('jwt'))
+    @Post(':id/like')
+    async likeReporte(@Param('id') id: number, @Req() req: any) {
+        return this.reportService.darLike(Number(id), req.user.id);
     }
 }

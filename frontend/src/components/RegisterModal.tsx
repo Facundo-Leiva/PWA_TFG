@@ -39,6 +39,7 @@ export default function RegisterModal({ onClose }: Props) {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [ubicacion, setUbicacion] = useState<UbicacionData | null>(null);
+    const [query, setQuery] = useState("");
     const [passwordRules, setPasswordRules] = useState({
         longitud: false,
         mayuscula: false,
@@ -67,22 +68,22 @@ export default function RegisterModal({ onClose }: Props) {
         }
 
         if (!ubicacion) {
-            alert("Seleccioná una ubicación válida");
+            alert("Seleccioná una ubicación válida.");
             return;
         }
 
         try {
             await registrarUsuario({
-            nombre,
-            apellido,
-            documento: parseInt(documento),
-            email,
-            password,
-            direccion,
-            ubicacion,
+                nombre,
+                apellido,
+                documento: parseInt(documento),
+                email,
+                password,
+                direccion,
+                ubicacion,
             });
 
-            alert("✅ Usuario creado exitosamente");
+            alert("✅ Usuario creado exitosamente.");
 
             // Limpiar campos
             setNombre("");
@@ -130,15 +131,17 @@ export default function RegisterModal({ onClose }: Props) {
                         required
                     />
                     <div>
+                        <label className="block text-sm font-medium text-gray-800 mb-2">
+                            Ubicación
+                        </label>
                         <LocationSearch
-                            onSelect={(ubicacionSeleccionada) => {
-                            setUbicacion(ubicacionSeleccionada);
-                            setDireccion(ubicacionSeleccionada.direccion);
-                            }}
+                            value={query}
+                            onChange={setQuery}
+                            onSelect={setUbicacion}
                         />
                         {ubicacion && (
-                            <p className="mt-2 text-sm text-gray-600">
-                            📍 {ubicacion.direccion} ({ubicacion.barrio}, {ubicacion.ciudad})
+                            <p className="mt-2 text-sm font-semibold text-blue-800">
+                                Dirección seleccionada: {ubicacion.direccion} ({ubicacion.barrio}, {ubicacion.ciudad})
                             </p>
                         )}
                     </div>

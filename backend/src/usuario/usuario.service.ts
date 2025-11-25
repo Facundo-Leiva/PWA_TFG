@@ -1,5 +1,4 @@
-// src/usuario/usuario.service.ts
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
@@ -26,7 +25,7 @@ export class UsuarioService {
         ]);
 
         // Reputación
-        const reputation = created * 10 + verified * 20;
+        const reputacion = created * 10 + verified * 20;
 
         // Reportes recientes
         const recientes = await this.prisma.reporte.findMany({
@@ -46,12 +45,51 @@ export class UsuarioService {
             name: `${usuario?.nombre} ${usuario?.apellido}`,
             joined: usuario?.fechaAlta?.toISOString() ?? new Date().toISOString(),
             avatar: usuario?.nombre?.[0]?.toUpperCase() ?? 'U',
-            stats: { created, verified, reputation },
+            stats: { created, verified, reputacion },
             reports: recientes.map((r) => ({
                 title: r.titulo,
                 category: r.tipoDeIncidencia.id,
                 status: this.mapEstadoLabel(r.estado),
                 date: r.fechaCreacion.toISOString(),
+            })),
+        };
+    }
+
+    async obtenerPerfilUsuario(id: number) {
+        const usuario = await this.prisma.usuario.findUnique({
+            where: { id },
+            include: {
+                reportes: true,
+            },
+        });
+
+        if (!usuario) {
+            throw new NotFoundException('Usuario no encontrado.');
+        }
+
+        // Estadísticas
+        const [created, verified] = await Promise.all([
+            this.prisma.reporte.count({ where: { id_usuario: id } }),
+            this.prisma.reporte.count({ where: { id_usuario: id, estado: 'verificado' } }),
+        ]);
+
+        // Reputación
+        const reputacion = created * 10 + verified * 20;
+
+        return {
+            name: `${usuario.nombre} ${usuario.apellido}`,
+            joined: usuario.fechaAlta,
+            avatar: usuario?.nombre?.[0]?.toUpperCase() ?? 'U',
+            stats: {
+                created: usuario.reportes.length,
+                verified: usuario.reportes.filter(r => r.estado === 'Verificado').length,
+                reputation: reputacion ?? 0,
+            },
+            reports: usuario.reportes.map(r => ({
+                title: r.titulo,
+                category: r.id_tipoDeIncidencia,
+                status: r.estado,
+                date: r.fechaCreacion,
             })),
         };
     }

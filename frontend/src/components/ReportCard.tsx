@@ -1,4 +1,3 @@
-import React from "react";
 import { formatRelative } from '../utils/date';
 
 export interface Report {
@@ -7,6 +6,7 @@ export interface Report {
     category: number;
     description: string;
     author: string;
+    authorId: number,
     date: string;
     location: string;
     likes: number;
@@ -27,17 +27,17 @@ export default function ReportCard({ report, onClick }: Props) {
             onClick={onClick}
         >
             {report.image ? (
-            <img
-                src={report.image}
-                alt={report.title}
-                className="h-48 w-full object-cover"
-            />
+                <img
+                    src={report.image}
+                    alt={report.title}
+                    className="h-48 w-full object-cover"
+                />
             ) : (
-            <div className="h-48 bg-linear-to-br from-gray-200 to-gray-300 flex items-center justify-center">
-                <svg className="w-12 h-12 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-            </div>
+                <div className="h-48 bg-linear-to-br from-gray-200 to-gray-300 flex items-center justify-center">
+                    <svg className="w-12 h-12 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                </div>
             )}
 
             <div className="p-6">

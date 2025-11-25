@@ -7,11 +7,18 @@ import CreateReport from "./components/CreateReport";
 import UserProfile from "./components/UserProfile";
 import ReportDetail from "./components/ReportDetail";
 import type { Report } from "./components/ReportCard";
-import DashboardSecundario from "./components/DashboardSecundario";
+import DashboardExploracion from "./components/exploracion/DashboardExploracion";
+import OtherUserProfile from "./components/OtherUserProfile";
+import ReportDetailExploracion from "./components/exploracion/ReportDetailExploracion";
+import UserProfileExploracion from "./components/exploracion/UserProfileExploracion";
 
 function App() {
-  const [screen, setScreen] = useState<"welcome" | "login" | "register" | "create" | "profile" | "detail" | "detailSecundario" | "dashboardSecundario" | "dashboard">("welcome");
+  const [screen, setScreen] = useState <
+  "welcome" | "login" | "register" | "create" | "profile" | "detail" |"detailExploracion" | "dashboardExploracion" | 
+  "userProfile" | "userProfileExploracion" |"dashboard"> ("welcome");
+  
   const [selectedReport, setSelectedReport] = useState<Report | null>(null);
+  const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
 
   const handleLogin = () => {
     setScreen("dashboard");
@@ -23,7 +30,7 @@ function App() {
         <WelcomeScreen
           onLogin={() => setScreen("login")}
           onRegister={() => setScreen("register")}
-          onExplore={() => setScreen("dashboardSecundario")}
+          onExplore={() => setScreen("dashboardExploracion")}
         />
       )}
 
@@ -47,15 +54,14 @@ function App() {
             setSelectedReport(report);
             setScreen("detail");
           }}
-          onCreateReport={() => setScreen("create")}
         />
       )}
 
-      {screen === "dashboardSecundario" && (
-        <DashboardSecundario
+      {screen === "dashboardExploracion" && (
+        <DashboardExploracion
           onShowDetail={(report) => {
             setSelectedReport(report);
-            setScreen("detailSecundario");
+            setScreen("detailExploracion");
           }}
         />
       )}
@@ -83,15 +89,44 @@ function App() {
             setSelectedReport(null);
             setScreen("dashboard");
           }}
+          onViewUser={(userId) => {
+            setSelectedUserId(userId);
+            setScreen("userProfile");
+          }}
+          currentUser={localStorage.getItem("userName") || ""}
         />
       )}
 
-      {screen === "detailSecundario" && selectedReport && (
-        <ReportDetail
+      {screen === "detailExploracion" && selectedReport && (
+        <ReportDetailExploracion
           report={selectedReport}
           onBack={() => {
             setSelectedReport(null);
-            setScreen("dashboardSecundario");
+            setScreen("dashboardExploracion");
+          }}
+          onViewUser={(userId) => {
+            setSelectedUserId(userId);
+            setScreen("userProfileExploracion");
+          }}
+        />
+      )}
+
+      {screen === "userProfile" && selectedUserId && (
+        <OtherUserProfile
+          userId={selectedUserId}
+          onBack={() => {
+            setSelectedUserId(null);
+            setScreen("dashboard");
+          }}
+        />
+      )}
+
+      {screen === "userProfileExploracion" && selectedUserId && (
+        <UserProfileExploracion
+          userId={selectedUserId}
+          onBack={() => {
+            setSelectedUserId(null);
+            setScreen("dashboardExploracion");
           }}
         />
       )}

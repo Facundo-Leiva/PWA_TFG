@@ -1,5 +1,5 @@
 // src/usuario/usuario.controller.ts
-import { Controller, Get, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, UseGuards, Req, Param } from '@nestjs/common';
 import { UsuarioService } from './usuario.service';
 import { AuthGuard } from '@nestjs/passport';
 
@@ -10,7 +10,13 @@ export class UsuarioController {
     @UseGuards(AuthGuard('jwt'))
     @Get('perfil')
     async getPerfil(@Req() req: any) {
-        const userId = req.user.id; // Viene del JWT
+        const userId = req.user.id;
         return this.usuarioService.getPerfil(userId);
+    }
+
+    @UseGuards(AuthGuard('jwt'))
+    @Get(':id/perfil')
+    async getPerfilUsuario(@Param('id') id: string) {
+        return this.usuarioService.obtenerPerfilUsuario(Number(id));
     }
 }
