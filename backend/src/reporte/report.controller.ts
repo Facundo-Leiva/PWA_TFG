@@ -84,4 +84,42 @@ export class ReportController {
     async likeReporte(@Param('id') id: number, @Req() req: any) {
         return this.reportService.darLike(Number(id), req.user.id);
     }
+
+    @UseGuards(AuthGuard('jwt'))
+    @Post(':id/comentarios')
+    @UseInterceptors(FileInterceptor('file', {
+        storage: diskStorage({
+            destination: './uploads',
+            filename: (req, file, cb) => {
+                const uniqueName = `file-${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(file.originalname)}`;
+                cb(null, uniqueName);
+            },
+        }),
+    }))
+    async addComentario(
+        @Param('id') id: string,
+        @UploadedFile() file: Express.Multer.File,
+        @Body() body: { contenido?: string; tipo?: string },
+        @Req() req,
+    ) {
+        const id_usuario = Number(req.user.id);
+
+        let soporteGraficoUrl: string | undefined;
+        if (file) {
+            soporteGraficoUrl = `/uploads/${file.filename}`;
+        }
+
+        return this.reportService.crearComentario(
+            Number(id),          
+            Number(id_usuario), 
+            body.contenido,
+            soporteGraficoUrl,
+            body.tipo,
+        );
+    }
+
+    @Get(':id/comentarios')
+    async getComentarios(@Param('id') id: string) {
+        return this.reportService.findByReporte(Number(id));
+    }
 }

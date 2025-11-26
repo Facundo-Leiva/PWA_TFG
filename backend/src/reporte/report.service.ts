@@ -74,7 +74,7 @@ export class ReportService {
         }));
     }
 
-    async buscarUbicacionExistente(data: { latitud: number; longitud: number }) {
+    async buscarUbicacionExistente (data: { latitud: number; longitud: number }) {
         const TOLERANCIA = 0.00001;
 
         return this.prisma.ubicacion.findFirst({
@@ -91,7 +91,7 @@ export class ReportService {
         });
     }
 
-    async darLike(reporteId: number, usuarioId: number) {
+    async darLike (reporteId: number, usuarioId: number) {
         const reporte = await this.prisma.reporte.findUnique({ where: { id: reporteId } });
         if (!reporte) throw new NotFoundException("Reporte no encontrado.");
 
@@ -112,7 +112,86 @@ export class ReportService {
         return { mensaje: "Like registrado", likes: totalLikes };
     }
 
-    async crearUbicacion(data: {
+    async crearComentario (
+        id_reporte: number,
+        id_usuario: number,
+        contenido?: string,
+        soporteGraficoUrl?: string,
+        tipo?: string,
+    ) {
+        if (!contenido?.trim() && !soporteGraficoUrl) {
+            throw new Error("El comentario debe tener texto o imagen.");
+        }
+
+        let soporteGrafico;
+        if (soporteGraficoUrl) {
+            soporteGrafico = await this.prisma.soporteGrafico.create({
+                data: {
+                    archivo: soporteGraficoUrl,
+                    tipo: tipo || "image/png",
+                },
+            });
+        }
+
+        const data: any = {
+            contenido: contenido ?? "",
+            id_usuario,
+            id_reporte,
+        };
+
+        if (soporteGrafico) {
+            data.id_soporteGrafico = soporteGrafico.id;
+        }
+
+        const comentario = await this.prisma.comentario.create({
+            data,
+            include: {
+                usuario: { select: { id: true, nombre: true, apellido: true } },
+                soporteGrafico: true,
+            },
+        });
+
+        return {
+            id: comentario.id,
+            author: `${comentario.usuario.nombre} ${comentario.usuario.apellido}`,
+            content: comentario.contenido,
+            createdAt: comentario.fechaEmision.toISOString(),
+            soporteGrafico: comentario.soporteGrafico
+            ? {
+                id: comentario.soporteGrafico.id,
+                tipo: comentario.soporteGrafico.tipo,
+                archivo: comentario.soporteGrafico.archivo,
+            }
+            : null,
+        };
+    }
+
+    async findByReporte (id_reporte: number) {
+        const comentarios = await this.prisma.comentario.findMany({
+            where: { id_reporte },
+            orderBy: { fechaEmision: 'asc' },
+            include: {
+                usuario: { select: { id: true, nombre: true, apellido: true } },
+                soporteGrafico: true,
+            },
+        });
+
+        return comentarios.map((c) => ({
+            id: c.id,
+            author: `${c.usuario.nombre} ${c.usuario.apellido}`,
+            content: c.contenido,
+            createdAt: c.fechaEmision.toISOString(),
+            soporteGrafico: c.soporteGrafico
+            ? {
+                id: c.soporteGrafico.id,
+                tipo: c.soporteGrafico.tipo,
+                archivo: c.soporteGrafico.archivo,
+            }
+            : null,
+        }));
+    }
+
+    async crearUbicacion (data: {
         latitud: number;
         longitud: number;
         direccion: string;

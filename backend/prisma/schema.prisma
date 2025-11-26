@@ -82,14 +82,15 @@ model TipoDeIncidencia {
 model Comentario {
   id           Int      @id @default(autoincrement())
   contenido    String
-  fechaEmision DateTime
+  fechaEmision DateTime @default(now())
 
   // Relaciones
-  usuario           Usuario        @relation(fields: [id_usuario], references: [id])
+  usuario           Usuario         @relation(fields: [id_usuario], references: [id])
   id_usuario        Int
-  soporteGrafico    SoporteGrafico @relation(fields: [id_soporteGrafico], references: [id])
-  id_soporteGrafico Int
-  Reporte           Reporte[]
+  soporteGrafico    SoporteGrafico? @relation(fields: [id_soporteGrafico], references: [id])
+  id_soporteGrafico Int?
+  reporte           Reporte         @relation(fields: [id_reporte], references: [id])
+  id_reporte        Int
 }
 
 model Like {
@@ -103,9 +104,10 @@ model Like {
 }
 
 model SoporteGrafico {
-  id      Int    @id @default(autoincrement())
-  tipo    String
-  archivo String
+  id           Int      @id @default(autoincrement())
+  tipo         String
+  archivo      String
+  fechaEmision DateTime @default(now())
 
   // Relaciones
   reportes    Reporte[]

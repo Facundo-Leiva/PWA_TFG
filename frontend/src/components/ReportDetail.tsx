@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Report } from "./ReportCard";
 import { formatDateToLocal } from '../utils/date';
 
@@ -9,9 +9,76 @@ interface Props {
     onViewUser?: (userId: number) => void;
 }
 
+interface Comment {
+    id: number;
+    author: string;
+    content: string;
+    createdAt: string;
+    soporteGrafico?: {
+        id: number;
+        tipo: string;
+        archivo: string;
+    } | null;
+}
+
 export default function ReportDetail({ report, onBack, currentUser, onViewUser }: Props) {
     const [likes, setLikes] = useState(report.likes);
     const [liked, setLiked] = useState(false);
+    const [comments, setComments] = useState<Comment[]>([]);
+    const [newComment, setNewComment] = useState("");
+    const [selectedImage, setSelectedImage] = useState<File | null>(null);
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+    // Cargar comentarios
+    useEffect(() => {
+        const fetchComments = async () => {
+            try {
+                const res = await fetch(`http://localhost:3000/reportes/${report.id}/comentarios`);
+                if (res.ok) {
+                    const data = await res.json();
+                    setComments(data);
+                }
+            } catch (err) {
+                console.error("Error al cargar comentarios", err);
+            }
+        };
+        fetchComments();
+    }, [report.id]);
+
+    // Nuevo comentario
+    const handleAddComment = async () => {
+        if (!newComment.trim() && !selectedImage) {
+            alert("El comentario no puede estar vacío. Escribi texto o adjunta una imagen.");
+            return;
+        }
+
+        const token = localStorage.getItem("token");
+        const formData = new FormData();
+        if (newComment.trim()) formData.append("contenido", newComment);
+        if (selectedImage) formData.append("file", selectedImage);
+
+        try {
+            const res = await fetch(`http://localhost:3000/reportes/${report.id}/comentarios`, {
+                method: "POST",
+                headers: { Authorization: `Bearer ${token}` },
+                body: formData,
+            });
+
+            if (!res.ok) {
+                alert("Error al enviar comentario");
+                return;
+            }
+
+            const data = await res.json();
+            setComments([...comments, data]);
+            setNewComment("");
+            setSelectedImage(null);
+            setPreviewUrl(null);
+        } catch (err) {
+            console.error(err);
+            alert("Error de conexión");
+        }
+    };
 
     const handleLike = async () => {
         if (report.author === currentUser) {
@@ -99,7 +166,7 @@ export default function ReportDetail({ report, onBack, currentUser, onViewUser }
                                     👤 <strong>Reportado por:</strong>{" "}
                                     <button
                                         onClick={() => onViewUser?.(report.authorId)}
-                                        className="font-semibold text-blue-600 hover:underline"
+                                        className="font-semibold text-blue-700 hover:underline"
                                     >
                                         {report.author}
                                     </button>
@@ -119,8 +186,81 @@ export default function ReportDetail({ report, onBack, currentUser, onViewUser }
                                     <span>👍</span>
                                     <span>{likes} Me gusta</span>
                                 </button>
-                                <span>💬 {report.comments} Comentarios</span>
+                                <span>💬 {comments.length} Comentarios</span>
                                 <span>🛠️ Estado: {report.estado}</span>
+                            </div>
+
+                             {/* Separador visual */}
+                            <hr className="my-6 border-gray-300" />
+
+                            {/* Sección de comentarios */}
+                            <div className="space-y-4">
+                                <h3 className="text-lg font-semibold text-gray-800">Comentarios</h3>
+
+                                {/* Lista de comentarios */}
+                                <div className="space-y-3">
+                                    {comments.map((c) => (
+                                        <div key={c.id} className="border-b pb-2">
+                                            <p className="text-sm">
+                                                <strong className="text-blue-600">{c.author}</strong>: {c.content}
+                                            </p>
+                                            <span className="text-xs text-gray-400">{formatDateToLocal(c.createdAt)}</span>
+
+                                            {/* Imagen del comentario */}
+                                            {c.soporteGrafico?.archivo && (
+                                                <div className="mt-2">
+                                                    <img
+                                                        src={`http://localhost:3000${c.soporteGrafico.archivo}`}
+                                                        alt="Soporte gráfico"
+                                                        className="max-w-xs rounded border border-gray-300"
+                                                    />
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Formulario para nuevo comentario */}
+                            <div className="mt-6 space-y-2">
+                                <div className="flex space-x-2">
+                                    <input
+                                        type="text"
+                                        value={newComment}
+                                        onChange={(e) => setNewComment(e.target.value)}
+                                        placeholder="Escribi un comentario..."
+                                        className="flex-1 border rounded px-3 py-2 text-sm"
+                                    />
+                                    <label className="bg-gray-100 border border-gray-300 px-3 py-2 rounded cursor-pointer hover:bg-gray-200 text-sm flex items-center">
+                                        📂 Adjuntar
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={(e) => setSelectedImage(e.target.files?.[0] || null)}
+                                            className="hidden"
+                                        />
+                                    </label>
+                                    <button
+                                        onClick={handleAddComment}
+                                        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:opacity-50"
+                                        disabled={!newComment.trim() && !selectedImage}
+                                    >
+                                        Enviar
+                                    </button>
+                                </div>
+
+                                {/* Vista previa de imagen */}
+                                {selectedImage && (
+                                    <div className="mt-2 text-sm text-gray-600 flex items-center space-x-2">
+                                        <span>📷 {selectedImage.name}</span>
+                                        <button
+                                            onClick={() => setSelectedImage(null)}
+                                            className="text-red-500 hover:underline"
+                                        >
+                                            Quitar
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>

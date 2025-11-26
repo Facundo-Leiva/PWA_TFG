@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "Comentario" ALTER COLUMN "fechaEmision" SET DEFAULT CURRENT_TIMESTAMP;
+
+-- AlterTable
+ALTER TABLE "SoporteGrafico" ADD COLUMN     "fechaEmision" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;

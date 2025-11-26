@@ -1,5 +1,6 @@
 import type { Report } from "../ReportCard";
 import { formatDateToLocal } from "../../utils/date";
+import { useEffect, useState } from "react";
 
 interface Props {
     report: Report;
@@ -7,7 +8,36 @@ interface Props {
     onViewUser?: (userId: number) => void;
 }
 
+interface Comment {
+    id: number;
+    author: string;
+    content: string;
+    createdAt: string;
+    soporteGrafico?: {
+        id: number;
+        tipo: string;
+        archivo: string;
+    } | null;
+}
+
 export default function ReportDetailExploracion({ report, onBack, onViewUser }: Props) {
+    const [comments, setComments] = useState<Comment[]>([]);
+    
+        useEffect(() => {
+            const fetchComments = async () => {
+                try {
+                    const res = await fetch(`http://localhost:3000/reportes/${report.id}/comentarios`);
+                    if (res.ok) {
+                        const data = await res.json();
+                        setComments(data);
+                    }
+                } catch (err) {
+                    console.error("Error al cargar comentarios", err);
+                }
+            };
+            fetchComments();
+        }, [report.id]);
+
     return (
         <div className="min-h-screen bg-linear-to-br from-blue-300 via-white to-green-300 flex items-center justify-center px-4 py-8">
             <div className="w-full max-w-2xl bg-white rounded-xl shadow-xl p-8">
@@ -66,6 +96,37 @@ export default function ReportDetailExploracion({ report, onBack, onViewUser }: 
                                 <span>👍 {report.likes} Me gusta</span>
                                 <span>💬 {report.comments} Comentarios</span>
                                 <span>🛠️ Estado: {report.estado}</span>
+                            </div>
+                            
+                            {/* Separador visual */}
+                            <hr className="my-6 border-gray-300" />
+
+                            {/* Sección de comentarios */}
+                            <div className="space-y-4">
+                                <h3 className="text-lg font-semibold text-gray-800">Comentarios</h3>
+
+                                {/* Lista de comentarios */}
+                                <div className="space-y-3">
+                                    {comments.map((c) => (
+                                        <div key={c.id} className="border-b pb-2">
+                                            <p className="text-sm">
+                                                <strong className="text-blue-600">{c.author}</strong>: {c.content}
+                                            </p>
+                                            <span className="text-xs text-gray-400">{formatDateToLocal(c.createdAt)}</span>
+
+                                            {/* Imagen del comentario */}
+                                            {c.soporteGrafico?.archivo && (
+                                                <div className="mt-2">
+                                                <img
+                                                    src={`http://localhost:3000${c.soporteGrafico.archivo}`}
+                                                    alt="Soporte gráfico"
+                                                    className="max-w-xs rounded border border-gray-300"
+                                                />
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
                         </div>
                     </div>
