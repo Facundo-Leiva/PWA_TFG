@@ -13,6 +13,7 @@ interface Report {
 }
 
 interface User {
+    id: number,
     name: string;
     joined: string;
     avatar: string;
@@ -102,6 +103,53 @@ export default function OtherUserProfile({ onBack, userId }: Props) {
                             <div className="text-center p-4 bg-purple-50 rounded-lg">
                                 <div className="text-2xl font-bold text-purple-600">{user.stats.reputation}</div>
                                 <div className="text-gray-600">Puntos de Reputación</div>
+                            </div>
+                        </div>
+
+                        {/* Calificación del usuario */}
+                        <div className="mt-6 flex items-center justify-center">
+                            <div className="bg-purple-50 border border-purple-300 rounded-lg px-4 py-3 shadow-sm flex items-center space-x-3">
+                                <span className="font-semibold text-purple-700 text-lg">Calificar usuario:</span>
+                                <select
+                                    className="bg-white border border-purple-400 rounded-md px-3 py-1 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                                    onChange={async (e) => {
+                                        const nota = parseInt(e.target.value);
+                                        if (!nota) return;
+
+                                        try {
+                                            const res = await fetch(`http://localhost:3000/usuarios/${user.id}/calificar`, {
+                                                method: "POST",
+                                                headers: {
+                                                    "Content-Type": "application/json",
+                                                    Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+                                                },
+                                                body: JSON.stringify({ nota }),
+                                            });
+
+                                            if (!res.ok) {
+                                                const error = await res.json();
+                                                alert(`❌ Error: ${error.message || "No se pudo calificar al usuario."}`);
+                                                return;
+                                            }
+
+                                            alert("✅ Usuario calificado correctamente.");
+                                            fetchUserProfile();
+                                        } catch (err) {
+                                            alert("❌ Error inesperado al calificar usuario.");
+                                        }
+                                    }}
+                                >
+                                    <option className="text-gray-800 font-medium" value="">Seleccionar nota...</option>
+                                        {[...Array(10)].map((_, i) => (
+                                            <option
+                                                key={i + 1}
+                                                value={i + 1}
+                                                className="text-purple-700 font-semibold"
+                                            >
+                                                {i + 1}
+                                            </option>
+                                        ))}
+                                </select>
                             </div>
                         </div>
 

@@ -26,11 +26,12 @@ model Usuario {
   fechaAlta        DateTime  @default(now())
 
   // Relaciones
-  ubicacion    Ubicacion    @relation(fields: [id_ubicacion], references: [id])
-  id_ubicacion Int
-  reportes     Reporte[]
-  comentarios  Comentario[]
-  likes        Like[]
+  ubicacion      Ubicacion      @relation(fields: [id_ubicacion], references: [id])
+  id_ubicacion   Int
+  reportes       Reporte[]
+  comentarios    Comentario[]
+  likes          Like[]
+  calificaciones Calificacion[]
 }
 
 model Reporte {
@@ -101,6 +102,19 @@ model Like {
   reporteId Int
 
   @@unique([usuarioId, reporteId])
+}
+
+model Calificacion {
+  id        Int      @id @default(autoincrement())
+  nota      Int
+  createdAt DateTime @default(now())
+  autorId   Int
+
+  // Relaciones
+  usuario   Usuario @relation(fields: [usuarioId], references: [id])
+  usuarioId Int
+
+  @@unique([usuarioId, autorId])
 }
 
 model SoporteGrafico {

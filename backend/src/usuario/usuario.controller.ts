@@ -1,5 +1,5 @@
 // src/usuario/usuario.controller.ts
-import { Controller, Get, UseGuards, Req, Param } from '@nestjs/common';
+import { Controller, Get, UseGuards, Req, Param, Post, Body, UnauthorizedException } from '@nestjs/common';
 import { UsuarioService } from './usuario.service';
 import { AuthGuard } from '@nestjs/passport';
 
@@ -18,5 +18,20 @@ export class UsuarioController {
     @Get(':id/perfil')
     async getPerfilUsuario(@Param('id') id: string) {
         return this.usuarioService.obtenerPerfilUsuario(Number(id));
+    }
+
+    @UseGuards(AuthGuard('jwt'))
+    @Post(':id/calificar')
+    async calificarUsuario (
+        @Param('id') id: string,
+        @Body() body: { nota: number },
+        @Req() req: any
+    ) {
+        const usuarioId = parseInt(id, 10);
+        const autorId = req.user?.id;
+
+        if (!autorId) throw new UnauthorizedException("No se pudo identificar al autor");
+
+        return this.usuarioService.calificarUsuario(usuarioId, body.nota, autorId);
     }
 }
