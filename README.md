@@ -30,6 +30,12 @@
 
   Este es un ejemplo, deberás remplazar los datos segun corresponda, recuerda usar '/' y comillas simples.
 
+  El próximo paso será ejecutar el siguiente comando en el CMD de backend que usamos anteriormente:
+
+  npx prisma generate
+
+  De esta manera, todo lo relacionado a la base de datos deberia estar funcionando correctamente.
+
 --> Ahora, tendrás que crear tu archivo ".env" dentro de la carpeta backend del proyecto.
   Lo que debera contener esta en el archivo ".env.example" que esta dentro del repositorio,
   podras copiar y pegar o simplemente mover este mismo archivo y cambiarle el nombre.
