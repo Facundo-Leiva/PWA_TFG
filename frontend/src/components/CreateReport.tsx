@@ -20,6 +20,7 @@ interface UbicacionData {
     barrio: string;
 }
 
+// Componente para la Creación de un Reporte
 export default function CreateReport({ onBack, onSubmit }: Props) {
     const [title, setTitle] = useState("");
     const [category, setCategory] = useState("");
@@ -30,6 +31,7 @@ export default function CreateReport({ onBack, onSubmit }: Props) {
     const [ubicacion, setUbicacion] = useState<UbicacionData | null>(null);
     const [query, setQuery] = useState("");
 
+    // Cargar categorías desde base de datos
     useEffect(() => {
         async function fetchCategorias() {
             try {
@@ -44,6 +46,7 @@ export default function CreateReport({ onBack, onSubmit }: Props) {
         fetchCategorias();
     }, []);
 
+    // Eliminar referencia URL de imagen
     useEffect(() => {
         return () => {
             if (previewUrl) {
@@ -52,6 +55,7 @@ export default function CreateReport({ onBack, onSubmit }: Props) {
         };
     }, [previewUrl]);
 
+    // Función para obtener datos de la creación del reporte
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -71,6 +75,7 @@ export default function CreateReport({ onBack, onSubmit }: Props) {
         onSubmit(reportData);
     };
 
+    // Retornar el componente HTML
     return (
         <div className="min-h-screen bg-linear-to-br from-blue-300 via-white to-green-300 flex items-center justify-center px-4 py-8">
             <div className="w-full max-w-2xl bg-white rounded-xl shadow-xl p-8">
@@ -86,8 +91,11 @@ export default function CreateReport({ onBack, onSubmit }: Props) {
                     </div>
                 </header>
 
+                {/* Datos asociados al reporte */}
                 <div className="max-w-2xl mx-auto px-4 py-6">
                     <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-sm p-6 space-y-6">
+
+                        {/* Título del reporte */}
                         <div>
                             <label className="block text-sm font-medium text-gray-800 mb-2">Título del Reporte</label>
                             <input
@@ -100,6 +108,7 @@ export default function CreateReport({ onBack, onSubmit }: Props) {
                             />
                         </div>
 
+                        {/* Categoría del reporte */}
                         <div>
                             <label className="block text-sm font-medium text-gray-800 mb-2">Categoría</label>
                             <select
@@ -117,6 +126,7 @@ export default function CreateReport({ onBack, onSubmit }: Props) {
                             </select>
                         </div>
 
+                        {/* Descripción del reporte */}
                         <div>
                             <label className="block text-sm font-medium text-gray-800 mb-2">Descripción</label>
                             <textarea
@@ -129,6 +139,7 @@ export default function CreateReport({ onBack, onSubmit }: Props) {
                             />
                         </div>
 
+                        {/* Ubicación del reporte */}
                         <div>
                             <label className="block text-sm font-medium text-gray-800 mb-2">
                                 Ubicación
@@ -145,6 +156,7 @@ export default function CreateReport({ onBack, onSubmit }: Props) {
                             )}
                         </div>
 
+                        {/* Soporte gráfico del reporte */}
                         <div>
                             <label className="block text-sm font-medium text-gray-800 mb-2">Foto o Video</label>
                             <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
@@ -186,6 +198,7 @@ export default function CreateReport({ onBack, onSubmit }: Props) {
                             </div>
                         </div>
 
+                        {/* Botón para crear el reporte */}
                         <button
                             type="submit"
                             className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors"

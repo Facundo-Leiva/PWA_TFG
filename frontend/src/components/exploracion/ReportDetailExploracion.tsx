@@ -20,6 +20,7 @@ interface Comment {
     } | null;
 }
 
+// Componente Detalles del Reporte (para usuarios que no están registrados)
 export default function ReportDetailExploracion({ report, onBack, onViewUser }: Props) {
     const [comments, setComments] = useState<Comment[]>([]);
     
@@ -27,6 +28,7 @@ export default function ReportDetailExploracion({ report, onBack, onViewUser }: 
             // Vista desde el principio del componente
             window.scrollTo(0, 0);
 
+            // Cargar los comentarios asociados al reporte
             const fetchComments = async () => {
                 try {
                     const res = await fetch(`http://localhost:3000/reportes/${report.id}/comentarios`);
@@ -41,6 +43,7 @@ export default function ReportDetailExploracion({ report, onBack, onViewUser }: 
             fetchComments();
         }, [report.id]);
 
+    // Retorna el componente HTML
     return (
         <div className="min-h-screen bg-linear-to-br from-blue-300 via-white to-green-300 flex items-center justify-center px-4 py-8">
             <div className="w-full max-w-2xl bg-white rounded-xl shadow-xl p-8">
@@ -58,6 +61,7 @@ export default function ReportDetailExploracion({ report, onBack, onViewUser }: 
 
                 <div className="max-w-4xl mx-auto px-4 py-6">
                     <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+                        {/* Cargar imagen del reporte */}
                         {report.image ? (
                             <img
                                 src={report.image}
@@ -72,6 +76,8 @@ export default function ReportDetailExploracion({ report, onBack, onViewUser }: 
                             </div>
                         )}
                         <div className="p-6 space-y-4">
+                            
+                             {/* Datos asociados al reporte */}
                             <div className="flex items-center justify-between">
                                 <span className={`px-3 py-1 rounded-full text-sm font-medium ${getCategoryStyle(report.category)}`}>
                                     {getCategoryIcon(report.category)} {getCategoryName(report.category)}
@@ -95,6 +101,7 @@ export default function ReportDetailExploracion({ report, onBack, onViewUser }: 
                                 </p>
                             </div>
 
+                            {/* Sección de likes, comentarios y estado del reporte */}
                             <div className="flex items-center space-x-6 pt-4 border-t border-gray-200 text-sm text-gray-600">
                                 <span>👍 {report.likes} Me gusta</span>
                                 <span>💬 {report.comments} Comentarios</span>

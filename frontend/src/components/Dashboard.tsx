@@ -10,6 +10,7 @@ interface Props {
     onShowDetail: (report: Report) => void;
 }
 
+// Componente Dashboard Principal
 export default function Dashboard({ onShowProfile, onShowDetail }: Props) {
     const [view, setView] = useState<"list" | "map" | "create">("list");
     const [filter, setFilter] = useState<string | number>("todos");
@@ -17,11 +18,13 @@ export default function Dashboard({ onShowProfile, onShowDetail }: Props) {
     const [reports, setReports] = useState<Report[]>([]);
     const [categories, setCategories] = useState<{ id: number; categoria: string }[]>([]);
 
+    // Cargar reportes y categorías desde base de datos
     useEffect(() => {
         fetchReports();
         fetchCategories();
     }, []);
 
+    // Cargar categorías
     async function fetchCategories() {
         try {
             const res = await fetch("http://localhost:3000/tipos-incidencia", {
@@ -29,15 +32,16 @@ export default function Dashboard({ onShowProfile, onShowDetail }: Props) {
                     Authorization: `Bearer ${localStorage.getItem("token") || ""}`
                 },
             });
-            if (!res.ok) throw new Error("Error al obtener categorías.");
+            if (!res.ok) throw new Error("❌ Error al obtener categorías.");
             const data = await res.json();
             setCategories(data);
         } catch (err) {
             console.error("❌ Error cargando categorías:", err);
-            alert("No se pudieron cargar las categorías.");
+            alert("❌ No se pudieron cargar las categorías.");
         }
     }
 
+    // Cargar reportes
     async function fetchReports() {
         try {
             const res = await fetch("http://localhost:3000/reportes", {
@@ -45,20 +49,22 @@ export default function Dashboard({ onShowProfile, onShowDetail }: Props) {
                     Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
                 },
             });
-            if (!res.ok) throw new Error("Error al obtener reportes.");
+            if (!res.ok) throw new Error("❌ Error al obtener reportes.");
             const data = await res.json();
             setReports(data);
         } catch (err) {
             console.error("❌ Error cargando reportes:", err);
-            alert("No se pudieron cargar los reportes.");
+            alert("❌ No se pudieron cargar los reportes.");
         }
     }
 
+    // Filtrar reportes según categoría
     const filteredReports =
         filter === "todos"
             ? reports
             : reports.filter((r) => r.category === filter);
 
+    // Función para manejar la creación de reportes
     async function handleCreateReportSubmit(report: {
         title: string;
         category: string;
@@ -71,7 +77,6 @@ export default function Dashboard({ onShowProfile, onShowDetail }: Props) {
             formData.append("title", report.title);
             formData.append("category", report.category);
             formData.append("description", report.description);
-
             formData.append("location", JSON.stringify(report.location));
 
             if (report.file) {
@@ -89,22 +94,20 @@ export default function Dashboard({ onShowProfile, onShowDetail }: Props) {
             if (!res.ok) {
                 const error = await res.json();
                 console.error("❌ Error al crear reporte:", error);
-                alert("No se pudo crear el reporte: " + error.message);
+                alert("❌ No se pudo crear el reporte: " + error.message);
                 return;
             }
 
-            const data = await res.json();
-            console.log("✅ Reporte creado:", data);
-            alert("Reporte creado exitosamente");
-
+            alert("✅ Reporte creado exitosamente.");
             setView("list");
             fetchReports();
         } catch (err) {
             console.error("❌ Error de red:", err);
-            alert("Error de conexión con el servidor");
+            alert("❌ Error de conexión con el servidor.");
         }
     }
 
+    // Retornar el componente HTML
     return (
         <div className="min-h-screen bg-gray-50">
             {/* Header */}
@@ -118,6 +121,8 @@ export default function Dashboard({ onShowProfile, onShowDetail }: Props) {
                         </div>
                         <h1 className="text-xl font-bold text-white">Ciudad Colaborativa</h1>
                     </div>
+
+                    {/* Botón del perfil del usuario */}
                     <button
                         onClick={onShowProfile}
                         className="w-8 h-8 bg-white rounded-full flex items-center justify-center text-blue-600 font-semibold hover:bg-blue-50"
@@ -127,7 +132,7 @@ export default function Dashboard({ onShowProfile, onShowDetail }: Props) {
                 </div>
             </header>
 
-            {/* Navegación y filtros */}
+            {/* Navegación de funciones del componente */}
             <div className="bg-linear-to-r from-blue-200 to-green-200 border-b border-gray-200">
                 <div className="max-w-6xl mx-auto px-4 py-6">
                     <div className="flex flex-wrap gap-4 mb-6">
@@ -154,6 +159,7 @@ export default function Dashboard({ onShowProfile, onShowDetail }: Props) {
                             ➕ Crear Reporte
                         </button>
                     </div>
+
                     {/* Filtros */}
                     {view === "list" && (
                         <div className="bg-white rounded-lg p-4 shadow-sm">
@@ -191,6 +197,8 @@ export default function Dashboard({ onShowProfile, onShowDetail }: Props) {
 
             {/* Contenido principal */}
             <div className="max-w-6xl mx-auto px-4 py-6">
+
+                {/* Tarjetas de reportes */}
                 {view === "list" && (
                     <>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -212,6 +220,7 @@ export default function Dashboard({ onShowProfile, onShowDetail }: Props) {
                     </>
                 )}
 
+                {/* Mapa geográfico */}
                 {view === "map" && (
                     <div className="map-container rounded-lg p-8 text-center">
                         <h3 className="text-xl font-semibold text-gray-800 mb-2">Mapa Interactivo</h3>
@@ -225,6 +234,7 @@ export default function Dashboard({ onShowProfile, onShowDetail }: Props) {
                     </div>
                 )}
 
+                {/* Instanciar el componente de creación de reporte */}
                 {view === "create" && (
                     <CreateReport
                         onBack={() => setView("list")}

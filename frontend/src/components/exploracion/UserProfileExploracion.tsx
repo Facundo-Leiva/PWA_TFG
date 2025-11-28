@@ -22,12 +22,15 @@ interface User {
     reports: Report[];
 }
 
+// Componente Perfil de Usuarios (para usuarios que no están registrados)
 export default function UserProfileExploracion({ onBack, userId }: Props) {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
 
+    // Buscar perfil de usuario según ID
     useEffect(() => { fetchUserProfile(); }, [userId]);
 
+    // Método buscar perfil de usuario
     async function fetchUserProfile() {
         try {
             const res = await fetch(`http://localhost:3000/usuarios/${userId}/perfil`, {
@@ -51,6 +54,7 @@ export default function UserProfileExploracion({ onBack, userId }: Props) {
 
     const isAvatarUrl = user.avatar.startsWith("http");
 
+    // Retornar el compontente HTML
     return (
         <div className="min-h-screen bg-linear-to-br from-blue-300 via-white to-green-300 flex items-center justify-center px-4 py-8">
             <div className="w-full max-w-2xl bg-white rounded-xl shadow-xl p-8">
@@ -66,6 +70,7 @@ export default function UserProfileExploracion({ onBack, userId }: Props) {
                     </div>
                 </header>
 
+                {/* Datos asociados al usuario */}
                 <div className="max-w-4xl mx-auto px-4 py-6">
                     <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
                         <div className="flex items-center space-x-6 mb-6">
@@ -87,7 +92,7 @@ export default function UserProfileExploracion({ onBack, userId }: Props) {
                             </div>
                         </div>
                         
-                        {/* Estadísticas */}
+                        {/* Estadísticas del usuario */}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                             <div className="text-center p-4 bg-blue-50 rounded-lg">
                                 <div className="text-2xl font-bold text-blue-600">{user.stats.created}</div>

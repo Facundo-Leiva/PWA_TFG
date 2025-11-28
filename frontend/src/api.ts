@@ -1,9 +1,10 @@
-// src/api.ts
 import axios from 'axios';
 
+// URL base de la API
 const BASE_URL = 'http://localhost:3000';
 
-// Tipos centralizados
+// Tipos centralizados (UbicacionData - RegisterPayload)
+
 export interface UbicacionData {
     latitud: number;
     longitud: number;
@@ -19,8 +20,10 @@ export interface RegisterPayload {
     email: string;
     password: string;
     direccion: string;
-    ubicacion: UbicacionData; // 👈 ahora acepta objeto completo
+    ubicacion: UbicacionData;
 }
+
+// Funciones (Registro e Inicio de Sesión)
 
 // Registrar usuario
 export async function registrarUsuario(data: RegisterPayload) {

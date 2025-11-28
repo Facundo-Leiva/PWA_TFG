@@ -47,7 +47,7 @@
   
   Dentro de CMD Frontend:
   npm run dev
-   
+
   (Si funciona correctamente, VITE te proveera una dirección localhost que copiarás y pegarás como URL en tu navegador, accediendo así a la página web)
   
   Ahora podrás utilizar la pagina web en desarrollo y sus funciones, además, podrás utilizar "pgAdmin4" de PostgreSQL para ver cambios en la base de datos.

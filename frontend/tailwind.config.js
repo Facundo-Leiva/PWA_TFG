@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 
+// Configuración de Tailwind
 module.exports = {
   content: [
     "./index.html",

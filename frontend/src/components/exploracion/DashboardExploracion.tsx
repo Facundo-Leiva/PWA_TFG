@@ -7,6 +7,7 @@ interface Props {
     onShowDetail: (report: Report) => void;
 }
 
+// Componente Dashboard de Exploración (para usuarios que no están registrados)
 export default function DashboardExploracion({ onShowDetail }: Props) {
     const [view, setView] = useState<"list" | "map" | "create">("list");
     const [filter, setFilter] = useState<string | number>("todos");
@@ -14,11 +15,13 @@ export default function DashboardExploracion({ onShowDetail }: Props) {
     const [reports, setReports] = useState<Report[]>([]);
     const [categories, setCategories] = useState<{ id: number; categoria: string }[]>([]);
 
+    // Cargar reportes y categorías desde base de datos
     useEffect(() => {
         fetchReports();
         fetchCategories();
     }, []);
 
+    // Método de carga de categorías
     async function fetchCategories() {
         try {
             const res = await fetch("http://localhost:3000/tipos-incidencia", {
@@ -26,15 +29,16 @@ export default function DashboardExploracion({ onShowDetail }: Props) {
                     Authorization: `Bearer ${localStorage.getItem("token") || ""}`
                 },
             });
-            if (!res.ok) throw new Error("Error al obtener categorías.");
+            if (!res.ok) throw new Error("❌ Error al obtener categorías.");
             const data = await res.json();
             setCategories(data);
         } catch (err) {
             console.error("❌ Error cargando categorías:", err);
-            alert("No se pudieron cargar las categorías.");
+            alert("❌ No se pudieron cargar las categorías.");
         }
     }
 
+    // Método de carga de reportes
     async function fetchReports() {
         try {
             const res = await fetch("http://localhost:3000/reportes", {
@@ -51,11 +55,13 @@ export default function DashboardExploracion({ onShowDetail }: Props) {
         }
     }
 
+    // Filtrar reportes según categoría
     const filteredReports =
         filter === "todos"
             ? reports
             : reports.filter((r) => r.category === filter);
 
+    // Retorna el componente HTML
     return (
         <div className="min-h-screen bg-gray-50">
             {/* Header */}
@@ -132,6 +138,8 @@ export default function DashboardExploracion({ onShowDetail }: Props) {
 
             {/* Contenido principal */}
             <div className="max-w-6xl mx-auto px-4 py-6">
+
+                {/* Tarjetas de reportes */}
                 {view === "list" && (
                     <>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -153,6 +161,7 @@ export default function DashboardExploracion({ onShowDetail }: Props) {
                     </>
                 )}
 
+                {/* Mapa geográfico */}
                 {view === "map" && (
                     <div className="map-container rounded-lg p-8 text-center">
                         <h3 className="text-xl font-semibold text-gray-800 mb-2">Mapa Interactivo</h3>

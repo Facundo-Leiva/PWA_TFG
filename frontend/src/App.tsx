@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import WelcomeScreen from "./components/WelcomeScreen";
 import RegisterModal from "./components/RegisterModal";
 import LoginModal from "./components/LoginModal";
@@ -12,18 +12,24 @@ import OtherUserProfile from "./components/OtherUserProfile";
 import ReportDetailExploracion from "./components/exploracion/ReportDetailExploracion";
 import UserProfileExploracion from "./components/exploracion/UserProfileExploracion";
 
+// Componente Raíz de la Aplicación REACT
 function App() {
+
+  // Control de pantallas
   const [screen, setScreen] = useState <
-  "welcome" | "login" | "register" | "create" | "profile" | "detail" |"detailExploracion" | "dashboardExploracion" | 
-  "userProfile" | "userProfileExploracion" |"dashboard"> ("welcome");
-  
+    "welcome" | "login" | "register" | "create" | "profile" | "detail" | "detailExploracion" | 
+    "dashboardExploracion" | "userProfile" | "userProfileExploracion" | "dashboard"
+  > ("welcome");
+
   const [selectedReport, setSelectedReport] = useState<Report | null>(null);
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
 
+  // Cambiar al Dashboard
   const handleLogin = () => {
     setScreen("dashboard");
   };
 
+  // Navegación entre componentes
   return (
     <>
       {screen === "welcome" && (
