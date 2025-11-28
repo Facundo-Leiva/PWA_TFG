@@ -23,8 +23,12 @@
 --> El siguiente paso será restaurar la base de datos: en el repositorio se encuentra el archivo "backup_data_base.sql",
   este contiene la base de datos necesaria para que funcione en correctas condiciones este sistema, para poder restaurar la base de datos,
   anteriormente deberías haber instalado PostgreSQL, siguiendo los pasos que te indica.
-  Dentro de pgAdmin4 deberás crear una base de datos vacia, una vez creada la base de datos con su nombre, haz clic derecho sobre ella, y elige la opción "restore".
-  En "Format" selecciona "custom", y en "filename" busca y selecciona el archivo "backup_data_base.sql" que esta en el repositorio, por último, haz clic en "Restore".
+  Dentro de pgAdmin4 deberás crear una base de datos vacia, ahora buscaremos el SQL Shell que deberia haberse instalado con PostreSQL.
+  Dentro del mismo, ejecutaremos el siguiente comando:
+  
+  \i 'C:/Users/Facun/Downloads/sistemaClonado/PWA_TFG/backup_data_base.sql'
+
+  Este es un ejemplo, deberás remplazar los datos segun corresponda, recuerda usar '/' y comillas simples.
 
 --> Ahora, tendrás que crear tu archivo ".env" dentro de la carpeta backend del proyecto.
   Lo que debera contener esta en el archivo ".env.example" que esta dentro del repositorio,
