@@ -24,6 +24,9 @@ export default function ReportDetailExploracion({ report, onBack, onViewUser }: 
     const [comments, setComments] = useState<Comment[]>([]);
     
         useEffect(() => {
+            // Vista desde el principio del componente
+            window.scrollTo(0, 0);
+
             const fetchComments = async () => {
                 try {
                     const res = await fetch(`http://localhost:3000/reportes/${report.id}/comentarios`);
@@ -59,7 +62,7 @@ export default function ReportDetailExploracion({ report, onBack, onViewUser }: 
                             <img
                                 src={report.image}
                                 alt={report.title}
-                                className="h-48 w-full object-cover"
+                                className="h-72 w-full object-contain"
                             />
                         ) : (
                             <div className="h-48 bg-linear-to-br from-gray-200 to-gray-300 flex items-center justify-center">

@@ -1,4 +1,4 @@
-import { Controller, Post, UseGuards, UseInterceptors, UploadedFile, Body, Req, UnauthorizedException, Get, InternalServerErrorException, BadRequestException, Param } from '@nestjs/common';
+import { Controller, Post, UseGuards, UseInterceptors, UploadedFile, Body, Req, UnauthorizedException, Get, InternalServerErrorException, BadRequestException, Param, Patch, ParseIntPipe } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ReportService } from './report.service';
@@ -6,6 +6,7 @@ import { SoporteService } from 'src/soporte/soporte.service';
 import { CreateReporteDto } from './dto/create.reporte.dto';
 import { diskStorage } from 'multer';
 import * as path from 'path';
+import { UpdateReporteDto } from './dto/update.reporte.dto';
 
 @Controller('reportes')
 export class ReportController {
@@ -31,7 +32,6 @@ export class ReportController {
             },
         }),
     }))
-
     async crearReporte(
         @UploadedFile() file: Express.Multer.File,
         @Body() data: CreateReporteDto,
@@ -80,6 +80,25 @@ export class ReportController {
     }
 
     @UseGuards(AuthGuard('jwt'))
+    @Patch(':id')
+    @UseInterceptors(FileInterceptor('soporteGrafico', {
+        storage: diskStorage({
+            destination: './uploads',
+            filename: (req, file, cb) => {
+                const uniqueName = Date.now() + '-' + file.originalname;
+                cb(null, uniqueName);
+            },
+        }),
+    }))
+    async updateReporte (
+        @Param('id', ParseIntPipe) id: number,
+        @Body() dto: UpdateReporteDto,
+        @UploadedFile() file?: Express.Multer.File,
+    ) {
+        return this.reportService.update(id, { ...dto, file });
+    }
+
+    @UseGuards(AuthGuard('jwt'))
     @Post(':id/like')
     async likeReporte(@Param('id') id: number, @Req() req: any) {
         return this.reportService.darLike(Number(id), req.user.id);
@@ -121,5 +140,17 @@ export class ReportController {
     @Get(':id/comentarios')
     async getComentarios(@Param('id') id: string) {
         return this.reportService.findByReporte(Number(id));
+    }
+
+    @UseGuards(AuthGuard('jwt'))
+    @Post(':id/denunciar')
+    async denunciarReporte (
+        @Param('id') id: string,
+        @Body() body: { motivo: string; detalle: string },
+        @Req() req: any
+    ) {
+        const reporteId = parseInt(id, 10);
+        const autorId = req.user?.id;
+        return this.reportService.denunciarReporte(reporteId, body.motivo, body.detalle, autorId);
     }
 }

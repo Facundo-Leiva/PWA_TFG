@@ -26,12 +26,13 @@ model Usuario {
   fechaAlta        DateTime  @default(now())
 
   // Relaciones
-  ubicacion      Ubicacion      @relation(fields: [id_ubicacion], references: [id])
-  id_ubicacion   Int
-  reportes       Reporte[]
-  comentarios    Comentario[]
-  likes          Like[]
-  calificaciones Calificacion[]
+  ubicacion        Ubicacion         @relation(fields: [id_ubicacion], references: [id])
+  id_ubicacion     Int
+  reportes         Reporte[]
+  comentarios      Comentario[]
+  likes            Like[]
+  calificaciones   Calificacion[]
+  denunciaReportes DenunciaReporte[]
 }
 
 model Reporte {
@@ -42,18 +43,19 @@ model Reporte {
   estado        String
 
   // Relaciones
-  usuario             Usuario          @relation(fields: [id_usuario], references: [id])
+  usuario             Usuario           @relation(fields: [id_usuario], references: [id])
   id_usuario          Int
-  ubicacion           Ubicacion        @relation(fields: [id_ubicacion], references: [id])
+  ubicacion           Ubicacion         @relation(fields: [id_ubicacion], references: [id])
   id_ubicacion        Int
-  tipoDeIncidencia    TipoDeIncidencia @relation(fields: [id_tipoDeIncidencia], references: [id])
+  tipoDeIncidencia    TipoDeIncidencia  @relation(fields: [id_tipoDeIncidencia], references: [id])
   id_tipoDeIncidencia Int
-  soporteGrafico      SoporteGrafico   @relation(fields: [id_soporteGrafico], references: [id])
+  soporteGrafico      SoporteGrafico    @relation(fields: [id_soporteGrafico], references: [id])
   id_soporteGrafico   Int
   comentarios         Comentario[]
   mapaReportes        MapaReporte[]
   indicesReportes     IndiceReporte[]
   likes               Like[]
+  denunciaReportes    DenunciaReporte[]
 }
 
 model Ubicacion {
@@ -115,6 +117,21 @@ model Calificacion {
   usuarioId Int
 
   @@unique([usuarioId, autorId])
+}
+
+model DenunciaReporte {
+  id      Int      @id @default(autoincrement())
+  motivo  String
+  detalle String
+  fecha   DateTime @default(now())
+
+  // Relaciones
+  autor      Usuario @relation(fields: [id_autor], references: [id])
+  id_autor   Int
+  reporte    Reporte @relation(fields: [id_reporte], references: [id])
+  id_reporte Int
+
+  @@unique([id_autor, id_reporte])
 }
 
 model SoporteGrafico {

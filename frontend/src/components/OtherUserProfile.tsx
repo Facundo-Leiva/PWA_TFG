@@ -19,7 +19,7 @@ interface User {
     avatar: string;
     stats: {
         created: number;
-        verified: number;
+        resolved: number;
         reputation: number;
     };
     reports: Report[];
@@ -94,17 +94,19 @@ export default function OtherUserProfile({ onBack, userId }: Props) {
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                             <div className="text-center p-4 bg-blue-50 rounded-lg">
                                 <div className="text-2xl font-bold text-blue-600">{user.stats.created}</div>
-                                <div className="text-gray-600">Reportes Creados</div>
+                                <div className="text-gray-700">Reportes Creados</div>
                             </div>
                             <div className="text-center p-4 bg-green-50 rounded-lg">
-                                <div className="text-2xl font-bold text-green-600">{user.stats.verified}</div>
-                                <div className="text-gray-600">Reportes Verificados</div>
+                                <div className="text-2xl font-bold text-green-600">{user.stats.resolved}</div>
+                                <div className="text-gray-700">Reportes Resueltos</div>
                             </div>
                             <div className="text-center p-4 bg-purple-50 rounded-lg">
                                 <div className="text-2xl font-bold text-purple-600">{user.stats.reputation}</div>
-                                <div className="text-gray-600">Puntos de Reputación</div>
+                                <div className="text-gray-700">Puntos de Reputación</div>
                             </div>
                         </div>
+
+                        <hr className="my-8 border-t border-gray-300" />
 
                         {/* Calificación del usuario */}
                         <div className="mt-6 flex items-center justify-center">
@@ -153,31 +155,53 @@ export default function OtherUserProfile({ onBack, userId }: Props) {
                             </div>
                         </div>
 
+                        <hr className="my-8 border-t border-gray-300" />
+
                         {/* Reportes recientes */}
                         <div className="bg-white rounded-lg shadow-sm p-6">
                             <h3 className="text-lg font-semibold text-gray-800 mb-4">Reportes Recientes</h3>
                             <div className="space-y-4">
-                                {user.reports.map((report, index) => (
-                                    <div key={index} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
-                                        <div>
-                                            <h4 className="font-medium text-gray-800">{report.title}</h4>
-                                            <p className="text-sm text-gray-600">
-                                                {getCategoryIcon(report.category)} • {formatDateToLocal(report.date)}
-                                            </p>
-                                        </div>
-                                        <span
-                                            className={`px-3 py-1 rounded-full text-sm ${
-                                                report.status === "Resuelto"
-                                                    ? "bg-green-100 text-green-800"
-                                                    : report.status === "Verificado"
-                                                    ? "bg-blue-100 text-blue-800"
-                                                    : "bg-yellow-100 text-yellow-800"
-                                            }`}
+                                {user.reports.map((report, index) => {
+                                    const normalizedStatus = report.status?.trim().toLowerCase();
+
+                                    return (
+                                        <div
+                                            key={index}
+                                            className="flex items-center justify-between gap-4 p-4 border border-gray-200 rounded-lg"
                                         >
-                                            {report.status}
-                                        </span>
-                                    </div>
-                                ))}
+                                            {/* Columna izquierda: título + fecha */}
+                                            <div className="flex-1 min-w-0">
+                                                <h4 className="font-medium text-gray-800 truncate">{report.title}</h4>
+                                                <p className="text-sm text-gray-600 whitespace-nowrap overflow-hidden text-ellipsis">
+                                                    {getCategoryIcon(report.category)} • {formatDateToLocal(report.date)}
+                                                </p>
+                                            </div>
+
+                                            {/* Columna derecha: estado */}
+                                            <div className="shrink-0">
+                                                <span
+                                                    className={`px-3 py-1 rounded-full text-sm font-medium flex items-center justify-center ${
+                                                        normalizedStatus === "resuelto"
+                                                        ? "bg-green-100 text-green-800"
+                                                        : normalizedStatus === "en revisión"
+                                                        ? "bg-blue-100 text-blue-800"
+                                                        : normalizedStatus === "pendiente"
+                                                        ? "bg-yellow-100 text-yellow-800"
+                                                        : "bg-gray-100 text-gray-800"
+                                                    }`}
+                                                >
+                                                    {normalizedStatus === "pendiente"
+                                                        ? "Pendiente"
+                                                        : normalizedStatus === "en revisión"
+                                                        ? "En revisión"
+                                                        : normalizedStatus === "resuelto"
+                                                        ? "Resuelto"
+                                                        : report.status}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
                             </div>
                         </div>
                     </div>

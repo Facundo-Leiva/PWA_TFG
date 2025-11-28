@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import { CreateReporteDto } from "./dto/create.reporte.dto";
 
@@ -41,6 +41,32 @@ export class ReportService {
         });
 
         return reporte;
+    }
+
+    async update (id: number, data: any) {
+        return this.prisma.reporte.update({
+            where: { id },
+            data: {
+                titulo: data.titulo,
+                descripcion: data.descripcion,
+                estado: data.estado,
+                ...(data.file?.filename && {
+                    soporteGrafico: {
+                        update: {
+                            archivo: `/uploads/${data.file.filename}`,
+                            tipo: "imagen",
+                        },
+                    },
+                }),
+            },
+            include: {
+                usuario: true,
+                ubicacion: true,
+                tipoDeIncidencia: true,
+                soporteGrafico: true,
+                comentarios: true,
+            },
+        });
     }
 
     async getAllReports() {
@@ -189,6 +215,43 @@ export class ReportService {
             }
             : null,
         }));
+    }
+
+    async denunciarReporte(id_reporte: number, motivo: string, detalle: string, id_autor: number) {
+        if (!motivo || motivo.trim().length === 0) {
+            throw new BadRequestException("El motivo es obligatorio.");
+        }
+
+        if (!detalle || detalle.trim().length === 0) {
+            throw new BadRequestException("El detalle es obligatorio.");
+        }
+
+        const reporte = await this.prisma.reporte.findUnique({
+            where: { id: id_reporte },
+            select: { id_usuario: true },
+        });
+
+        if (!reporte) throw new NotFoundException("Reporte no encontrado.");
+        if (reporte.id_usuario === id_autor) {
+            throw new ForbiddenException("No puedes denunciar tu propio reporte.");
+        }
+
+        return this.prisma.denunciaReporte.upsert({
+            where: {
+                id_autor_id_reporte: { id_autor, id_reporte },
+            },
+            update: {
+                motivo,
+                detalle,
+                fecha: new Date(),
+            },
+            create: {
+                motivo,
+                detalle,
+                id_autor,
+                id_reporte,
+            },
+        });
     }
 
     async crearUbicacion (data: {

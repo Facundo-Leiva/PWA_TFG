@@ -30,7 +30,7 @@ export default function ReportCard({ report, onClick }: Props) {
                 <img
                     src={report.image}
                     alt={report.title}
-                    className="h-48 w-full object-cover"
+                    className="h-72 w-full object-contain"
                 />
             ) : (
                 <div className="h-48 bg-linear-to-br from-gray-200 to-gray-300 flex items-center justify-center">
@@ -52,7 +52,10 @@ export default function ReportCard({ report, onClick }: Props) {
 
                 <div className="flex items-center justify-between text-sm text-gray-500 mb-3">
                     <span>📍 {report.location}</span>
-                    <span>{formatRelative(report.date)}</span>
+                </div>
+
+                <div className="flex items-center justify-between text-sm text-gray-500 mb-3">
+                    <span>Creado: {formatRelative(report.date)}</span>
                 </div>
 
                 <div className="flex items-center justify-between">

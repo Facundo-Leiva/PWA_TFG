@@ -28,9 +28,13 @@ export default function ReportDetail({ report, onBack, currentUser, onViewUser }
     const [newComment, setNewComment] = useState("");
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+    const [motivo, setMotivo] = useState("");
+    const [detalle, setDetalle] = useState("");
 
-    // Cargar comentarios
     useEffect(() => {
+        // Vista desde el principio del componente
+        window.scrollTo(0, 0);
+
         const fetchComments = async () => {
             try {
                 const res = await fetch(`http://localhost:3000/reportes/${report.id}/comentarios`);
@@ -140,7 +144,7 @@ export default function ReportDetail({ report, onBack, currentUser, onViewUser }
                             <img
                                 src={report.image}
                                 alt={report.title}
-                                className="h-48 w-full object-cover"
+                                className="h-72 w-full object-contain"
                             />
                         ) : (
                             <div className="h-48 bg-linear-to-br from-gray-200 to-gray-300 flex items-center justify-center">
@@ -261,6 +265,66 @@ export default function ReportDetail({ report, onBack, currentUser, onViewUser }
                                         </button>
                                     </div>
                                 )}
+                            </div>
+
+                            <hr className="my-10 border-t border-gray-300" />
+
+                            {/* Denunciar reporte */}
+                            <div className="mt-10 bg-red-50 border border-red-300 rounded-lg px-4 py-4 shadow-sm max-w-md mx-auto">
+                                <h4 className="text-red-700 font-semibold mb-2">🚨 Denunciar este reporte</h4>
+                                <select
+                                    className="w-full mb-2 bg-white border border-red-300 rounded-md px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-red-400"
+                                    value={motivo}
+                                    onChange={(e) => setMotivo(e.target.value)}
+                                >
+                                    <option value="">Seleccionar motivo...</option>
+                                    <option value="Contenido ofensivo">Contenido ofensivo</option>
+                                    <option value="Falsedad o spam">Falsedad o spam</option>
+                                    <option value="Información incorrecta">Información incorrecta</option>
+                                    <option value="Otro">Otro</option>
+                                </select>
+                                <textarea
+                                    className="w-full bg-white border border-red-300 rounded-md px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-red-400"
+                                    rows={3}
+                                    placeholder="Detalles adicionales (obligatorio)"
+                                    value={detalle}
+                                    onChange={(e) => setDetalle(e.target.value)}
+                                    required
+                                />
+                                <button
+                                    className="mt-3 bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-md"
+                                    onClick={async () => {
+                                        if (!motivo || !detalle.trim()) {
+                                            alert("Completa todos los campos para denunciar.");
+                                            return;
+                                        }
+
+                                        try {
+                                            const res = await fetch(`http://localhost:3000/reportes/${report.id}/denunciar`, {
+                                                method: "POST",
+                                                headers: {
+                                                    "Content-Type": "application/json",
+                                                    Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+                                                },
+                                                body: JSON.stringify({ motivo, detalle }),
+                                            });
+
+                                            if (!res.ok) {
+                                                const error = await res.json();
+                                                alert(`❌ Error: ${error.message}`);
+                                                return;
+                                            }
+
+                                            alert("✅ Denuncia enviada correctamente.");
+                                            setMotivo("");
+                                            setDetalle("");
+                                        } catch (err) {
+                                            alert("❌ Error inesperado al enviar denuncia.");
+                                        }
+                                    }}
+                                >
+                                    Enviar denuncia
+                                </button>
                             </div>
                         </div>
                     </div>

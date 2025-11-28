@@ -18,23 +18,56 @@ export class UsuarioService {
             },
         });
 
+        const denunciasRealizadas = await this.prisma.denunciaReporte.findMany({
+            where: { id_autor: userId },
+            orderBy: { fecha: "desc" },
+            select: {
+                motivo: true,
+                detalle: true,
+                fecha: true,
+                reporte: {
+                    select: { titulo: true },
+                },
+            },
+        });
+
+        const denunciasRecibidas = await this.prisma.denunciaReporte.findMany({
+            where: {
+                reporte: {
+                    id_usuario: userId,
+                },
+            },
+            orderBy: { fecha: "desc" },
+            select: {
+                motivo: true,
+                detalle: true,
+                fecha: true,
+                autor: {
+                    select: { nombre: true, apellido: true },
+                },
+                reporte: {
+                    select: { titulo: true },
+                },
+            },
+        });
+
         if (!usuario) throw new NotFoundException("Usuario no encontrado");
 
-        const [created, verified] = await Promise.all([
+        const [created, resolved] = await Promise.all([
             this.prisma.reporte.count({ where: { id_usuario: userId } }),
-            this.prisma.reporte.count({ where: { id_usuario: userId, estado: "verificado" } }),
+            this.prisma.reporte.count({ where: { id_usuario: userId, estado: "resuelto" } }),
         ]);
 
         // Puntos por tipo de actividad
         const PUNTOS_CREATED = 7;
-        const PUNTOS_VERIFIED = 9;
+        const PUNTOS_RESOLVED = 9;
 
         // Reputación base total por actividad
-        const reputacionBase = created * PUNTOS_CREATED + verified * PUNTOS_VERIFIED;
+        const reputacionBase = created * PUNTOS_CREATED + resolved * PUNTOS_RESOLVED;
 
         // Promedio de actividad por reporte (ponderado)
         // Si no hay actividad, queda 0
-        const totalEventos = created + verified;
+        const totalEventos = created + resolved;
         const actividadPromedio = totalEventos > 0
             ? reputacionBase / totalEventos
             : 0;
@@ -63,10 +96,14 @@ export class UsuarioService {
             orderBy: { fechaCreacion: "desc" },
             take: 5,
             select: {
+                id: true,
                 titulo: true,
+                descripcion: true,
                 estado: true,
                 fechaCreacion: true,
                 tipoDeIncidencia: { select: { id: true, categoria: true } },
+                soporteGrafico: { select: { archivo: true } },
+                id_soporteGrafico: true,
             },
         });
 
@@ -75,13 +112,32 @@ export class UsuarioService {
             name: `${usuario.nombre} ${usuario.apellido}`,
             joined: usuario.fechaAlta.toISOString(),
             avatar: usuario.nombre[0]?.toUpperCase() ?? "U",
-            stats: { created, verified, reputation: reputacionFinal },
+            stats: { created, resolved, reputation: reputacionFinal },
             reports: recientes.map((r) => ({
+                id: r.id,
                 title: r.titulo,
+                description: r.descripcion,
                 category: r.tipoDeIncidencia.id,
                 status: this.mapEstadoLabel(r.estado),
                 date: r.fechaCreacion.toISOString(),
+                soporteGrafico: r.soporteGrafico?.archivo
+                    ? `http://localhost:3000/uploads/${r.soporteGrafico.archivo.replace(/^\/?uploads\/?/, '')}`
+                    : null,
+                soporteGraficoId: r.id_soporteGrafico,
             })),
+            denunciasRealizadas: denunciasRealizadas.map(d => ({
+                motivo: d.motivo,
+                detalle: d.detalle,
+                fecha: d.fecha.toISOString(),
+                reporte: d.reporte.titulo,
+            })),
+            denunciasRecibidas: denunciasRecibidas.map(d => ({
+                motivo: d.motivo,
+                detalle: d.detalle,
+                fecha: d.fecha.toISOString(),
+                autor: `${d.autor.nombre} ${d.autor.apellido}`,
+                reporte: d.reporte.titulo,
+            }))
         };
     }
 
@@ -100,21 +156,21 @@ export class UsuarioService {
 
         if (!usuario) throw new NotFoundException("Usuario no encontrado.");
 
-        const [created, verified] = await Promise.all([
+        const [created, resolved] = await Promise.all([
             this.prisma.reporte.count({ where: { id_usuario: id } }),
-            this.prisma.reporte.count({ where: { id_usuario: id, estado: "verificado" } }),
+            this.prisma.reporte.count({ where: { id_usuario: id, estado: "resuelto" } }),
         ]);
 
         // Puntos por tipo de actividad
         const PUNTOS_CREATED = 7;
-        const PUNTOS_VERIFIED = 9;
+        const PUNTOS_RESOLVED= 9;
 
         // Reputación base total por actividad
-        const reputacionBase = created * PUNTOS_CREATED + verified * PUNTOS_VERIFIED;
+        const reputacionBase = created * PUNTOS_CREATED + resolved * PUNTOS_RESOLVED;
 
         // Promedio de actividad por reporte (ponderado)
         // Si no hay actividad, queda 0
-        const totalEventos = created + verified;
+        const totalEventos = created + resolved;
         const actividadPromedio = totalEventos > 0
             ? reputacionBase / totalEventos
             : 0;
@@ -145,13 +201,13 @@ export class UsuarioService {
             avatar: usuario.nombre[0]?.toUpperCase() ?? "U",
             stats: {
                 created,
-                verified,
+                resolved,
                 reputation: reputacionFinal,
             },
             reports: usuario.reportes.map((r) => ({
                 title: r.titulo,
                 category: r.id_tipoDeIncidencia,
-                status: r.estado,
+                status: this.mapEstadoLabel(r.estado),
                 date: r.fechaCreacion.toISOString(),
             })),
         };
@@ -179,15 +235,16 @@ export class UsuarioService {
     }
 
     private mapEstadoLabel(estado: string) {
-        switch (estado) {
-        case 'pendiente':
-            return 'En revisión';
-        case 'verificado':
-            return 'Verificado';
-        case 'resuelto':
-            return 'Resuelto';
-        default:
-            return 'En revisión';
-        }
+        const normalized = estado.trim().toLowerCase();
+        switch (normalized) {
+            case 'pendiente':
+                return 'pendiente';
+            case 'en revisión':
+                return 'en revisión';
+            case 'resuelto':
+                return 'resuelto';
+            default:
+                return 'pendiente';
+        }   
     }
 }
