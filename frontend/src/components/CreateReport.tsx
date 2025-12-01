@@ -55,7 +55,7 @@ export default function CreateReport({ onBack, onSubmit }: Props) {
         };
     }, [previewUrl]);
 
-    // Función para obtener datos de la creación del reporte
+    // Crear el objeto con los datos de la creación del reporte
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 

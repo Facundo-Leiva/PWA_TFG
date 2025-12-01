@@ -8,7 +8,9 @@ import { ReportesModule } from './reporte/report.module';
 import { TipoDeIncidenciaModule } from './reporte/incidencia.module';
 import { UsuarioModule } from './usuario/usuario.module';
 
+// Módulo raíz de la aplicación NestJS
 @Module({
+    // Módulos que forman parte de la aplicación
     imports: [
         ConfigModule.forRoot({
             isGlobal: true,
@@ -22,4 +24,5 @@ import { UsuarioModule } from './usuario/usuario.module';
         UsuarioModule
     ],
 })
+
 export class AppModule {}

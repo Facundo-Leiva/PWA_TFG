@@ -20,7 +20,10 @@ interface Props {
     onClick: () => void;
 }
 
+// Componente Carta de Reporte (vista previa del reporte)
 export default function ReportCard({ report, onClick }: Props) {
+
+    // Retornar el componente de carta de reporte con la información del mismo
     return (
         <div
             className="report-card bg-white rounded-lg shadow-sm overflow-hidden cursor-pointer hover:shadow-md transition"

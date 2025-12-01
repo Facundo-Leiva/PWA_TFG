@@ -1,5 +1,5 @@
-// Data Transfer Objet del Registro de Usuario.
 
+// DTO para el registro de usuario
 export class RegisterDto {
     nombre: string;
     apellido: string;

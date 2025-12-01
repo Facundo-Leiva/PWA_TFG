@@ -13,6 +13,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+/*
+Esquema Prisma con las tablas de bases de datos.
+Desde aquí se definieron las tablas, sus componentes
+y las relaciones entre tablas.
+*/
+
 model Usuario {
   id               Int       @id @default(autoincrement())
   nombre           String

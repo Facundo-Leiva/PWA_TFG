@@ -1,11 +1,10 @@
-import React from "react";
-
 interface Props {
     onLogin: () => void;
     onRegister: () => void;
     onExplore: () => void;
 }
 
+// Componente para la Pantalla Principal de la Página
 export default function WelcomeScreen({ onLogin, onRegister, onExplore }: Props) {
     return (
         <div className="min-h-screen bg-linear-to-br from-blue-600 via-blue-700 to-green-600 flex items-center justify-center p-4">        
@@ -25,6 +24,7 @@ export default function WelcomeScreen({ onLogin, onRegister, onExplore }: Props)
                     Cada reporte cuenta para crear espacios más seguros y funcionales.
                 </p>
                 
+                {/* Botones para acceder a las funciones */}
                 <div className="space-y-4">
                     <button
                         onClick={onLogin}

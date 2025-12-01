@@ -36,6 +36,7 @@ interface User {
     denunciasRecibidas: Denuncia[];
 }
 
+// Componente del Perfil Propio de Usuario 
 export default function UserProfile({ onBack }: Props) {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
@@ -43,8 +44,10 @@ export default function UserProfile({ onBack }: Props) {
     const [formData, setFormData] = useState<any>({});
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
+    // Buscar datos del usuario al cargar
     useEffect(() => { fetchUserProfile(); }, []);
 
+    // Llamar la función para obtener los datos del usuario
     async function fetchUserProfile() {
         try {
             const res = await fetch("http://localhost:3000/usuarios/perfil", {
@@ -79,6 +82,7 @@ export default function UserProfile({ onBack }: Props) {
 
     const isAvatarUrl = user.avatar.startsWith("http");
 
+    // Llamar la función para actualizar los datos de un reporte
     async function handleUpdateReport(id: number, data: any) {
 
         if (!data.titulo?.trim() || !data.descripcion?.trim()) {
@@ -115,6 +119,7 @@ export default function UserProfile({ onBack }: Props) {
         }
     }
 
+    // Retornar el componente de perfil del usuario
     return (
         <div className="min-h-screen bg-linear-to-br from-blue-300 via-white to-green-300 flex items-center justify-center px-4 py-8">
             <div className="w-full max-w-2xl bg-white rounded-xl shadow-xl p-8">
@@ -130,8 +135,8 @@ export default function UserProfile({ onBack }: Props) {
                     </div>
                 </header>
 
+                {/* Datos del usuario */}
                 <div className="max-w-4xl mx-auto px-4 py-6">
-                    {/* Perfil básico */}
                     <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
                         <div className="flex items-center space-x-6 mb-6">
                             {isAvatarUrl ? (
@@ -180,7 +185,7 @@ export default function UserProfile({ onBack }: Props) {
                                     key={index}
                                     className="flex justify-between items-center p-4 border border-gray-200 rounded-lg"
                                 >
-                                    {/* Columna izquierda */}
+                                    {/* Columna izquierda: título + fecha */}
                                     <div>
                                         <h4 className="font-medium text-gray-800">{report.title}</h4>
                                         <p className="text-sm text-gray-600">
@@ -188,7 +193,7 @@ export default function UserProfile({ onBack }: Props) {
                                         </p>
                                     </div>
 
-                                    {/* Columna derecha: estado + botón */}
+                                    {/* Columna derecha: estado + botón para actualizar */}
                                     <div className="flex flex-col items-center gap-2">
                                         <span
                                             className={`px-3 py-1 rounded-full text-sm font-medium ${
