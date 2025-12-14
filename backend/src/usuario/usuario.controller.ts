@@ -21,7 +21,7 @@ export class UsuarioController {
     async getPerfilUsuario(@Param('id') id: string) {
         return this.usuarioService.obtenerPerfilUsuario(Number(id));
     }
-
+    // Controlador: obtener perfil de otro usuario (explorador)
     @Get(':id/perfilExp')
     async getPerfilUsuarioExp(@Param('id') id: string) {
         return this.usuarioService.obtenerPerfilUsuario(Number(id));

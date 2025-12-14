@@ -30,7 +30,7 @@ export default function UserProfileExploracion({ onBack, userId }: Props) {
     // Buscar perfil de usuario según ID
     useEffect(() => { fetchUserProfile(); }, [userId]);
 
-    // Llamar la función para buscar el perfil del usuario
+    // Llamar la función para buscar el perfil del usuario (explorador)
     async function fetchUserProfile() {
         try {
             const res = await fetch(`http://localhost:3000/usuarios/${userId}/perfilExp`, {
