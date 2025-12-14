@@ -1,5 +1,6 @@
 import type { Request } from 'express';
 
+// Declaración de tipos de TypeScript
 declare namespace Express {
     export interface User {
         id: number;

@@ -21,6 +21,7 @@ interface Comment {
     } | null;
 }
 
+// Componente para Visualizar Detalles del Reporte
 export default function ReportDetail({ report, onBack, currentUser, onViewUser }: Props) {
     const [likes, setLikes] = useState(report.likes);
     const [liked, setLiked] = useState(false);
@@ -31,8 +32,9 @@ export default function ReportDetail({ report, onBack, currentUser, onViewUser }
     const [motivo, setMotivo] = useState("");
     const [detalle, setDetalle] = useState("");
 
+    // Cargar comentarios al iniciar
     useEffect(() => {
-        // Vista desde el principio del componente
+        // Cargar vista desde el principio del componente
         window.scrollTo(0, 0);
 
         const fetchComments = async () => {
@@ -49,7 +51,7 @@ export default function ReportDetail({ report, onBack, currentUser, onViewUser }
         fetchComments();
     }, [report.id]);
 
-    // Nuevo comentario
+    // Llamar método para agregar comentarios
     const handleAddComment = async () => {
         if (!newComment.trim() && !selectedImage) {
             alert("El comentario no puede estar vacío. Escribi texto o adjunta una imagen.");
@@ -84,6 +86,7 @@ export default function ReportDetail({ report, onBack, currentUser, onViewUser }
         }
     };
 
+    // Llamar método para agregar un "like"
     const handleLike = async () => {
         if (report.author === currentUser) {
             alert("No puedes dar like a tu propio reporte.");
@@ -123,6 +126,7 @@ export default function ReportDetail({ report, onBack, currentUser, onViewUser }
         }
     };
     
+    // Retornar el componente detalle del reporte
     return (
         <div className="min-h-screen bg-linear-to-br from-blue-300 via-white to-green-300 flex items-center justify-center px-4 py-8">
             <div className="w-full max-w-2xl bg-white rounded-xl shadow-xl p-8">
@@ -138,6 +142,7 @@ export default function ReportDetail({ report, onBack, currentUser, onViewUser }
                     </div>
                 </header>
 
+                {/* Datos del reporte */}
                 <div className="max-w-4xl mx-auto px-4 py-6">
                     <div className="bg-white rounded-lg shadow-sm overflow-hidden">
                         {report.image ? (
@@ -166,6 +171,8 @@ export default function ReportDetail({ report, onBack, currentUser, onViewUser }
                             <div className="text-sm text-gray-500 space-y-1">
                                 <p>📍 <strong>Ubicación:</strong> {report.location}</p>
                                 <p>🕒 <strong>Fecha:</strong> {formatDateToLocal(report.date)}</p>
+
+                                {/* Botón para acceder al perfil del usuario */}
                                 <p>
                                     👤 <strong>Reportado por:</strong>{" "}
                                     <button
@@ -177,6 +184,7 @@ export default function ReportDetail({ report, onBack, currentUser, onViewUser }
                                 </p>
                             </div>
 
+                            {/* Botón para dar like */}
                             <div className="flex items-center space-x-6 pt-4 border-t border-gray-200 text-sm text-gray-600">
                                 <button
                                     onClick={handleLike}
@@ -194,7 +202,7 @@ export default function ReportDetail({ report, onBack, currentUser, onViewUser }
                                 <span>🛠️ Estado: {report.estado}</span>
                             </div>
 
-                             {/* Separador visual */}
+                            {/* Separador visual */}
                             <hr className="my-6 border-gray-300" />
 
                             {/* Sección de comentarios */}
@@ -253,7 +261,7 @@ export default function ReportDetail({ report, onBack, currentUser, onViewUser }
                                     </button>
                                 </div>
 
-                                {/* Vista previa de imagen */}
+                                {/* Información previa de la imagen del comentario */}
                                 {selectedImage && (
                                     <div className="mt-2 text-sm text-gray-600 flex items-center space-x-2">
                                         <span>📷 {selectedImage.name}</span>
@@ -267,6 +275,7 @@ export default function ReportDetail({ report, onBack, currentUser, onViewUser }
                                 )}
                             </div>
 
+                            {/* Separador visual */}
                             <hr className="my-10 border-t border-gray-300" />
 
                             {/* Denunciar reporte */}

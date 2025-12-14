@@ -25,12 +25,15 @@ interface User {
     reports: Report[];
 }
 
+// Componente para Visualizar la Información del Perfil de Otro Usuario
 export default function OtherUserProfile({ onBack, userId }: Props) {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
 
+    // Obtener datos del usuario al cargar
     useEffect(() => { fetchUserProfile(); }, [userId]);
 
+    // Llamar la función para obtener los datos del perfil del usuario
     async function fetchUserProfile() {
         try {
             const res = await fetch(`http://localhost:3000/usuarios/${userId}/perfil`, {
@@ -54,6 +57,7 @@ export default function OtherUserProfile({ onBack, userId }: Props) {
 
     const isAvatarUrl = user.avatar.startsWith("http");
 
+    // Retornar el componente del perfil del usuario
     return (
         <div className="min-h-screen bg-linear-to-br from-blue-300 via-white to-green-300 flex items-center justify-center px-4 py-8">
             <div className="w-full max-w-2xl bg-white rounded-xl shadow-xl p-8">
@@ -69,6 +73,7 @@ export default function OtherUserProfile({ onBack, userId }: Props) {
                     </div>
                 </header>
 
+                {/* Datos del usuario */}
                 <div className="max-w-4xl mx-auto px-4 py-6">
                     <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
                         <div className="flex items-center space-x-6 mb-6">

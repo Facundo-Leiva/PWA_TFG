@@ -1,10 +1,12 @@
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
+// Servicio de la API: relacionado con el usuario
 @Injectable()
 export class UsuarioService {
     constructor(private readonly prisma: PrismaService) {}
 
+    // Función: obtener datos para el perfil propio del usuario
     async getPerfil(userId: number) {
         const usuario = await this.prisma.usuario.findUnique({
             where: { id: userId },
@@ -18,6 +20,7 @@ export class UsuarioService {
             },
         });
 
+        // Denuncias a reportes, realizadas por el usuario
         const denunciasRealizadas = await this.prisma.denunciaReporte.findMany({
             where: { id_autor: userId },
             orderBy: { fecha: "desc" },
@@ -31,6 +34,7 @@ export class UsuarioService {
             },
         });
 
+        // Denuncias recibidas a reportes propios del usuario
         const denunciasRecibidas = await this.prisma.denunciaReporte.findMany({
             where: {
                 reporte: {
@@ -53,19 +57,20 @@ export class UsuarioService {
 
         if (!usuario) throw new NotFoundException("Usuario no encontrado");
 
+        // Estado de reportes 
         const [created, resolved] = await Promise.all([
             this.prisma.reporte.count({ where: { id_usuario: userId } }),
             this.prisma.reporte.count({ where: { id_usuario: userId, estado: "resuelto" } }),
         ]);
 
-        // Puntos por tipo de actividad
+        // Puntos por estado del reporte
         const PUNTOS_CREATED = 7;
         const PUNTOS_RESOLVED = 9;
 
-        // Reputación base total por actividad
+        // Reputación base total por el estado de los reportes del usuario
         const reputacionBase = created * PUNTOS_CREATED + resolved * PUNTOS_RESOLVED;
 
-        // Promedio de actividad por reporte (ponderado)
+        // Promedio de puntajes por reporte (ponderado)
         // Si no hay actividad, queda 0
         const totalEventos = created + resolved;
         const actividadPromedio = totalEventos > 0
@@ -84,6 +89,7 @@ export class UsuarioService {
 
         let reputacionFinal: number;
 
+        // Asignar una calificación final (promedio entre puntaje por reportes y asignados por otros usuarios)
         if (tieneCalificaciones) {
             const calificacionEscalada = Math.min(10, Math.max(1, promedioCalificaciones));
             reputacionFinal = Number(((actividadEscalada + calificacionEscalada) / 2).toFixed(1));
@@ -91,6 +97,7 @@ export class UsuarioService {
             reputacionFinal = Number(actividadEscalada.toFixed(1));
         }
 
+        // Devolver los últimos 5 reportes más recientes del usuario
         const recientes = await this.prisma.reporte.findMany({
             where: { id_usuario: userId },
             orderBy: { fechaCreacion: "desc" },
@@ -107,6 +114,7 @@ export class UsuarioService {
             },
         });
 
+        // Retornar todos los datos del usuario asociados al perfil
         return {
             id: usuario.id,
             name: `${usuario.nombre} ${usuario.apellido}`,
@@ -141,6 +149,7 @@ export class UsuarioService {
         };
     }
 
+    // Función: obtener datos para el perfil de otro usuario
     async obtenerPerfilUsuario(id: number) {
         const usuario = await this.prisma.usuario.findUnique({
             where: { id },
@@ -156,19 +165,20 @@ export class UsuarioService {
 
         if (!usuario) throw new NotFoundException("Usuario no encontrado.");
 
+        // Estado de reportes 
         const [created, resolved] = await Promise.all([
             this.prisma.reporte.count({ where: { id_usuario: id } }),
             this.prisma.reporte.count({ where: { id_usuario: id, estado: "resuelto" } }),
         ]);
 
-        // Puntos por tipo de actividad
+        // Puntos por estado del reporte
         const PUNTOS_CREATED = 7;
         const PUNTOS_RESOLVED= 9;
 
-        // Reputación base total por actividad
+        // Reputación base total por el estado de los reportes del usuario
         const reputacionBase = created * PUNTOS_CREATED + resolved * PUNTOS_RESOLVED;
 
-        // Promedio de actividad por reporte (ponderado)
+        // Promedio de puntajes por reporte (ponderado)
         // Si no hay actividad, queda 0
         const totalEventos = created + resolved;
         const actividadPromedio = totalEventos > 0
@@ -187,6 +197,7 @@ export class UsuarioService {
 
         let reputacionFinal: number;
 
+        // Asignar una calificación final (promedio entre puntaje por reportes y asignados por otros usuarios)
         if (tieneCalificaciones) {
             const calificacionEscalada = Math.min(10, Math.max(1, promedioCalificaciones));
             reputacionFinal = Number(((actividadEscalada + calificacionEscalada) / 2).toFixed(1));
@@ -194,6 +205,7 @@ export class UsuarioService {
             reputacionFinal = Number(actividadEscalada.toFixed(1));
         }
 
+        // Retornar todos los datos del usuario asociados al perfil
         return {
             id: usuario.id,
             name: `${usuario.nombre} ${usuario.apellido}`,
@@ -213,6 +225,7 @@ export class UsuarioService {
         };
     }
 
+    // Función: calificar un usuario
     async calificarUsuario(usuarioId: number, nota: number, autorId: number) {
         if (nota < 1 || nota > 10) {
             throw new BadRequestException("La nota debe estar entre 1 y 10.");
@@ -234,6 +247,7 @@ export class UsuarioService {
         });
     }
 
+    // Estandarizar el valor de los estados de reportes
     private mapEstadoLabel(estado: string) {
         const normalized = estado.trim().toLowerCase();
         switch (normalized) {

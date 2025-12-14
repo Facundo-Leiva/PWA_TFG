@@ -6,11 +6,13 @@ interface Props {
   onSubmit: (usuario: any) => void;
 }
 
+// Componente para el Inicio de Sesión del Usuario
 export default function LoginModal({ onClose, onSubmit }: Props) {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [error, setError] = useState("");
 
+  // Llamadar método para el inicio de sesión
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -24,7 +26,7 @@ export default function LoginModal({ onClose, onSubmit }: Props) {
     }
   };
 
-
+  // Retornar el componente de inicio de sesión
   return (
     <div className="min-h-screen bg-linear-to-br from-blue-600 via-blue-700 to-green-600 flex items-center justify-center p-4">        
       <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6 animate-fade-in">

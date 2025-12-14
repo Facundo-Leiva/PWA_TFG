@@ -8,6 +8,10 @@ interface UbicacionData {
     barrio: string;
 }
 
+/*
+Componente para devolver ubicaciones geográficas de Argentina.
+Incluye autocompletado y conexión a la API de LocationIQ. 
+*/
 export default function LocationSearch({
     value,
     onChange,
@@ -19,6 +23,7 @@ export default function LocationSearch({
 }) {
     const [results, setResults] = useState<any[]>([]);
 
+    // Busqueda con debounce
     useEffect(() => {
         const timeout = setTimeout(() => {
             if (value.length >= 3) {
@@ -29,6 +34,7 @@ export default function LocationSearch({
         return () => clearTimeout(timeout);
     }, [value]);
 
+    // Buscar direcciones geográficas utilizando la API de LocationIQ.
     const fetchResults = async (query: string) => {
         try {
             const res = await fetch(
@@ -47,6 +53,7 @@ export default function LocationSearch({
         }
     };
 
+    // Transformar el objeto LocationIQ en el tipo UbicacionData
     const handleSelect = (place: any) => {
         const ubicacion = {
             latitud: parseFloat(place.lat),
@@ -60,6 +67,7 @@ export default function LocationSearch({
         setResults([]); // Ocultar sugerencias
     };
 
+    // Retornar el componente con la lista de sugerencias
     return (
         <div className="relative">
             <input

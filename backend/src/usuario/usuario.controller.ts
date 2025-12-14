@@ -1,12 +1,13 @@
-// src/usuario/usuario.controller.ts
 import { Controller, Get, UseGuards, Req, Param, Post, Body, UnauthorizedException } from '@nestjs/common';
 import { UsuarioService } from './usuario.service';
 import { AuthGuard } from '@nestjs/passport';
 
+// Controlador de peticiones HTTP para usuarios
 @Controller('usuarios')
 export class UsuarioController {
     constructor(private readonly usuarioService: UsuarioService) {}
 
+    // Controlador: obtener perfil de usuario propio
     @UseGuards(AuthGuard('jwt'))
     @Get('perfil')
     async getPerfil(@Req() req: any) {
@@ -14,6 +15,7 @@ export class UsuarioController {
         return this.usuarioService.getPerfil(userId);
     }
 
+    // Controlador: obtener perfil de otro usuario
     @UseGuards(AuthGuard('jwt'))
     @Get(':id/perfil')
     async getPerfilUsuario(@Param('id') id: string) {
@@ -25,6 +27,7 @@ export class UsuarioController {
         return this.usuarioService.obtenerPerfilUsuario(Number(id));
     }
 
+    // Controlador: calificar usuario
     @UseGuards(AuthGuard('jwt'))
     @Post(':id/calificar')
     async calificarUsuario (

@@ -1,5 +1,6 @@
 import { IsString, IsNotEmpty, IsNumberString } from 'class-validator';
 
+// DTO para la creación de un reporte
 export class CreateReporteDto {
     @IsString()
     @IsNotEmpty()

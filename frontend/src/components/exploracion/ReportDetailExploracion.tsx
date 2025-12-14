@@ -28,7 +28,7 @@ export default function ReportDetailExploracion({ report, onBack, onViewUser }: 
             // Vista desde el principio del componente
             window.scrollTo(0, 0);
 
-            // Cargar los comentarios asociados al reporte
+            // Llamar la función para cargar los comentarios asociados al reporte
             const fetchComments = async () => {
                 try {
                     const res = await fetch(`http://localhost:3000/reportes/${report.id}/comentarios`);

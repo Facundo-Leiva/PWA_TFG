@@ -6,6 +6,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as argon2 from 'argon2';
 
+// Servicio de la API: relacionado con la autenticación del usuario 
 @Injectable()
 export class AuthService {
     constructor (
@@ -14,6 +15,7 @@ export class AuthService {
         private jwtService: JwtService,
     ) {}
 
+    // Función: registrar un usuario nuevo
     async register(data: RegisterDto) {
         const existingEmail = await this.prisma.usuario.findUnique({ where: { email: data.email } });
         if (existingEmail) throw new ForbiddenException('El correo electrónico ya se encuentra registrado.');
@@ -46,7 +48,7 @@ export class AuthService {
             });
         }
 
-        // Crear usuario con id_ubicacion
+        // Crear usuario con los datos asociados
         const usuario = await this.prisma.usuario.create({
             data: {
             nombre: data.nombre,
@@ -62,18 +64,24 @@ export class AuthService {
         return usuario;
     }
 
+    // Función: inicio de sesión del usuario
     async login(data: LoginDto) {
         const usuario = await this.prisma.usuario.findUnique({ where: { email: data.email } });
         if (!usuario) throw new ForbiddenException('Usuario no encontrado, verifique los datos.');
 
+        // Verificar si el usuario esta bloqueado
         if (usuario.bloqueadoHasta && usuario.bloqueadoHasta > new Date()) {
             throw new ForbiddenException("Acceso bloqueado. Intente más tarde.");
         }
 
+        // Validar contraseña
         const isValid = await argon2.verify(usuario.password, data.password);
+
+        // Si es incorrecta, agregar un intento fallido
         if (!isValid) {
             const nuevosIntentos = usuario.intentosFallidos + 1;
 
+            // Al quinto intento se bloquea el acceso al usuario usuario
             await this.prisma.usuario.update({
                 where: { id: usuario.id },
                 data: {
@@ -85,6 +93,7 @@ export class AuthService {
             throw new ForbiddenException('Contraseña incorrecta, vuelva a intentar.');
         }
 
+        // Si es correcta, se resetean los intentos
         await this.prisma.usuario.update({
             where: { id: usuario.id },
             data: {
@@ -93,9 +102,11 @@ export class AuthService {
             },
         });
 
+        // Generar token de validación 
         const payload = { sub: usuario.id, email: usuario.email };
         const token = this.jwtService.sign(payload);
 
+        // Retornar el usuario con su token
         return { token, usuario };
     }
 }

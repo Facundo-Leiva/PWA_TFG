@@ -4,6 +4,7 @@ import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended'
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
+// Configuración de ESLint para el backend en TypeScript
 export default tseslint.config(
   {
     ignores: ['eslint.config.mjs'],

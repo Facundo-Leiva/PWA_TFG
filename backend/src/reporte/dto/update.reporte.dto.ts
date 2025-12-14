@@ -1,6 +1,7 @@
 import { IsOptional, IsString, IsIn, IsInt } from 'class-validator';
 import { Type } from 'class-transformer';
 
+// DTO para la actualización de un reporte
 export class UpdateReporteDto {
     @IsOptional()
     @IsString()

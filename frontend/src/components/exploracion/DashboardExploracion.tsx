@@ -21,7 +21,7 @@ export default function DashboardExploracion({ onShowDetail }: Props) {
         fetchCategories();
     }, []);
 
-    // Método de carga de categorías
+    // Llamar la función de carga de categorías
     async function fetchCategories() {
         try {
             const res = await fetch("http://localhost:3000/tipos-incidencia", {
@@ -38,7 +38,7 @@ export default function DashboardExploracion({ onShowDetail }: Props) {
         }
     }
 
-    // Método de carga de reportes
+    // Llamar la función de carga de reportes
     async function fetchReports() {
         try {
             const res = await fetch("http://localhost:3000/reportes", {

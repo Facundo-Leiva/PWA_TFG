@@ -7,6 +7,7 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './jwt.strategy';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
+// Módulo de dominio para la autenticación del usuario
 @Module({
   imports: [
     PrismaModule,
@@ -24,4 +25,5 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
   controllers: [AuthController],
   exports: [AuthService],
 })
+
 export class AuthModule {}

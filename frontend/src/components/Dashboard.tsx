@@ -64,7 +64,7 @@ export default function Dashboard({ onShowProfile, onShowDetail }: Props) {
             ? reports
             : reports.filter((r) => r.category === filter);
 
-    // Función para manejar la creación de reportes
+    // Llamar función para manejar la creación de reportes
     async function handleCreateReportSubmit(report: {
         title: string;
         category: string;

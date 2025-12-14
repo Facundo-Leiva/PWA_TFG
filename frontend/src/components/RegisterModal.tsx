@@ -14,6 +14,7 @@ interface UbicacionData {
     barrio: string;
 }
 
+// Función para validar la contraseña (boolean)
 function esContrasenaValida(password: string): boolean {
     const tieneLongitudMinima = password.length >= 8;
     const tieneMayuscula = /[A-Z]/.test(password);
@@ -30,6 +31,7 @@ function esContrasenaValida(password: string): boolean {
     );
 }
 
+// Componente para el Registro del Usuario
 export default function RegisterModal({ onClose }: Props) {
     const [nombre, setNombre] = useState("");
     const [apellido, setApellido] = useState("");
@@ -48,6 +50,7 @@ export default function RegisterModal({ onClose }: Props) {
         sinEspacios: true,
     });
 
+    // Función para validar constraseña (string)
     const validarPassword = (value: string) => {
         setPassword(value);
         setPasswordRules({
@@ -59,6 +62,7 @@ export default function RegisterModal({ onClose }: Props) {
         });
     };
 
+    // Llamadar método para el registro del usuario 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -101,10 +105,13 @@ export default function RegisterModal({ onClose }: Props) {
         }
     };
 
+    // Retornar el componente para el registro del usuario
     return (
         <div className="min-h-screen bg-linear-to-br from-blue-600 via-blue-700 to-green-600 flex items-center justify-center p-4">        
             <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6 animate-fade-in">
                 <h2 className="text-2xl font-bold mb-4 text-center text-blue-700">Crear cuenta</h2>
+
+                {/* Ingreso de datos del usuario */}
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <input
                         type="text"

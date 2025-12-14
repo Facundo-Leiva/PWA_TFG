@@ -2,11 +2,13 @@ import { BadRequestException, ForbiddenException, Injectable, NotFoundException 
 import { PrismaService } from "src/prisma/prisma.service";
 import { CreateReporteDto } from "./dto/create.reporte.dto";
 
+// Servicio de la API: relacionado con los reportes
 @Injectable()
 export class ReportService {
     reportService: any;
     constructor(private readonly prisma: PrismaService) {}
 
+    // Función: crear un reporte
     async crear (
         data: CreateReporteDto,
         usuarioId: number,
@@ -20,6 +22,7 @@ export class ReportService {
             throw new BadRequestException("Categoría inválida.");
         }
 
+        // Crear el reporte con los datos que vienen del frontend mediante el data transfer objet
         const reporte = await this.prisma.reporte.create({
             data: {
                 titulo: data.title,
@@ -40,10 +43,13 @@ export class ReportService {
             },
         });
 
+        // retornar el reporte
         return reporte;
     }
 
+    // Función: actualizar un reporte
     async update (id: number, data: any) {
+        // Actualizar el reporte con los datos que vienen desde el frontend mediante el data tranfer objet
         return this.prisma.reporte.update({
             where: { id },
             data: {
@@ -69,6 +75,7 @@ export class ReportService {
         });
     }
 
+    // Función: obtener todos los reportes existentes en base de datos
     async getAllReports() {
         const reportes = await this.prisma.reporte.findMany({
             include: {
@@ -82,6 +89,7 @@ export class ReportService {
             orderBy: { fechaCreacion: 'desc' },
         });
 
+        // Retornar mediante un tipo reporte con datos mapeados
         return reportes.map((r) => ({
             id: r.id,
             title: r.titulo,
@@ -100,7 +108,9 @@ export class ReportService {
         }));
     }
 
+    // Función: buscar ubicación guardada en base de datos
     async buscarUbicacionExistente (data: { latitud: number; longitud: number }) {
+        // Número de tolerancia para las diferencias en las latitudes y longitudes
         const TOLERANCIA = 0.00001;
 
         return this.prisma.ubicacion.findFirst({
@@ -117,6 +127,7 @@ export class ReportService {
         });
     }
 
+    // Función: dar me gusta a un reporte
     async darLike (reporteId: number, usuarioId: number) {
         const reporte = await this.prisma.reporte.findUnique({ where: { id: reporteId } });
         if (!reporte) throw new NotFoundException("Reporte no encontrado.");
@@ -138,6 +149,7 @@ export class ReportService {
         return { mensaje: "Like registrado", likes: totalLikes };
     }
 
+    // Función: agregar un comentario en un reporte
     async crearComentario (
         id_reporte: number,
         id_usuario: number,
@@ -149,6 +161,7 @@ export class ReportService {
             throw new Error("El comentario debe tener texto o imagen.");
         }
 
+        // Agregar soporte gráfico al comentario
         let soporteGrafico;
         if (soporteGraficoUrl) {
             soporteGrafico = await this.prisma.soporteGrafico.create({
@@ -169,6 +182,7 @@ export class ReportService {
             data.id_soporteGrafico = soporteGrafico.id;
         }
 
+        // Crear comentario incluyendo datos del usuario que lo generó
         const comentario = await this.prisma.comentario.create({
             data,
             include: {
@@ -177,6 +191,7 @@ export class ReportService {
             },
         });
 
+        // Retornar el comentario creado con los datos obtenidos
         return {
             id: comentario.id,
             author: `${comentario.usuario.nombre} ${comentario.usuario.apellido}`,
@@ -192,6 +207,7 @@ export class ReportService {
         };
     }
 
+    // Función: buscar comentarios asociados a un reporte
     async findByReporte (id_reporte: number) {
         const comentarios = await this.prisma.comentario.findMany({
             where: { id_reporte },
@@ -202,6 +218,7 @@ export class ReportService {
             },
         });
 
+        // Retornar comentario con la información mapeada
         return comentarios.map((c) => ({
             id: c.id,
             author: `${c.usuario.nombre} ${c.usuario.apellido}`,
@@ -217,6 +234,7 @@ export class ReportService {
         }));
     }
 
+    // Función: denunciar el reporte de un usuario
     async denunciarReporte(id_reporte: number, motivo: string, detalle: string, id_autor: number) {
         if (!motivo || motivo.trim().length === 0) {
             throw new BadRequestException("El motivo es obligatorio.");
@@ -236,6 +254,7 @@ export class ReportService {
             throw new ForbiddenException("No puedes denunciar tu propio reporte.");
         }
 
+        // Retornar una denuncia con los datos de la misma y del usuario denunciante
         return this.prisma.denunciaReporte.upsert({
             where: {
                 id_autor_id_reporte: { id_autor, id_reporte },
@@ -254,6 +273,7 @@ export class ReportService {
         });
     }
 
+    // Función: crear y guardar una ubicación geográfica en base de datos
     async crearUbicacion (data: {
         latitud: number;
         longitud: number;
