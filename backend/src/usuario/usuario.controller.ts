@@ -20,6 +20,11 @@ export class UsuarioController {
         return this.usuarioService.obtenerPerfilUsuario(Number(id));
     }
 
+    @Get(':id/perfilExp')
+    async getPerfilUsuarioExp(@Param('id') id: string) {
+        return this.usuarioService.obtenerPerfilUsuario(Number(id));
+    }
+
     @UseGuards(AuthGuard('jwt'))
     @Post(':id/calificar')
     async calificarUsuario (

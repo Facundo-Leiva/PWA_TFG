@@ -33,7 +33,7 @@ export default function UserProfileExploracion({ onBack, userId }: Props) {
     // Método buscar perfil de usuario
     async function fetchUserProfile() {
         try {
-            const res = await fetch(`http://localhost:3000/usuarios/${userId}/perfil`, {
+            const res = await fetch(`http://localhost:3000/usuarios/${userId}/perfilExp`, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token") || ""}`
                 },
