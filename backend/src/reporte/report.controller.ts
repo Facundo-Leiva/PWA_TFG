@@ -105,6 +105,21 @@ export class ReportController {
         return this.reportService.update(id, { ...dto, file });
     }
 
+    // Controlador: seguir un reporte
+    @UseGuards(AuthGuard('jwt')) 
+    @Post(':id/seguir') 
+    async seguir(@Param('id') id: string, @Req() req) { 
+        const usuarioId = req.user.id; 
+        return this.reportService.seguirReporte(Number(id), usuarioId); 
+    }
+
+    // Controlador: obtener reportes seguidos
+    @UseGuards(AuthGuard('jwt'))  
+    @Get('seguidos') async seguidos(@Req() req) { 
+        const usuarioId = req.user.id; 
+        return this.reportService.obtenerSeguidos(usuarioId); 
+    }
+
     // Controlador: dar me gusta a un reporte
     @UseGuards(AuthGuard('jwt'))
     @Post(':id/like')

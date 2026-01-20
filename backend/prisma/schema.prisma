@@ -13,11 +13,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-/*
-Esquema Prisma con las tablas de bases de datos.
-Desde aquí se definieron las tablas, sus componentes
-y las relaciones entre tablas.
-*/
+/**
+ * Esquema Prisma con las tablas de bases de datos.
+ * Desde aquí se definieron las tablas, sus componentes
+ * y las relaciones entre tablas.
+ */
 
 model Usuario {
   id               Int       @id @default(autoincrement())
@@ -39,6 +39,7 @@ model Usuario {
   likes            Like[]
   calificaciones   Calificacion[]
   denunciaReportes DenunciaReporte[]
+  seguimientos     Seguimiento[]
 }
 
 model Reporte {
@@ -62,6 +63,7 @@ model Reporte {
   indicesReportes     IndiceReporte[]
   likes               Like[]
   denunciaReportes    DenunciaReporte[]
+  seguimientos        Seguimiento[]
 }
 
 model Ubicacion {
@@ -108,6 +110,19 @@ model Like {
   usuarioId Int
   reporte   Reporte @relation(fields: [reporteId], references: [id])
   reporteId Int
+
+  @@unique([usuarioId, reporteId])
+}
+
+model Seguimiento {
+  id        Int      @id @default(autoincrement())
+  usuarioId Int
+  reporteId Int
+  createdAt DateTime @default(now())
+
+  // Relaciones 
+  usuario Usuario @relation(fields: [usuarioId], references: [id])
+  reporte Reporte @relation(fields: [reporteId], references: [id])
 
   @@unique([usuarioId, reporteId])
 }

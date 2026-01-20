@@ -1,17 +1,29 @@
 import { useEffect, useState } from "react";
 import { formatDateToLocal } from "../utils/date";
 
-interface Props { onBack: () => void; }
+interface Props { 
+    onBack: () => void; 
+}
 
 export interface Report {
     id: number;                 
     title: string;              
     description: string;       
     category: number;           
+    createdAt: string;
     status: "pendiente" | "en revisión" | "resuelto";
     date: string;               
     soporteGraficoId: number;
     soporteGrafico?: string;   
+}
+
+export interface FollowedReport { 
+    id: number; 
+    title: string; 
+    description: string; 
+    status: string; 
+    createdAt: string; 
+    category: string | number; 
 }
 
 interface Denuncia {
@@ -34,6 +46,7 @@ interface User {
     reports: Report[];
     denunciasRealizadas: Denuncia[];
     denunciasRecibidas: Denuncia[];
+    seguidos?: Report[];
 }
 
 // Componente del Perfil Propio de Usuario 
@@ -50,12 +63,24 @@ export default function UserProfile({ onBack }: Props) {
     // Llamar la función para obtener los datos del usuario
     async function fetchUserProfile() {
         try {
+            // Perfil del usuario
             const res = await fetch("http://localhost:3000/usuarios/perfil", {
                 headers: { Authorization: `Bearer ${localStorage.getItem("token") || ""}` },
             });
             if (!res.ok) throw new Error("Error al obtener perfil");
             const data: User = await res.json();
-            setUser(data);
+
+            // Reportes seguidos
+            const resSeguidos = await fetch("http://localhost:3000/reportes/seguidos", {
+                headers: { Authorization: `Bearer ${localStorage.getItem("token") || ""}` },
+            });
+            if (!resSeguidos.ok) throw new Error("Error al obtener reportes seguidos");
+            const seguidosData = await resSeguidos.json();
+
+            setUser({
+                ...data,
+                seguidos: seguidosData,
+            });
         } catch (err) {
             console.error("❌ Error cargando perfil:", err);
             alert("No se pudo cargar el perfil del usuario");
@@ -236,6 +261,60 @@ export default function UserProfile({ onBack }: Props) {
                         </div>
                     </div>
 
+                    {/* Reportes seguidos */}
+                    <div className="bg-white rounded-lg shadow-sm p-6 mt-6">
+                        <h3 className="text-lg font-semibold text-gray-800 mb-4">Reportes Seguidos</h3>
+                        <div className="space-y-4">
+                            {user?.seguidos?.length === 0 && (
+                                <p className="text-gray-500">Todavía no sigues ningún reporte.</p>
+                            )}
+
+                            {user?.seguidos?.map((report, index) => {
+                                const normalizedStatus = report.status?.trim().toLowerCase();
+
+                                return (
+                                    <div
+                                        key={index}
+                                        className="flex items-start justify-between gap-4 p-4 border border-gray-200 rounded-lg"
+                                    >
+                                        {/* Columna izquierda: título + descripción + categoría + fecha */}
+                                        <div className="flex-1 min-w-0">
+                                            <h4 className="font-medium text-gray-800 truncate">{report.title}</h4>
+                                            <p className="text-sm text-gray-700 mt-1">{report.description}</p>
+                                            <br />
+                                            <p className={`px-3 py-1 rounded-full text-sm font-medium ${getCategoryStyle(report.category)}`}>
+                                                {getCategoryName(report.category)} • {formatDateToLocal(report.createdAt)}
+                                            </p>
+                                        </div>
+
+                                        {/* Columna derecha: estado */}
+                                        <div className="shrink-0">
+                                            <span
+                                                className={`px-3 py-1 rounded-full text-sm font-medium flex items-center justify-center ${
+                                                    normalizedStatus === "resuelto"
+                                                    ? "bg-green-100 text-green-800"
+                                                    : normalizedStatus === "en revisión"
+                                                    ? "bg-blue-100 text-blue-800"
+                                                    : normalizedStatus === "pendiente"
+                                                    ? "bg-yellow-100 text-yellow-800"
+                                                    : "bg-gray-100 text-gray-800"
+                                                }`}
+                                            >
+                                                {normalizedStatus === "pendiente"
+                                                    ? "Pendiente"
+                                                    : normalizedStatus === "en revisión"
+                                                    ? "En revisión"
+                                                    : normalizedStatus === "resuelto"
+                                                    ? "Resuelto"
+                                                    : report.status}
+                                            </span>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+
                     {/* Denuncias realizadas */}
                     <div className="bg-white rounded-lg shadow-sm p-6 mt-6">
                         <h3 className="text-lg font-semibold text-gray-800 mb-4">Mis Denuncias Realizadas</h3>
@@ -403,4 +482,24 @@ function getCategoryIcon(id: number) {
         4: "🏢",
         5: "📋",
     }[id] || "📌";
+}
+
+function getCategoryName(id: number) {
+    return {
+        1: "Tráfico y Vía Pública",
+        2: "Residuos Viales",
+        3: "Alumbrado Público y Sistema Eléctrico",
+        4: "Robo y Vandalismo",
+        5: "Varios",
+    }[id] || "Varios";
+}
+
+function getCategoryStyle(id: number) {
+    return {
+        1: "bg-red-100 text-red-700",
+        2: "bg-green-100 text-green-700",
+        3: "bg-yellow-100 text-yellow-700",
+        4: "bg-purple-100 text-purple-700",
+        5: "bg-gray-100 text-gray-700",
+    }[id] || "bg-gray-100 text-gray-700";
 }

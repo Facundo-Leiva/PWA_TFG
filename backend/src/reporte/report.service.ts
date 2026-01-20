@@ -149,6 +149,56 @@ export class ReportService {
         return { mensaje: "Like registrado", likes: totalLikes };
     }
 
+    // Función: seguir un reporte
+    async seguirReporte(reporteId: number, usuarioId: number) { 
+        const reporte = await this.prisma.reporte.findUnique({ where: { id: reporteId } }); 
+        if (!reporte) throw new NotFoundException("Reporte no encontrado."); 
+
+        if (reporte.id_usuario === usuarioId) { 
+            throw new BadRequestException("No puedes seguir tu propio reporte."); 
+        } 
+
+        const existente = await this.prisma.seguimiento.findUnique({ 
+            where: { usuarioId_reporteId: { usuarioId, reporteId } }, 
+        }); 
+        if (existente) { 
+            throw new BadRequestException("Ya sigues este reporte."); 
+        } 
+
+        await this.prisma.seguimiento.create({ data: { usuarioId, reporteId } }); 
+
+        const totalSeguidores = await this.prisma.seguimiento.count({ where: { reporteId } }); 
+        return { mensaje: "Reporte seguido con éxito ✅", seguidores: totalSeguidores }; 
+    } 
+
+    // Función: obtener lista de reportes seguidos
+    async obtenerSeguidos(usuarioId: number) { 
+        const seguidos = await this.prisma.seguimiento.findMany({
+            where: { usuarioId }, 
+            include: {
+                reporte: {
+                    select: {
+                        id: true, 
+                        titulo: true,
+                        descripcion: true,
+                        estado: true, 
+                        tipoDeIncidencia: { select: { id: true, categoria: true } },
+                        fechaCreacion: true,
+                    }
+                }
+            }
+        }); 
+
+        return seguidos.map(s => ({
+            id: s.reporte.id, 
+            title: s.reporte.titulo, 
+            description: s.reporte.descripcion,
+            status: s.reporte.estado, 
+            createdAt: s.reporte.fechaCreacion.toISOString(),
+            category: s.reporte.tipoDeIncidencia?.id ?? "",
+        }));
+    }
+
     // Función: agregar un comentario en un reporte
     async crearComentario (
         id_reporte: number,

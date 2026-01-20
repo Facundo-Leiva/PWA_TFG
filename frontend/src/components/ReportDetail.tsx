@@ -25,6 +25,7 @@ interface Comment {
 export default function ReportDetail({ report, onBack, currentUser, onViewUser }: Props) {
     const [likes, setLikes] = useState(report.likes);
     const [liked, setLiked] = useState(false);
+    const [followed, setFollowed] = useState(false);
     const [comments, setComments] = useState<Comment[]>([]);
     const [newComment, setNewComment] = useState("");
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -126,6 +127,47 @@ export default function ReportDetail({ report, onBack, currentUser, onViewUser }
         }
     };
     
+    // Llamar método para seguir un reporte
+    const handleFollow = async () => {
+        if (report.author === currentUser) {
+            alert("No puedes seguir tu propio reporte.");
+            return;
+        }
+        if (followed) {
+            alert("Ya estas siguiendo este reporte.");
+            return;
+        }
+
+        const token = localStorage.getItem("token");
+
+        try {
+            const res = await fetch(`http://localhost:3000/reportes/${report.id}/seguir`, {
+                method: "POST",
+                headers: { 
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                }
+            });
+            if (!res.ok) {
+                const errText = await res.text();
+                try {
+                    const err = JSON.parse(errText);
+                    alert(err.message || "Error al seguir el reporte");
+                } catch {
+                    alert(errText || "Error al seguir el reporte");
+                }
+                return;
+            }
+
+            const data = await res.json();
+            alert(data.mensaje);
+            setFollowed(true);
+        } catch (err) {
+            console.error(err);
+            alert("Error de conexión");
+        }
+    };
+
     // Retornar el componente detalle del reporte
     return (
         <div className="min-h-screen bg-linear-to-br from-blue-300 via-white to-green-300 flex items-center justify-center px-4 py-8">
@@ -163,6 +205,20 @@ export default function ReportDetail({ report, onBack, currentUser, onViewUser }
                                 <span className={`px-3 py-1 rounded-full text-sm font-medium ${getCategoryStyle(report.category)}`}>
                                     {getCategoryIcon(report.category)} {getCategoryName(report.category)}
                                 </span>
+
+                                {/* Botón para seguir reporte */}
+                                <button
+                                    onClick={handleFollow}
+                                    disabled={followed || report.author === currentUser}
+                                    className={`flex items-center space-x-2 px-3 py-0.5 rounded-full font-medium transition ${
+                                        followed
+                                            ? "bg-blue-100 text-blue-700 border border-blue-400"
+                                            : "bg-teal-100 text-teal-700 border hover:bg-teal-200"
+                                    }`}
+                                >
+                                    <span>📢</span>
+                                    <span>Seguir reporte</span>
+                                </button>
                             </div>
 
                             <h2 className="text-2xl font-bold text-gray-800">{report.title}</h2>
@@ -203,7 +259,7 @@ export default function ReportDetail({ report, onBack, currentUser, onViewUser }
                             </div>
 
                             {/* Separador visual */}
-                            <hr className="my-6 border-gray-300" />
+                            <hr className="my-5 border-gray-300" />
 
                             {/* Sección de comentarios */}
                             <div className="space-y-4">
