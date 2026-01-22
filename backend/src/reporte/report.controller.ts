@@ -14,7 +14,7 @@ export class ReportController {
     constructor(
         private readonly reportService: ReportService,
         private readonly soporteService: SoporteService
-    ) {}
+    ) { }
 
     // Controlador: obtener reportes desde base de datos
     @Get()
@@ -84,6 +84,13 @@ export class ReportController {
         }
     }
 
+    // Controlador: buscar reportes mapa geográfico
+    @UseGuards(AuthGuard('jwt'))
+    @Get('reportesMapa') 
+    async reportesMapa() { 
+        return this.reportService.buscarReportesMapa(); 
+    }
+
     // Controlador: actualizar un reporte
     @UseGuards(AuthGuard('jwt'))
     @Patch(':id')
@@ -96,7 +103,7 @@ export class ReportController {
             },
         }),
     }))
-    async updateReporte (
+    async updateReporte(
         @Param('id', ParseIntPipe) id: number,
         @Body() dto: UpdateReporteDto,
         @UploadedFile() file?: Express.Multer.File,
@@ -106,18 +113,18 @@ export class ReportController {
     }
 
     // Controlador: seguir un reporte
-    @UseGuards(AuthGuard('jwt')) 
-    @Post(':id/seguir') 
-    async seguir(@Param('id') id: string, @Req() req) { 
-        const usuarioId = req.user.id; 
-        return this.reportService.seguirReporte(Number(id), usuarioId); 
+    @UseGuards(AuthGuard('jwt'))
+    @Post(':id/seguir')
+    async seguir(@Param('id') id: string, @Req() req) {
+        const usuarioId = req.user.id;
+        return this.reportService.seguirReporte(Number(id), usuarioId);
     }
 
     // Controlador: obtener reportes seguidos
-    @UseGuards(AuthGuard('jwt'))  
-    @Get('seguidos') async seguidos(@Req() req) { 
-        const usuarioId = req.user.id; 
-        return this.reportService.obtenerSeguidos(usuarioId); 
+    @UseGuards(AuthGuard('jwt'))
+    @Get('seguidos') async seguidos(@Req() req) {
+        const usuarioId = req.user.id;
+        return this.reportService.obtenerSeguidos(usuarioId);
     }
 
     // Controlador: dar me gusta a un reporte
@@ -154,8 +161,8 @@ export class ReportController {
 
         // Retornar un comentario con su contenido y referencia al emisor
         return this.reportService.crearComentario(
-            Number(id),          
-            Number(id_usuario), 
+            Number(id),
+            Number(id_usuario),
             body.contenido,
             soporteGraficoUrl,
             body.tipo,
@@ -171,7 +178,7 @@ export class ReportController {
     // Controlador: denunciar un reporte
     @UseGuards(AuthGuard('jwt'))
     @Post(':id/denunciar')
-    async denunciarReporte (
+    async denunciarReporte(
         @Param('id') id: string,
         @Body() body: { motivo: string; detalle: string },
         @Req() req: any

@@ -4,6 +4,7 @@ import ReportDetail from "./ReportDetail";
 import CreateReport from "./CreateReport";
 import type { Report } from "./ReportCard";
 import type { UbicacionData } from "../api";
+import GeographicMap from "./GeographicMap";
 
 interface Props {
     onShowProfile: () => void;
@@ -154,9 +155,13 @@ export default function Dashboard({ onShowProfile, onShowDetail }: Props) {
                         </button>
                         <button
                             onClick={() => setView("create")}
-                            className="px-6 py-3 rounded-lg bg-linear-to-r from-orange-500 to-red-500 text-white font-semibold shadow-md hover:from-orange-600 hover:to-red-600 transition-all"
+                            className={`px-6 py-3 rounded-lg font-semibold shadow-md transition-all ${
+                                view === "create"
+                                ? "bg-linear-to-r from-orange-500 to-red-500 text-white"
+                                : "bg-gray-100 text-gray-700"
+                            }`}
                         >
-                            ➕ Crear Reporte
+                            📢 Crear Reporte
                         </button>
                     </div>
 
@@ -221,18 +226,7 @@ export default function Dashboard({ onShowProfile, onShowDetail }: Props) {
                 )}
 
                 {/* Mapa geográfico */}
-                {view === "map" && (
-                    <div className="map-container rounded-lg p-8 text-center">
-                        <h3 className="text-xl font-semibold text-gray-800 mb-2">Mapa Interactivo</h3>
-                        <p className="text-gray-600 mb-4">Aquí se mostraría un mapa con los reportes geolocalizados</p>
-                        <button
-                            onClick={() => setView("list")}
-                            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-                        >
-                            Volver a Lista
-                        </button>
-                    </div>
-                )}
+                {view === "map" && <GeographicMap />}
 
                 {/* Instanciar el componente de creación de reporte */}
                 {view === "create" && (

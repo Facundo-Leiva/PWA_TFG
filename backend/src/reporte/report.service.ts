@@ -6,10 +6,10 @@ import { CreateReporteDto } from "./dto/create.reporte.dto";
 @Injectable()
 export class ReportService {
     reportService: any;
-    constructor(private readonly prisma: PrismaService) {}
+    constructor(private readonly prisma: PrismaService) { }
 
     // Función: crear un reporte
-    async crear (
+    async crear(
         data: CreateReporteDto,
         usuarioId: number,
         soporteGraficoId: number,
@@ -48,7 +48,7 @@ export class ReportService {
     }
 
     // Función: actualizar un reporte
-    async update (id: number, data: any) {
+    async update(id: number, data: any) {
         // Actualizar el reporte con los datos que vienen desde el frontend mediante el data tranfer objet
         return this.prisma.reporte.update({
             where: { id },
@@ -93,7 +93,7 @@ export class ReportService {
         return reportes.map((r) => ({
             id: r.id,
             title: r.titulo,
-            category: r.tipoDeIncidencia.id, 
+            category: r.tipoDeIncidencia.id,
             description: r.descripcion,
             author: r.usuario.nombre + " " + r.usuario.apellido,
             authorId: r.usuario.id,
@@ -108,8 +108,19 @@ export class ReportService {
         }));
     }
 
+    // Función: buscar reportes para el mapa geográfico
+    async buscarReportesMapa() {
+        return this.prisma.reporte.findMany({
+            include: {
+                ubicacion: true,
+                tipoDeIncidencia: true,
+                usuario: { select: { nombre: true, apellido: true } },
+            },
+        });
+    }
+
     // Función: buscar ubicación guardada en base de datos
-    async buscarUbicacionExistente (data: { latitud: number; longitud: number }) {
+    async buscarUbicacionExistente(data: { latitud: number; longitud: number }) {
         // Número de tolerancia para las diferencias en las latitudes y longitudes
         const TOLERANCIA = 0.00001;
 
@@ -128,7 +139,7 @@ export class ReportService {
     }
 
     // Función: dar me gusta a un reporte
-    async darLike (reporteId: number, usuarioId: number) {
+    async darLike(reporteId: number, usuarioId: number) {
         const reporte = await this.prisma.reporte.findUnique({ where: { id: reporteId } });
         if (!reporte) throw new NotFoundException("Reporte no encontrado.");
 
@@ -150,57 +161,57 @@ export class ReportService {
     }
 
     // Función: seguir un reporte
-    async seguirReporte(reporteId: number, usuarioId: number) { 
-        const reporte = await this.prisma.reporte.findUnique({ where: { id: reporteId } }); 
-        if (!reporte) throw new NotFoundException("Reporte no encontrado."); 
+    async seguirReporte(reporteId: number, usuarioId: number) {
+        const reporte = await this.prisma.reporte.findUnique({ where: { id: reporteId } });
+        if (!reporte) throw new NotFoundException("Reporte no encontrado.");
 
-        if (reporte.id_usuario === usuarioId) { 
-            throw new BadRequestException("No puedes seguir tu propio reporte."); 
-        } 
+        if (reporte.id_usuario === usuarioId) {
+            throw new BadRequestException("No puedes seguir tu propio reporte.");
+        }
 
-        const existente = await this.prisma.seguimiento.findUnique({ 
-            where: { usuarioId_reporteId: { usuarioId, reporteId } }, 
-        }); 
-        if (existente) { 
-            throw new BadRequestException("Ya sigues este reporte."); 
-        } 
+        const existente = await this.prisma.seguimiento.findUnique({
+            where: { usuarioId_reporteId: { usuarioId, reporteId } },
+        });
+        if (existente) {
+            throw new BadRequestException("Ya sigues este reporte.");
+        }
 
-        await this.prisma.seguimiento.create({ data: { usuarioId, reporteId } }); 
+        await this.prisma.seguimiento.create({ data: { usuarioId, reporteId } });
 
-        const totalSeguidores = await this.prisma.seguimiento.count({ where: { reporteId } }); 
-        return { mensaje: "Reporte seguido con éxito ✅", seguidores: totalSeguidores }; 
-    } 
+        const totalSeguidores = await this.prisma.seguimiento.count({ where: { reporteId } });
+        return { mensaje: "Reporte seguido con éxito ✅", seguidores: totalSeguidores };
+    }
 
     // Función: obtener lista de reportes seguidos
-    async obtenerSeguidos(usuarioId: number) { 
+    async obtenerSeguidos(usuarioId: number) {
         const seguidos = await this.prisma.seguimiento.findMany({
-            where: { usuarioId }, 
+            where: { usuarioId },
             include: {
                 reporte: {
                     select: {
-                        id: true, 
+                        id: true,
                         titulo: true,
                         descripcion: true,
-                        estado: true, 
+                        estado: true,
                         tipoDeIncidencia: { select: { id: true, categoria: true } },
                         fechaCreacion: true,
                     }
                 }
             }
-        }); 
+        });
 
         return seguidos.map(s => ({
-            id: s.reporte.id, 
-            title: s.reporte.titulo, 
+            id: s.reporte.id,
+            title: s.reporte.titulo,
             description: s.reporte.descripcion,
-            status: s.reporte.estado, 
+            status: s.reporte.estado,
             createdAt: s.reporte.fechaCreacion.toISOString(),
             category: s.reporte.tipoDeIncidencia?.id ?? "",
         }));
     }
 
     // Función: agregar un comentario en un reporte
-    async crearComentario (
+    async crearComentario(
         id_reporte: number,
         id_usuario: number,
         contenido?: string,
@@ -248,17 +259,17 @@ export class ReportService {
             content: comentario.contenido,
             createdAt: comentario.fechaEmision.toISOString(),
             soporteGrafico: comentario.soporteGrafico
-            ? {
-                id: comentario.soporteGrafico.id,
-                tipo: comentario.soporteGrafico.tipo,
-                archivo: comentario.soporteGrafico.archivo,
-            }
-            : null,
+                ? {
+                    id: comentario.soporteGrafico.id,
+                    tipo: comentario.soporteGrafico.tipo,
+                    archivo: comentario.soporteGrafico.archivo,
+                }
+                : null,
         };
     }
 
     // Función: buscar comentarios asociados a un reporte
-    async findByReporte (id_reporte: number) {
+    async findByReporte(id_reporte: number) {
         const comentarios = await this.prisma.comentario.findMany({
             where: { id_reporte },
             orderBy: { fechaEmision: 'asc' },
@@ -275,12 +286,12 @@ export class ReportService {
             content: c.contenido,
             createdAt: c.fechaEmision.toISOString(),
             soporteGrafico: c.soporteGrafico
-            ? {
-                id: c.soporteGrafico.id,
-                tipo: c.soporteGrafico.tipo,
-                archivo: c.soporteGrafico.archivo,
-            }
-            : null,
+                ? {
+                    id: c.soporteGrafico.id,
+                    tipo: c.soporteGrafico.tipo,
+                    archivo: c.soporteGrafico.archivo,
+                }
+                : null,
         }));
     }
 
@@ -324,7 +335,7 @@ export class ReportService {
     }
 
     // Función: crear y guardar una ubicación geográfica en base de datos
-    async crearUbicacion (data: {
+    async crearUbicacion(data: {
         latitud: number;
         longitud: number;
         direccion: string;
