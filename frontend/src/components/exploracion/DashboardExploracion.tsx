@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import ReportCard from "../ReportCard";
 import ReportDetail from "../ReportDetail";
 import type { Report } from "../ReportCard";
+import GeographicMap from "../GeographicMap";
 
 interface Props {
     onShowDetail: (report: Report) => void;
@@ -162,18 +163,7 @@ export default function DashboardExploracion({ onShowDetail }: Props) {
                 )}
 
                 {/* Mapa geográfico */}
-                {view === "map" && (
-                    <div className="map-container rounded-lg p-8 text-center">
-                        <h3 className="text-xl font-semibold text-gray-800 mb-2">Mapa Interactivo</h3>
-                        <p className="text-gray-600 mb-4">Aquí se mostraría un mapa con los reportes geolocalizados</p>
-                        <button
-                            onClick={() => setView("list")}
-                            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-                        >
-                            Volver a Lista
-                        </button>
-                    </div>
-                )}
+                {view === "map" && <GeographicMap />}
             </div>
         </div>
     );
