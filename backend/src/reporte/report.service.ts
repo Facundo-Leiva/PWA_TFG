@@ -119,6 +119,29 @@ export class ReportService {
         });
     }
 
+    // Función: filtrar reportes en el mapa geográfico
+    async bucarReportesFiltrados(filtros: any) {
+        const { tipo, estado, fechaInicio, fechaFin, ubicacion } = filtros;
+
+        return this.prisma.reporte.findMany({
+            where: {
+                ...(tipo ? { tipoDeIncidencia: { categoria: tipo } } : {}),
+                ...(estado ? { estado } : {}),
+                ...(fechaInicio && fechaFin
+                    ? { fechaCreacion: { gte: new Date(fechaInicio), lte: new Date(fechaFin) } }
+                    : {}),
+                ...(ubicacion
+                    ? { ubicacion: { direccion: { contains: ubicacion } } }
+                    : {}),
+            },
+            include: {
+                usuario: true,
+                ubicacion: true,
+                tipoDeIncidencia: true,
+            },
+        });
+    }
+
     // Función: buscar ubicación guardada en base de datos
     async buscarUbicacionExistente(data: { latitud: number; longitud: number }) {
         // Número de tolerancia para las diferencias en las latitudes y longitudes

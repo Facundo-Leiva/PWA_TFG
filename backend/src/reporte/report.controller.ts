@@ -1,4 +1,4 @@
-import { Controller, Post, UseGuards, UseInterceptors, UploadedFile, Body, Req, UnauthorizedException, Get, InternalServerErrorException, BadRequestException, Param, Patch, ParseIntPipe } from '@nestjs/common';
+import { Controller, Post, UseGuards, UseInterceptors, UploadedFile, Body, Req, UnauthorizedException, Get, InternalServerErrorException, BadRequestException, Param, Patch, ParseIntPipe, Query } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ReportService } from './report.service';
@@ -89,6 +89,18 @@ export class ReportController {
     @Get('reportesMapa') 
     async reportesMapa() { 
         return this.reportService.buscarReportesMapa(); 
+    }
+
+    // Controlador: obtener filtros para el mapa geográfico
+    @Get("reportesFiltradosMapa")
+    async getReportesMapa(
+        @Query("tipo") tipo?: string,
+        @Query("estado") estado?: string,
+        @Query("fechaInicio") fechaInicio?: string,
+        @Query("fechaFin") fechaFin?: string,
+        @Query("ubicacion") ubicacion?: string,
+    ) {
+        return this.reportService.bucarReportesFiltrados({ tipo, estado, fechaInicio, fechaFin, ubicacion });
     }
 
     // Controlador: actualizar un reporte
