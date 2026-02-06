@@ -60,7 +60,7 @@ model Reporte {
   id_soporteGrafico   Int
   comentarios         Comentario[]
   mapaReportes        MapaReporte[]
-  indicesReportes     IndiceReporte[]
+  indicesReportes     FiltroReporte[]
   likes               Like[]
   denunciaReportes    DenunciaReporte[]
   seguimientos        Seguimiento[]
@@ -86,7 +86,7 @@ model TipoDeIncidencia {
   descripcion String
 
   // Relaciones
-  indiceMapa IndiceMapa[]
+  indiceMapa FiltroMapa[]
   reportes   Reporte[]
 }
 
@@ -173,7 +173,7 @@ model MapaGeografico {
   // Relaciones
   ubicacion     Ubicacion     @relation(fields: [id_ubicacion], references: [id])
   id_ubicacion  Int
-  indiceMapa    IndiceMapa    @relation(fields: [id_indiceMapa], references: [id])
+  indiceMapa    FiltroMapa    @relation(fields: [id_indiceMapa], references: [id])
   id_indiceMapa Int
   mapaReportes  MapaReporte[]
 }
@@ -188,7 +188,7 @@ model MapaReporte {
   id_reporte        Int
 }
 
-model IndiceMapa {
+model FiltroMapa {
   id     Int    @id @default(autoincrement())
   ciudad String
   barrio String
@@ -197,14 +197,14 @@ model IndiceMapa {
   tipoDeIncidencia    TipoDeIncidencia @relation(fields: [id_tipoDeIncidencia], references: [id])
   id_tipoDeIncidencia Int
   mapas               MapaGeografico[]
-  indicesReportes     IndiceReporte[]
+  indicesReportes     FiltroReporte[]
 }
 
-model IndiceReporte {
+model FiltroReporte {
   id Int @id @default(autoincrement())
 
   // Relaciones
-  indiceMapa    IndiceMapa @relation(fields: [id_indiceMapa], references: [id])
+  indiceMapa    FiltroMapa @relation(fields: [id_indiceMapa], references: [id])
   id_indiceMapa Int
   reporte       Reporte    @relation(fields: [id_reporte], references: [id])
   id_reporte    Int

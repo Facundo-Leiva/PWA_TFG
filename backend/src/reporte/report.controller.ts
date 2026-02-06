@@ -85,7 +85,6 @@ export class ReportController {
     }
 
     // Controlador: buscar reportes mapa geográfico
-    @UseGuards(AuthGuard('jwt'))
     @Get('reportesMapa') 
     async reportesMapa() { 
         return this.reportService.buscarReportesMapa(); 

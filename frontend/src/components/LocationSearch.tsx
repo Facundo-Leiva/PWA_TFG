@@ -8,6 +8,9 @@ interface UbicacionData {
     barrio: string;
 }
 
+// Key para la búsqueda en Location IQ.
+const API_KEY = import.meta.env.VITE_LOCATION_KEY;
+
 /*
 Componente para devolver ubicaciones geográficas de Argentina.
 Incluye autocompletado y conexión a la API de LocationIQ. 
@@ -38,7 +41,8 @@ export default function LocationSearch({
     const fetchResults = async (query: string) => {
         try {
             const res = await fetch(
-                `https://api.locationiq.com/v1/autocomplete?key=pk.eb11f28a0d6cd46db4e167baf57974ae&q=${query}&limit=5&format=json&countrycodes=ar`
+                // Las localizaciones están limitidas solo a la provincia de Córdoba, Argentina.
+                `https://api.locationiq.com/v1/autocomplete?key=${API_KEY}&q=${query}&limit=5&format=json&countrycodes=ar&viewbox=-65.8,-29.5,-62.0,-35.2&bounded=1`
             );
             if (res.status === 429) {
                 console.warn("Demasiadas solicitudes a LocationIQ");
