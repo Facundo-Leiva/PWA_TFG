@@ -115,6 +115,11 @@ export default function UserProfile({ onBack }: Props) {
             return;
         }
 
+        if (data.descripcion.length < 50) {
+            alert ('❌ El campo "Descripción" debe tener al menos 50 caracteres.')
+            return;
+        }
+
         const formDataToSend = new FormData();
         formDataToSend.append("titulo", data.titulo);
         formDataToSend.append("descripcion", data.descripcion);

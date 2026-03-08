@@ -55,7 +55,12 @@ export default function ReportDetail({ report, onBack, currentUser, onViewUser }
     // Llamar método para agregar comentarios
     const handleAddComment = async () => {
         if (!newComment.trim() && !selectedImage) {
-            alert("El comentario no puede estar vacío. Escribi texto o adjunta una imagen.");
+            alert("❌ El comentario no puede estar vacío. Escribi texto o adjunta una imagen.");
+            return;
+        }
+
+        if (newComment.length > 500) {
+            alert("❌ El comentario no debe superar los 500 caracteres.");
             return;
         }
 
@@ -72,7 +77,7 @@ export default function ReportDetail({ report, onBack, currentUser, onViewUser }
             });
 
             if (!res.ok) {
-                alert("Error al enviar comentario");
+                alert("Error al enviar comentario.");
                 return;
             }
 
@@ -376,7 +381,7 @@ export default function ReportDetail({ report, onBack, currentUser, onViewUser }
 
                                             if (!res.ok) {
                                                 const error = await res.json();
-                                                alert(`❌ Error: ${error.message}`);
+                                                alert(`❌ Error al enviar la denuncia: ${error.message}`);
                                                 return;
                                             }
 
@@ -384,7 +389,7 @@ export default function ReportDetail({ report, onBack, currentUser, onViewUser }
                                             setMotivo("");
                                             setDetalle("");
                                         } catch (err) {
-                                            alert("❌ Error inesperado al enviar denuncia.");
+                                            console.error("❌ Error al enviar la denuncia: ", err);
                                         }
                                     }}
                                 >

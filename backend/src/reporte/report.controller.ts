@@ -56,6 +56,10 @@ export class ReportController {
             throw new BadRequestException('Ubicación inválida');
         }
 
+        if (data.description.length < 50) {
+            throw new BadRequestException('El campo "Descripción" debe tener al menos 50 caracteres.');
+        }
+
         // Si la ubicación no existe en base de datos, se crea, si es prácticamente la misma, se referencia a esta
         try {
             let ubicacion = await this.reportService.buscarUbicacionExistente(ubicacionData);
@@ -160,7 +164,7 @@ export class ReportController {
     async addComentario(
         @Param('id') id: string,
         @UploadedFile() file: Express.Multer.File,
-        @Body() body: { contenido?: string; tipo?: string },
+        @Body() body: { contenido: string; tipo: string },
         @Req() req,
     ) {
         const id_usuario = Number(req.user.id);
@@ -168,6 +172,10 @@ export class ReportController {
         let soporteGraficoUrl: string | undefined;
         if (file) {
             soporteGraficoUrl = `/uploads/${file.filename}`;
+        }
+
+        if (body.contenido?.length > 500) {
+            throw new BadRequestException('El comentario no puede tener más de 500 caracteres.');
         }
 
         // Retornar un comentario con su contenido y referencia al emisor
@@ -194,6 +202,14 @@ export class ReportController {
         @Body() body: { motivo: string; detalle: string },
         @Req() req: any
     ) {
+        if (body.detalle.length < 20) {
+            throw new BadRequestException('El detalle de la denuncia debe tener al menos 20 caracteres.');
+        }
+
+        if (body.detalle.length > 50) {
+            throw new BadRequestException('El detalle de la denuncia NO debe tener más de 50 caracteres.');
+        }
+
         const reporteId = parseInt(id, 10);
         const autorId = req.user?.id;
         return this.reportService.denunciarReporte(reporteId, body.motivo, body.detalle, autorId);
