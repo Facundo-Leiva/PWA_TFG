@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { formatDateToLocal } from "../utils/date";
+import { API_URL } from "../api";
 
 interface Props { 
     onBack: () => void; 
@@ -64,14 +65,14 @@ export default function UserProfile({ onBack }: Props) {
     async function fetchUserProfile() {
         try {
             // Perfil del usuario
-            const res = await fetch("http://localhost:3000/usuarios/perfil", {
+            const res = await fetch(`${API_URL}/usuarios/perfil`, {
                 headers: { Authorization: `Bearer ${localStorage.getItem("token") || ""}` },
             });
             if (!res.ok) throw new Error("Error al obtener perfil");
             const data: User = await res.json();
 
             // Reportes seguidos
-            const resSeguidos = await fetch("http://localhost:3000/reportes/seguidos", {
+            const resSeguidos = await fetch(`${API_URL}/reportes/seguidos`, {
                 headers: { Authorization: `Bearer ${localStorage.getItem("token") || ""}` },
             });
             if (!resSeguidos.ok) throw new Error("Error al obtener reportes seguidos");
@@ -131,7 +132,7 @@ export default function UserProfile({ onBack }: Props) {
         }
 
         try {
-            const res = await fetch(`http://localhost:3000/reportes/${id}`, {
+            const res = await fetch(`${API_URL}/reportes/${id}`, {
                 method: "PATCH",
                 headers: { Authorization: `Bearer ${localStorage.getItem("token") || ""}` },
                 body: formDataToSend,

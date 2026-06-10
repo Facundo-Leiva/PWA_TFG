@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { formatDateToLocal } from "../../utils/date";
+import { API_URL } from "../../api";
 
 interface Props { onBack: () => void; userId: number; }
 
@@ -33,7 +34,7 @@ export default function UserProfileExploracion({ onBack, userId }: Props) {
     // Llamar la función para buscar el perfil del usuario (explorador)
     async function fetchUserProfile() {
         try {
-            const res = await fetch(`http://localhost:3000/usuarios/${userId}/perfilExp`, {
+            const res = await fetch(`${API_URL}/usuarios/${userId}/perfilExp`, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token") || ""}`
                 },

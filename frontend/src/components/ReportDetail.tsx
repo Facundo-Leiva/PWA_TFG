@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { Report } from "./ReportCard";
 import { formatDateToLocal } from '../utils/date';
+import { API_URL, buildApiUrl } from "../api";
 
 interface Props {
     report: Report;
@@ -40,7 +41,7 @@ export default function ReportDetail({ report, onBack, currentUser, onViewUser }
 
         const fetchComments = async () => {
             try {
-                const res = await fetch(`http://localhost:3000/reportes/${report.id}/comentarios`);
+                const res = await fetch(`${API_URL}/reportes/${report.id}/comentarios`);
                 if (res.ok) {
                     const data = await res.json();
                     setComments(data);
@@ -70,7 +71,7 @@ export default function ReportDetail({ report, onBack, currentUser, onViewUser }
         if (selectedImage) formData.append("file", selectedImage);
 
         try {
-            const res = await fetch(`http://localhost:3000/reportes/${report.id}/comentarios`, {
+            const res = await fetch(`${API_URL}/reportes/${report.id}/comentarios`, {
                 method: "POST",
                 headers: { Authorization: `Bearer ${token}` },
                 body: formData,
@@ -106,7 +107,7 @@ export default function ReportDetail({ report, onBack, currentUser, onViewUser }
         const token = localStorage.getItem("token");
 
         try {
-            const res = await fetch(`http://localhost:3000/reportes/${report.id}/like`, {
+            const res = await fetch(`${API_URL}/reportes/${report.id}/like`, {
                 method: "POST",
                 headers: { 
                     "Content-Type": "application/json",
@@ -146,7 +147,7 @@ export default function ReportDetail({ report, onBack, currentUser, onViewUser }
         const token = localStorage.getItem("token");
 
         try {
-            const res = await fetch(`http://localhost:3000/reportes/${report.id}/seguir`, {
+            const res = await fetch(`${API_URL}/reportes/${report.id}/seguir`, {
                 method: "POST",
                 headers: { 
                     "Content-Type": "application/json",
@@ -283,7 +284,7 @@ export default function ReportDetail({ report, onBack, currentUser, onViewUser }
                                             {c.soporteGrafico?.archivo && (
                                                 <div className="mt-2">
                                                     <img
-                                                        src={`http://localhost:3000${c.soporteGrafico.archivo}`}
+                                                        src={buildApiUrl(c.soporteGrafico.archivo)}
                                                         alt="Soporte gráfico"
                                                         className="max-w-xs rounded border border-gray-300"
                                                     />
@@ -370,7 +371,7 @@ export default function ReportDetail({ report, onBack, currentUser, onViewUser }
                                         }
 
                                         try {
-                                            const res = await fetch(`http://localhost:3000/reportes/${report.id}/denunciar`, {
+                                            const res = await fetch(`${API_URL}/reportes/${report.id}/denunciar`, {
                                                 method: "POST",
                                                 headers: {
                                                     "Content-Type": "application/json",

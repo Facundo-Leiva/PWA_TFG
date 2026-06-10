@@ -1,6 +1,7 @@
 import type { Report } from "../ReportCard";
 import { formatDateToLocal } from "../../utils/date";
 import { useEffect, useState } from "react";
+import { API_URL, buildApiUrl } from "../../api";
 
 interface Props {
     report: Report;
@@ -31,7 +32,7 @@ export default function ReportDetailExploracion({ report, onBack, onViewUser }: 
             // Llamar la función para cargar los comentarios asociados al reporte
             const fetchComments = async () => {
                 try {
-                    const res = await fetch(`http://localhost:3000/reportes/${report.id}/comentarios`);
+                    const res = await fetch(`${API_URL}/reportes/${report.id}/comentarios`);
                     if (res.ok) {
                         const data = await res.json();
                         setComments(data);
@@ -128,7 +129,7 @@ export default function ReportDetailExploracion({ report, onBack, onViewUser }: 
                                             {c.soporteGrafico?.archivo && (
                                                 <div className="mt-2">
                                                 <img
-                                                    src={`http://localhost:3000${c.soporteGrafico.archivo}`}
+                                                    src={buildApiUrl(c.soporteGrafico.archivo)}
                                                     alt="Soporte gráfico"
                                                     className="max-w-xs rounded border border-gray-300"
                                                 />

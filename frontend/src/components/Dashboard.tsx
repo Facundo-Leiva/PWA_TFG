@@ -5,6 +5,7 @@ import CreateReport from "./CreateReport";
 import type { Report } from "./ReportCard";
 import type { UbicacionData } from "../api";
 import GeographicMap from "./GeographicMap";
+import { API_URL } from "../api";
 
 interface Props {
     onShowProfile: () => void;
@@ -28,7 +29,7 @@ export default function Dashboard({ onShowProfile, onShowDetail }: Props) {
     // Cargar categorías
     async function fetchCategories() {
         try {
-            const res = await fetch("http://localhost:3000/tipos-incidencia", {
+            const res = await fetch(`${API_URL}/tipos-incidencia`, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token") || ""}`
                 },
@@ -45,7 +46,7 @@ export default function Dashboard({ onShowProfile, onShowDetail }: Props) {
     // Cargar reportes
     async function fetchReports() {
         try {
-            const res = await fetch("http://localhost:3000/reportes", {
+            const res = await fetch(`${API_URL}/reportes`, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
                 },
@@ -84,7 +85,7 @@ export default function Dashboard({ onShowProfile, onShowDetail }: Props) {
                 formData.append("file", report.file);
             }
 
-            const res = await fetch("http://localhost:3000/reportes", {
+            const res = await fetch(`${API_URL}/reportes`, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token") || ""}`,

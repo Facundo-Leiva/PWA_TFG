@@ -1,12 +1,26 @@
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import { CreateReporteDto } from "./dto/create.reporte.dto";
+import { ConfigService } from "@nestjs/config";
+
+const USUARIO_REPORTE_SELECT = {
+    id: true,
+    nombre: true,
+    apellido: true,
+};
 
 // Servicio de la API: relacionado con los reportes
 @Injectable()
 export class ReportService {
     reportService: any;
-    constructor(private readonly prisma: PrismaService) { }
+    constructor(
+        private readonly prisma: PrismaService,
+        private readonly config: ConfigService,
+    ) { }
+
+    private get publicApiUrl(): string {
+        return this.config.get<string>("publicApiUrl") || "http://localhost:3000";
+    }
 
     // Función: crear un reporte
     async crear(
@@ -35,7 +49,7 @@ export class ReportService {
                 id_soporteGrafico: soporteGraficoId,
             },
             include: {
-                usuario: true,
+                usuario: { select: USUARIO_REPORTE_SELECT },
                 ubicacion: true,
                 tipoDeIncidencia: true,
                 soporteGrafico: true,
@@ -66,7 +80,7 @@ export class ReportService {
                 }),
             },
             include: {
-                usuario: true,
+                usuario: { select: USUARIO_REPORTE_SELECT },
                 ubicacion: true,
                 tipoDeIncidencia: true,
                 soporteGrafico: true,
@@ -79,7 +93,7 @@ export class ReportService {
     async getAllReports() {
         const reportes = await this.prisma.reporte.findMany({
             include: {
-                usuario: true,
+                usuario: { select: USUARIO_REPORTE_SELECT },
                 comentarios: true,
                 ubicacion: true,
                 tipoDeIncidencia: true,
@@ -103,7 +117,7 @@ export class ReportService {
             comments: r.comentarios.length,
             estado: r.estado,
             image: r.soporteGrafico?.archivo
-                ? `http://localhost:3000/uploads/${r.soporteGrafico.archivo.replace(/^\/?uploads\/?/, '')}`
+                ? `${this.publicApiUrl}/uploads/${r.soporteGrafico.archivo.replace(/^\/?uploads\/?/, "")}`
                 : null,
         }));
     }
@@ -135,7 +149,7 @@ export class ReportService {
                     : {}),
             },
             include: {
-                usuario: true,
+                usuario: { select: USUARIO_REPORTE_SELECT },
                 ubicacion: true,
                 tipoDeIncidencia: true,
             },

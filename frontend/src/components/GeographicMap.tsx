@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import LocationSearch from "./LocationSearch";
+import { API_URL } from "../api";
 
 // Interfaces del componente
 
@@ -83,7 +84,7 @@ export default function GeographicMap() {
         // Carga de datos de reportes
         async function fetchReportes() {
             try {
-                const res = await fetch("http://localhost:3000/reportes/reportesMapa", {
+                const res = await fetch(`${API_URL}/reportes/reportesMapa`, {
                     headers: { Authorization: `Bearer ${localStorage.getItem("token") || ""}` },
                 });
                 if (!res.ok) throw new Error("Error al obtener reportes del mapa");
@@ -118,7 +119,7 @@ export default function GeographicMap() {
                 }).filter(([_, v]) => v !== "")
             ).toString();
 
-            const res = await fetch(`http://localhost:3000/reportes/reportesFiltradosMapa?${queryParams}`, {
+            const res = await fetch(`${API_URL}/reportes/reportesFiltradosMapa?${queryParams}`, {
                 headers: { Authorization: `Bearer ${localStorage.getItem("token") || ""}` },
             });
 

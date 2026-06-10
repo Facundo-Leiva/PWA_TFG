@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import LocationSearch from "./LocationSearch";
+import { API_URL } from "../api";
 
 interface Props {
     onBack: () => void;
@@ -35,7 +36,7 @@ export default function CreateReport({ onBack, onSubmit }: Props) {
     useEffect(() => {
         async function fetchCategorias() {
             try {
-                const res = await fetch("http://localhost:3000/tipos-incidencia");
+                const res = await fetch(`${API_URL}/tipos-incidencia`);
                 const data = await res.json();
                 setCategorias(data);
             } catch (err) {

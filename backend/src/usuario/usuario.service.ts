@@ -1,10 +1,18 @@
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { ConfigService } from '@nestjs/config';
 
 // Servicio de la API: relacionado con el usuario
 @Injectable()
 export class UsuarioService {
-    constructor(private readonly prisma: PrismaService) {}
+    constructor(
+        private readonly prisma: PrismaService,
+        private readonly config: ConfigService,
+    ) {}
+
+    private get publicApiUrl(): string {
+        return this.config.get<string>("publicApiUrl") || "http://localhost:3000";
+    }
 
     // Función: obtener datos para el perfil propio del usuario
     async getPerfil(userId: number) {
@@ -129,7 +137,7 @@ export class UsuarioService {
                 status: this.mapEstadoLabel(r.estado),
                 date: r.fechaCreacion.toISOString(),
                 soporteGrafico: r.soporteGrafico?.archivo
-                    ? `http://localhost:3000/uploads/${r.soporteGrafico.archivo.replace(/^\/?uploads\/?/, '')}`
+                    ? `${this.publicApiUrl}/uploads/${r.soporteGrafico.archivo.replace(/^\/?uploads\/?/, "")}`
                     : null,
                 soporteGraficoId: r.id_soporteGrafico,
             })),

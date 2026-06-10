@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { formatDateToLocal } from "../utils/date";
+import { API_URL } from "../api";
 
 interface Props {
     onBack: () => void; userId: number;
@@ -36,7 +37,7 @@ export default function OtherUserProfile({ onBack, userId }: Props) {
     // Llamar la función para obtener los datos del perfil del usuario
     async function fetchUserProfile() {
         try {
-            const res = await fetch(`http://localhost:3000/usuarios/${userId}/perfil`, {
+            const res = await fetch(`${API_URL}/usuarios/${userId}/perfil`, {
                 headers: { 
                     Authorization: `Bearer ${localStorage.getItem("token") || ""}`
                 },
@@ -124,7 +125,7 @@ export default function OtherUserProfile({ onBack, userId }: Props) {
                                         if (!nota) return;
 
                                         try {
-                                            const res = await fetch(`http://localhost:3000/usuarios/${user.id}/calificar`, {
+                                            const res = await fetch(`${API_URL}/usuarios/${user.id}/calificar`, {
                                                 method: "POST",
                                                 headers: {
                                                     "Content-Type": "application/json",

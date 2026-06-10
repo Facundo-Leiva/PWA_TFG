@@ -3,6 +3,7 @@ import ReportCard from "../ReportCard";
 import ReportDetail from "../ReportDetail";
 import type { Report } from "../ReportCard";
 import GeographicMap from "../GeographicMap";
+import { API_URL } from "../../api";
 
 interface Props {
     onShowDetail: (report: Report) => void;
@@ -25,7 +26,7 @@ export default function DashboardExploracion({ onShowDetail }: Props) {
     // Llamar la función de carga de categorías
     async function fetchCategories() {
         try {
-            const res = await fetch("http://localhost:3000/tipos-incidencia", {
+            const res = await fetch(`${API_URL}/tipos-incidencia`, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token") || ""}`
                 },
@@ -42,7 +43,7 @@ export default function DashboardExploracion({ onShowDetail }: Props) {
     // Llamar la función de carga de reportes
     async function fetchReports() {
         try {
-            const res = await fetch("http://localhost:3000/reportes", {
+            const res = await fetch(`${API_URL}/reportes`, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token") || ""}`
                 },
