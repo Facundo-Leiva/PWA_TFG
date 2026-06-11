@@ -25,7 +25,7 @@ model Usuario {
   apellido         String
   documento        Int       @unique
   email            String    @unique
-  password         String    @unique
+  password         String
   direccion        String
   intentosFallidos Int       @default(0)
   bloqueadoHasta   DateTime?

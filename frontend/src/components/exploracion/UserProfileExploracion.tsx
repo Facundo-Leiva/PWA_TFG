@@ -29,26 +29,27 @@ export default function UserProfileExploracion({ onBack, userId }: Props) {
     const [loading, setLoading] = useState(true);
 
     // Buscar perfil de usuario según ID
-    useEffect(() => { fetchUserProfile(); }, [userId]);
-
-    // Llamar la función para buscar el perfil del usuario (explorador)
-    async function fetchUserProfile() {
-        try {
-            const res = await fetch(`${API_URL}/usuarios/${userId}/perfilExp`, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token") || ""}`
-                },
-            });
-            if (!res.ok) throw new Error("Error al obtener perfil.");
-            const data: User = await res.json();
-            setUser(data);
-        } catch (err) {
-            console.error("❌ Error cargando perfil:", err);
-            alert("No se pudo cargar el perfil del usuario.");
-        } finally {
-            setLoading(false);
+    useEffect(() => {
+        async function fetchUserProfile() {
+            try {
+                const res = await fetch(`${API_URL}/usuarios/${userId}/perfilExp`, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token") || ""}`
+                    },
+                });
+                if (!res.ok) throw new Error("Error al obtener perfil.");
+                const data: User = await res.json();
+                setUser(data);
+            } catch (err) {
+                console.error("❌ Error cargando perfil:", err);
+                alert("No se pudo cargar el perfil del usuario.");
+            } finally {
+                setLoading(false);
+            }
         }
-    }
+
+        fetchUserProfile();
+    }, [userId]);
 
     if (loading) return <p>Cargando perfil...</p>;
     if (!user) return <p>No se pudo cargar el perfil.</p>;

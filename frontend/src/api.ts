@@ -36,6 +36,31 @@ export interface RegisterPayload {
     ubicacion: UbicacionData;
 }
 
+export interface AuthUser {
+    id: number;
+    nombre: string;
+    apellido: string;
+    email: string;
+    fechaAlta: string;
+}
+
+interface LoginResponse {
+    token: string;
+    usuario: AuthUser;
+}
+
+interface ApiErrorResponse {
+    message?: string | string[];
+}
+
+export function getApiErrorMessage(error: unknown, fallback: string): string {
+    if (!axios.isAxiosError<ApiErrorResponse>(error)) return fallback;
+
+    const message = error.response?.data?.message;
+    if (Array.isArray(message)) return message.join(" ");
+    return message || fallback;
+}
+
 // Funciones (Registro e Inicio de Sesión)
 
 // Registrar usuario
@@ -46,7 +71,7 @@ export async function registrarUsuario(data: RegisterPayload) {
 
 // Iniciar sesión
 export async function iniciarSesion(email: string, password: string) {
-    const res = await api.post("/auth/login", { email, password });
+    const res = await api.post<LoginResponse>("/auth/login", { email, password });
     const { token, usuario } = res.data;
     return { token, usuario };
 }

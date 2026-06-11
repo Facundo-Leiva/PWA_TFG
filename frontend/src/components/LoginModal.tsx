@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { iniciarSesion } from "../api";
+import { getApiErrorMessage, iniciarSesion } from "../api";
+import type { AuthUser } from "../api";
 
 interface Props {
   onClose: () => void;
-  onSubmit: (usuario: any) => void;
+  onSubmit: (usuario: AuthUser) => void;
 }
 
 // Componente para el Inicio de Sesión del Usuario
@@ -21,8 +22,8 @@ export default function LoginModal({ onClose, onSubmit }: Props) {
       alert("✅ Sesión iniciada correctamente.");
       onClose();
       onSubmit(respuesta.usuario);                           
-    } catch (err: any) {
-      setError(err.response?.data?.message || "❌ Error al iniciar sesión.");
+    } catch (err: unknown) {
+      setError(getApiErrorMessage(err, "❌ Error al iniciar sesión."));
     }
   };
 

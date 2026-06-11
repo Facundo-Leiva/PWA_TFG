@@ -1,6 +1,7 @@
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import { CreateReporteDto } from "./dto/create.reporte.dto";
+import { UpdateReporteDto } from "./dto/update.reporte.dto";
 import { ConfigService } from "@nestjs/config";
 
 const USUARIO_REPORTE_SELECT = {
@@ -62,8 +63,27 @@ export class ReportService {
     }
 
     // Función: actualizar un reporte
-    async update(id: number, data: any) {
-        // Actualizar el reporte con los datos que vienen desde el frontend mediante el data tranfer objet
+    async update(
+        id: number,
+        usuarioId: number,
+        data: UpdateReporteDto & { file?: Express.Multer.File },
+    ) {
+        const reporteExistente = await this.prisma.reporte.findUnique({
+            where: { id },
+            select: { id_usuario: true },
+        });
+
+        if (!reporteExistente) {
+            throw new NotFoundException("Reporte no encontrado.");
+        }
+
+        if (reporteExistente.id_usuario !== usuarioId) {
+            throw new ForbiddenException(
+                "No tienes permiso para modificar este reporte.",
+            );
+        }
+
+        // Actualizar el reporte con los datos que vienen desde el frontend mediante el data transfer object.
         return this.prisma.reporte.update({
             where: { id },
             data: {
@@ -134,7 +154,13 @@ export class ReportService {
     }
 
     // Función: filtrar reportes en el mapa geográfico
-    async bucarReportesFiltrados(filtros: any) {
+    async bucarReportesFiltrados(filtros: {
+        tipo?: string;
+        estado?: string;
+        fechaInicio?: string;
+        fechaFin?: string;
+        ubicacion?: string;
+    }) {
         const { tipo, estado, fechaInicio, fechaFin, ubicacion } = filtros;
 
         return this.prisma.reporte.findMany({
@@ -256,7 +282,7 @@ export class ReportService {
         tipo?: string,
     ) {
         if (!contenido?.trim() && !soporteGraficoUrl) {
-            throw new Error("El comentario debe tener texto o imagen.");
+            throw new BadRequestException("El comentario debe tener texto o imagen.");
         }
 
         // Agregar soporte gráfico al comentario

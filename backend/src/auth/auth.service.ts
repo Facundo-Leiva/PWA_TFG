@@ -72,7 +72,9 @@ export class AuthService {
                 documento: data.documento,
                 email: data.email,
                 password: hashedPassword,
-                direccion: data.direccion,
+                // El formulario conserva un campo separado, pero la dirección
+                // seleccionada realmente se encuentra dentro de la ubicación.
+                direccion: data.direccion.trim() || data.ubicacion.direccion,
                 id_ubicacion: ubicacion.id,
             },
             select: {

@@ -116,7 +116,7 @@ export default function GeographicMap() {
                     fechaInicio: filtros.fechaInicio,
                     fechaFin: filtros.fechaFin,
                     ubicacion: ubicacion ? ubicacion.direccion : ""
-                }).filter(([_, v]) => v !== "")
+                }).filter(([, value]) => value !== "")
             ).toString();
 
             const res = await fetch(`${API_URL}/reportes/reportesFiltradosMapa?${queryParams}`, {

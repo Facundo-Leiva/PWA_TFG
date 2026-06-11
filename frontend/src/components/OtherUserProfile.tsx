@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { formatDateToLocal } from "../utils/date";
 import { API_URL } from "../api";
 
@@ -31,11 +31,8 @@ export default function OtherUserProfile({ onBack, userId }: Props) {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
 
-    // Obtener datos del usuario al cargar
-    useEffect(() => { fetchUserProfile(); }, [userId]);
-
     // Llamar la función para obtener los datos del perfil del usuario
-    async function fetchUserProfile() {
+    const fetchUserProfile = useCallback(async () => {
         try {
             const res = await fetch(`${API_URL}/usuarios/${userId}/perfil`, {
                 headers: { 
@@ -51,7 +48,10 @@ export default function OtherUserProfile({ onBack, userId }: Props) {
         } finally {
             setLoading(false);
         }
-    }
+    }, [userId]);
+
+    // Obtener datos del usuario al cargar
+    useEffect(() => { fetchUserProfile(); }, [fetchUserProfile]);
 
     if (loading) return <p>Cargando perfil...</p>;
     if (!user) return <p>No se pudo cargar el perfil.</p>;
@@ -142,7 +142,7 @@ export default function OtherUserProfile({ onBack, userId }: Props) {
 
                                             alert("✅ Usuario calificado correctamente.");
                                             fetchUserProfile();
-                                        } catch (err) {
+                                        } catch {
                                             alert("❌ Error inesperado al calificar usuario.");
                                         }
                                     }}

@@ -27,6 +27,14 @@ export interface FollowedReport {
     category: string | number; 
 }
 
+interface ReportEditForm {
+    titulo: string;
+    descripcion: string;
+    estado: Report["status"];
+    soporteGraficoId: number;
+    soporteGrafico: File | null;
+}
+
 interface Denuncia {
     motivo: string;
     detalle: string;
@@ -55,7 +63,13 @@ export default function UserProfile({ onBack }: Props) {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
     const [editingReport, setEditingReport] = useState<Report | null>(null);
-    const [formData, setFormData] = useState<any>({});
+    const [formData, setFormData] = useState<ReportEditForm>({
+        titulo: "",
+        descripcion: "",
+        estado: "pendiente",
+        soporteGraficoId: 0,
+        soporteGrafico: null,
+    });
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
     // Buscar datos del usuario al cargar
@@ -109,7 +123,7 @@ export default function UserProfile({ onBack }: Props) {
     const isAvatarUrl = user.avatar.startsWith("http");
 
     // Llamar la función para actualizar los datos de un reporte
-    async function handleUpdateReport(id: number, data: any) {
+    async function handleUpdateReport(id: number, data: ReportEditForm) {
 
         if (!data.titulo?.trim() || !data.descripcion?.trim()) {
             alert("Título y Descripción son obligatorios.");
@@ -251,7 +265,7 @@ export default function UserProfile({ onBack }: Props) {
                                                 setFormData({
                                                     titulo: report.title,
                                                     descripcion: report.description,
-                                                    estado: report.status.toLowerCase(),
+                                                    estado: report.status,
                                                     soporteGraficoId: report.soporteGraficoId,
                                                     soporteGrafico: null,
                                                 });
@@ -409,7 +423,10 @@ export default function UserProfile({ onBack }: Props) {
                                 <label className="block text-sm font-medium text-gray-900 mb-1">Estado</label>
                                 <select
                                     value={formData.estado}
-                                    onChange={(e) => setFormData({ ...formData, estado: e.target.value })}
+                                    onChange={(e) => setFormData({
+                                        ...formData,
+                                        estado: e.target.value as Report["status"],
+                                    })}
                                     className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
                                 >
                                     <option value="pendiente">Pendiente</option>

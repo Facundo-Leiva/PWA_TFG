@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { registrarUsuario } from "../api";
+import { getApiErrorMessage, registrarUsuario } from "../api";
 import LocationSearch from "./LocationSearch";
 
 interface Props {
@@ -100,8 +100,8 @@ export default function RegisterModal({ onClose }: Props) {
             setError("");
 
             onClose();
-        } catch (err: any) {
-            setError(err.response?.data?.message || "Error al registrar usuario, verifique los datos.");
+        } catch (err: unknown) {
+            setError(getApiErrorMessage(err, "Error al registrar usuario, verifique los datos."));
         }
     };
 

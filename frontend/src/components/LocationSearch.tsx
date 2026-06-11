@@ -8,6 +8,19 @@ interface UbicacionData {
     barrio: string;
 }
 
+interface LocationIqPlace {
+    place_id: string | number;
+    lat: string;
+    lon: string;
+    display_name: string;
+    address?: {
+        city?: string;
+        town?: string;
+        suburb?: string;
+        neighbourhood?: string;
+    };
+}
+
 // Key para la búsqueda en Location IQ.
 const API_KEY = import.meta.env.VITE_LOCATION_KEY;
 
@@ -24,7 +37,7 @@ export default function LocationSearch({
     onChange: (val: string) => void;
     onSelect: (data: UbicacionData) => void;
 }) {
-    const [results, setResults] = useState<any[]>([]);
+    const [results, setResults] = useState<LocationIqPlace[]>([]);
 
     // Busqueda con debounce
     useEffect(() => {
@@ -49,7 +62,7 @@ export default function LocationSearch({
                 setResults([]);
                 return;
             }
-            const data = await res.json();
+            const data: LocationIqPlace[] = await res.json();
             setResults(data);
         } catch (err) {
             console.error("Error al buscar dirección:", err);
@@ -58,7 +71,7 @@ export default function LocationSearch({
     };
 
     // Transformar el objeto LocationIQ en el tipo UbicacionData
-    const handleSelect = (place: any) => {
+    const handleSelect = (place: LocationIqPlace) => {
         const ubicacion = {
             latitud: parseFloat(place.lat),
             longitud: parseFloat(place.lon),

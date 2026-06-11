@@ -30,7 +30,6 @@ export default function ReportDetail({ report, onBack, currentUser, onViewUser }
     const [comments, setComments] = useState<Comment[]>([]);
     const [newComment, setNewComment] = useState("");
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
-    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [motivo, setMotivo] = useState("");
     const [detalle, setDetalle] = useState("");
 
@@ -86,7 +85,6 @@ export default function ReportDetail({ report, onBack, currentUser, onViewUser }
             setComments([...comments, data]);
             setNewComment("");
             setSelectedImage(null);
-            setPreviewUrl(null);
         } catch (err) {
             console.error(err);
             alert("Error de conexión");
