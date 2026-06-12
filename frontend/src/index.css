@@ -1,5 +1,52 @@
-
-/* 
+/*
 Importar el Framework de Tailwind CSS
 */
 @import "tailwindcss";
+
+:root {
+  min-width: 320px;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-width: 320px;
+  min-height: 100%;
+}
+
+html,
+body {
+  margin: 0;
+  overflow-x: hidden;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+img,
+video {
+  max-width: 100%;
+}
+
+.scrollbar-hide {
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.leaflet-popup-content {
+  max-width: min(72vw, 280px);
+  overflow-wrap: anywhere;
+}

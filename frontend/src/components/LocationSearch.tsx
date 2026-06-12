@@ -92,15 +92,15 @@ export default function LocationSearch({
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
                 placeholder="Dirección"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="w-full min-h-11 px-4 py-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-blue-500"
             />
             {results.length > 0 && (
-                <ul className="absolute z-10 bg-white border border-gray-300 rounded-md mt-1 w-full max-h-60 overflow-y-auto">
+                <ul className="absolute left-0 right-0 z-20 mt-1 w-full max-h-56 overflow-y-auto rounded-md border border-gray-300 bg-white shadow-lg">
                     {results.map((place) => (
                         <li
                             key={`${place.place_id}-${place.lat}-${place.lon}`}
                             onClick={() => handleSelect(place)}
-                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                            className="px-4 py-3 text-sm break-words hover:bg-gray-100 cursor-pointer"
                         >
                             {place.display_name}
                         </li>

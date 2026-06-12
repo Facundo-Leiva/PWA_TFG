@@ -78,23 +78,23 @@ export default function CreateReport({ onBack, onSubmit }: Props) {
 
     // Retornar el componente HTML
     return (
-        <div className="min-h-screen bg-linear-to-br from-blue-300 via-white to-green-300 flex items-center justify-center px-4 py-8">
-            <div className="w-full max-w-2xl bg-white rounded-xl shadow-xl p-8">
+        <div className="min-h-[100dvh] bg-linear-to-br from-blue-300 via-white to-green-300 flex items-start sm:items-center justify-center px-3 py-4 sm:px-4 sm:py-8">
+            <div className="w-full max-w-2xl overflow-hidden bg-white rounded-xl shadow-xl p-0 sm:p-6 md:p-8">
                 <header className="bg-white shadow-sm border-b border-gray-200">
-                    <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
-                        <button onClick={onBack} className="text-gray-600 hover:text-gray-800">
+                    <div className="max-w-2xl mx-auto px-3 sm:px-4 py-4 flex items-center justify-between gap-3">
+                        <button onClick={onBack} className="-m-2 min-h-11 min-w-11 p-2 rounded-full text-gray-600 hover:bg-gray-100 hover:text-gray-800">
                             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                             </svg>
                         </button>
-                        <h1 className="text-xl font-semibold text-gray-800">Crear Reporte</h1>
+                        <h1 className="text-lg sm:text-xl font-semibold text-gray-800 text-center">Crear Reporte</h1>
                         <div className="w-6" />
                     </div>
                 </header>
 
                 {/* Datos asociados al reporte */}
-                <div className="max-w-2xl mx-auto px-4 py-6">
-                    <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-sm p-6 space-y-6">
+                <div className="max-w-2xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
+                    <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-none sm:shadow-sm p-0 sm:p-6 space-y-5 sm:space-y-6">
 
                         {/* Título del reporte */}
                         <div>
@@ -103,7 +103,7 @@ export default function CreateReport({ onBack, onSubmit }: Props) {
                                 type="text"
                                 value={title}
                                 onChange={(e) => setTitle(e.target.value)}
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                className="w-full min-h-11 px-4 py-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-blue-500"
                                 placeholder="Ej: Bache en Av. Principal"
                                 required
                             />
@@ -115,7 +115,7 @@ export default function CreateReport({ onBack, onSubmit }: Props) {
                             <select
                                 value={category}
                                 onChange={(e) => setCategory(e.target.value)}
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                className="w-full min-h-11 px-4 py-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-blue-500"
                                 required
                             >
                                 <option value="">Selecciona una Categoría</option>
@@ -134,7 +134,7 @@ export default function CreateReport({ onBack, onSubmit }: Props) {
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
                                 rows={4}
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                className="w-full min-h-11 px-4 py-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-blue-500"
                                 placeholder="Describe el problema con detalle..."
                                 required
                             />
@@ -151,7 +151,7 @@ export default function CreateReport({ onBack, onSubmit }: Props) {
                                 onSelect={setUbicacion}
                             />
                             {ubicacion && (
-                                <p className="mt-2 text-sm font-semibold text-blue-800">
+                                <p className="mt-2 text-sm font-semibold text-blue-800 break-words">
                                     Dirección seleccionada: {ubicacion.direccion} ({ubicacion.barrio}, {ubicacion.ciudad})
                                 </p>
                             )}
@@ -160,11 +160,11 @@ export default function CreateReport({ onBack, onSubmit }: Props) {
                         {/* Soporte gráfico del reporte */}
                         <div>
                             <label className="block text-sm font-medium text-gray-800 mb-2">Foto o Video</label>
-                            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                            <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 sm:p-6 text-center">
                                 <svg className="w-12 h-12 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                 </svg>
-                                <p className="text-gray-600 mb-2">Arrastra una imagen aquí o haz clic para seleccionar</p>
+                                <p className="text-sm sm:text-base text-gray-600 mb-2">Arrastra una imagen aquí o haz clic para seleccionar</p>
                                 <input
                                     type="file"
                                     accept="image/*,video/*"
@@ -192,7 +192,7 @@ export default function CreateReport({ onBack, onSubmit }: Props) {
                                         <img
                                             src={previewUrl}
                                             alt="Vista previa"
-                                            className="max-w-full h-auto rounded-lg shadow-md"
+                                            className="max-h-96 w-full object-contain rounded-lg shadow-md"
                                         />
                                     </div>
                                 )}
@@ -202,7 +202,7 @@ export default function CreateReport({ onBack, onSubmit }: Props) {
                         {/* Botón para crear el reporte */}
                         <button
                             type="submit"
-                            className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                            className="w-full min-h-12 bg-blue-600 text-white py-3 px-5 sm:px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
                         >
                             📤 Publicar Reporte
                         </button>

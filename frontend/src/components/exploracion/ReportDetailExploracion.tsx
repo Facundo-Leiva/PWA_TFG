@@ -46,49 +46,49 @@ export default function ReportDetailExploracion({ report, onBack, onViewUser }: 
 
     // Retorna el componente HTML
     return (
-        <div className="min-h-screen bg-linear-to-br from-blue-300 via-white to-green-300 flex items-center justify-center px-4 py-8">
-            <div className="w-full max-w-2xl bg-white rounded-xl shadow-xl p-8">
+        <div className="min-h-[100dvh] bg-linear-to-br from-blue-300 via-white to-green-300 flex items-start sm:items-center justify-center px-3 py-4 sm:px-4 sm:py-8">
+            <div className="w-full max-w-2xl overflow-hidden bg-white rounded-xl shadow-xl p-0 sm:p-6 md:p-8">
                 <header className="bg-white shadow-sm border-b border-gray-200">
-                    <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-                        <button onClick={onBack} className="text-gray-600 hover:text-gray-800">
+                    <div className="max-w-4xl mx-auto px-3 sm:px-4 py-4 flex items-center justify-between gap-3">
+                        <button onClick={onBack} className="-m-2 min-h-11 min-w-11 p-2 rounded-full text-gray-600 hover:bg-gray-100 hover:text-gray-800">
                             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                             </svg>
                         </button>
-                        <h1 className="text-xl font-semibold text-gray-800">Detalle del Reporte</h1>
+                        <h1 className="text-lg sm:text-xl font-semibold text-gray-800 text-center">Detalle del Reporte</h1>
                         <div className="w-6" />
                     </div>
                 </header>
 
-                <div className="max-w-4xl mx-auto px-4 py-6">
+                <div className="max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
                     <div className="bg-white rounded-lg shadow-sm overflow-hidden">
                         {/* Cargar imagen del reporte */}
                         {report.image ? (
                             <img
                                 src={report.image}
                                 alt={report.title}
-                                className="h-72 w-full object-contain"
+                                className="h-52 sm:h-72 w-full bg-gray-50 object-contain"
                             />
                         ) : (
-                            <div className="h-48 bg-linear-to-br from-gray-200 to-gray-300 flex items-center justify-center">
+                            <div className="h-44 sm:h-48 bg-linear-to-br from-gray-200 to-gray-300 flex items-center justify-center">
                                 <svg className="w-12 h-12 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                 </svg>
                             </div>
                         )}
-                        <div className="p-6 space-y-4">
+                        <div className="p-4 sm:p-6 space-y-4">
                             
                              {/* Datos asociados al reporte */}
-                            <div className="flex items-center justify-between">
-                                <span className={`px-3 py-1 rounded-full text-sm font-medium ${getCategoryStyle(report.category)}`}>
+                            <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
+                                <span className={`max-w-full px-3 py-1 rounded-full text-xs sm:text-sm font-medium whitespace-normal break-words ${getCategoryStyle(report.category)}`}>
                                     {getCategoryIcon(report.category)} {getCategoryName(report.category)}
                                 </span>
                             </div>
 
-                            <h2 className="text-2xl font-bold text-gray-800">{report.title}</h2>
-                            <p className="text-gray-600">{report.description}</p>
+                            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 break-words">{report.title}</h2>
+                            <p className="text-gray-600 break-words">{report.description}</p>
 
-                            <div className="text-sm text-gray-500 space-y-1">
+                            <div className="text-sm text-gray-500 space-y-2 break-words">
                                 <p>📍 <strong>Ubicación:</strong> {report.location}</p>
                                 <p>🕒 <strong>Fecha:</strong> {formatDateToLocal(report.date)}</p>
                                 <p>
@@ -103,7 +103,7 @@ export default function ReportDetailExploracion({ report, onBack, onViewUser }: 
                             </div>
 
                             {/* Sección de likes, comentarios y estado del reporte */}
-                            <div className="flex items-center space-x-6 pt-4 border-t border-gray-200 text-sm text-gray-600">
+                            <div className="flex flex-col items-start gap-3 pt-4 border-t border-gray-200 text-sm text-gray-600 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-6">
                                 <span>👍 {report.likes} Me gusta</span>
                                 <span>💬 {report.comments} Comentarios</span>
                                 <span>🛠️ Estado: {report.estado}</span>
@@ -131,7 +131,7 @@ export default function ReportDetailExploracion({ report, onBack, onViewUser }: 
                                                 <img
                                                     src={buildApiUrl(c.soporteGrafico.archivo)}
                                                     alt="Soporte gráfico"
-                                                    className="max-w-xs rounded border border-gray-300"
+                                                    className="w-full max-w-sm rounded border border-gray-300 object-contain"
                                                 />
                                                 </div>
                                             )}

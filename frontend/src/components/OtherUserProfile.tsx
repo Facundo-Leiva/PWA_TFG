@@ -60,36 +60,36 @@ export default function OtherUserProfile({ onBack, userId }: Props) {
 
     // Retornar el componente del perfil del usuario
     return (
-        <div className="min-h-screen bg-linear-to-br from-blue-300 via-white to-green-300 flex items-center justify-center px-4 py-8">
-            <div className="w-full max-w-2xl bg-white rounded-xl shadow-xl p-8">
+        <div className="min-h-[100dvh] bg-linear-to-br from-blue-300 via-white to-green-300 flex items-start sm:items-center justify-center px-3 py-4 sm:px-4 sm:py-8">
+            <div className="w-full max-w-2xl overflow-hidden bg-white rounded-xl shadow-xl p-0 sm:p-6 md:p-8">
                 <header className="bg-white shadow-sm border-b border-gray-200">
-                    <div onClick={onBack} className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-                        <button className="text-gray-600 hover:text-gray-800">
+                    <div className="max-w-4xl mx-auto px-3 sm:px-4 py-4 flex items-center justify-between gap-3">
+                        <button onClick={onBack} className="-m-2 min-h-11 min-w-11 p-2 rounded-full text-gray-600 hover:bg-gray-100 hover:text-gray-800">
                             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                             </svg>
                         </button>
-                        <h1 className="text-xl font-semibold text-gray-800">Perfil de Usuario</h1>
+                        <h1 className="text-lg sm:text-xl font-semibold text-gray-800 text-center">Perfil de Usuario</h1>
                         <div className="w-6" />
                     </div>
                 </header>
 
                 {/* Datos del usuario */}
-                <div className="max-w-4xl mx-auto px-4 py-6">
-                    <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-                        <div className="flex items-center space-x-6 mb-6">
+                <div className="max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
+                    <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6 mb-6">
+                        <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:gap-6 sm:text-left mb-6">
                             {isAvatarUrl ? (
-                                <img src={user.avatar} alt="Avatar" className="w-20 h-20 rounded-full object-cover" />
+                                <img src={user.avatar} alt="Avatar" className="w-20 h-20 shrink-0 rounded-full object-cover" />
                             ) : (
-                                <div className="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center text-white text-2xl font-bold">
+                                <div className="w-20 h-20 shrink-0 bg-blue-600 rounded-full flex items-center justify-center text-white text-2xl font-bold">
                                 {user.avatar}
                                 </div>
                             )}
                             <div>
-                                <h2 className="text-2xl font-bold text-gray-800">{user.name}</h2>
+                                <h2 className="text-xl sm:text-2xl font-bold text-gray-800 break-words">{user.name}</h2>
                                 <p className="text-gray-600">Miembro desde {formatDateToLocal(user.joined)}</p>
-                                <div className="flex items-center mt-2">
-                                    <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                                <div className="flex items-center justify-center sm:justify-start mt-2">
+                                    <span className="inline-flex max-w-full bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium text-center">
                                         ⭐ Colaborador Activo
                                     </span>
                                 </div>
@@ -97,7 +97,7 @@ export default function OtherUserProfile({ onBack, userId }: Props) {
                         </div>
                         
                         {/* Estadísticas */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6 mb-6">
                             <div className="text-center p-4 bg-blue-50 rounded-lg">
                                 <div className="text-2xl font-bold text-blue-600">{user.stats.created}</div>
                                 <div className="text-gray-700">Reportes Creados</div>
@@ -116,10 +116,10 @@ export default function OtherUserProfile({ onBack, userId }: Props) {
 
                         {/* Calificación del usuario */}
                         <div className="mt-6 flex items-center justify-center">
-                            <div className="bg-purple-50 border border-purple-300 rounded-lg px-4 py-3 shadow-sm flex items-center space-x-3">
-                                <span className="font-semibold text-purple-700 text-lg">Calificar usuario:</span>
+                            <div className="w-full sm:w-auto bg-purple-50 border border-purple-300 rounded-lg px-4 py-3 shadow-sm flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
+                                <span className="font-semibold text-purple-700 text-base sm:text-lg text-center sm:text-left">Calificar usuario:</span>
                                 <select
-                                    className="bg-white border border-purple-400 rounded-md px-3 py-1 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                                    className="w-full sm:w-auto min-h-11 bg-white border border-purple-400 rounded-md px-3 py-2 text-base sm:text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-purple-400"
                                     onChange={async (e) => {
                                         const nota = parseInt(e.target.value);
                                         if (!nota) return;
@@ -164,7 +164,7 @@ export default function OtherUserProfile({ onBack, userId }: Props) {
                         <hr className="my-8 border-t border-gray-300" />
 
                         {/* Reportes recientes */}
-                        <div className="bg-white rounded-lg shadow-sm p-6">
+                        <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
                             <h3 className="text-lg font-semibold text-gray-800 mb-4">Reportes Recientes</h3>
                             <div className="space-y-4">
                                 {user.reports.map((report, index) => {
@@ -173,12 +173,12 @@ export default function OtherUserProfile({ onBack, userId }: Props) {
                                     return (
                                         <div
                                             key={index}
-                                            className="flex items-center justify-between gap-4 p-4 border border-gray-200 rounded-lg"
+                                            className="flex flex-col items-stretch gap-3 p-4 border border-gray-200 rounded-lg sm:flex-row sm:items-center sm:justify-between"
                                         >
                                             {/* Columna izquierda: título + fecha */}
                                             <div className="flex-1 min-w-0">
                                                 <h4 className="font-medium text-gray-800 truncate">{report.title}</h4>
-                                                <p className="text-sm text-gray-600 whitespace-nowrap overflow-hidden text-ellipsis">
+                                                <p className="text-sm text-gray-600 break-words">
                                                     {getCategoryIcon(report.category)} • {formatDateToLocal(report.date)}
                                                 </p>
                                             </div>

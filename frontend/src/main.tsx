@@ -1,22 +1,31 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import { registerSW } from 'virtual:pwa-register';
 import App from './App.tsx';
 import './index.css';
-import { registerSW } from 'virtual:pwa-register';
 
-// Registrar el Service Worker de la PWA
-registerSW({
+const updateSW = registerSW({
   onNeedRefresh() {
-    console.log('🔄 Hay una nueva versión disponible.');
+    const shouldUpdate = window.confirm(
+      'Hay una nueva versión de Ciudad Colaborativa disponible. ¿Querés actualizarla ahora?',
+    );
+
+    if (shouldUpdate) {
+      void updateSW(true);
+    }
   },
   onOfflineReady() {
-    console.log('✅ App lista para usar sin conexión.');
+    console.info(
+      'La interfaz básica quedó almacenada. Las funciones que consultan o envían datos requieren conexión con el servidor.',
+    );
+  },
+  onRegisterError(error) {
+    console.error('No se pudo registrar el service worker:', error);
   },
 });
 
-// Punto de entrada de la aplicación REACT (componente Raíz)
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App /> 
-  </StrictMode>
+    <App />
+  </StrictMode>,
 );

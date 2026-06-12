@@ -107,9 +107,9 @@ export default function RegisterModal({ onClose }: Props) {
 
     // Retornar el componente para el registro del usuario
     return (
-        <div className="min-h-screen bg-linear-to-br from-blue-600 via-blue-700 to-green-600 flex items-center justify-center p-4">        
-            <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6 animate-fade-in">
-                <h2 className="text-2xl font-bold mb-4 text-center text-blue-700">Crear cuenta</h2>
+        <div className="min-h-[100dvh] bg-linear-to-br from-blue-600 via-blue-700 to-green-600 flex items-start sm:items-center justify-center px-3 py-6 sm:p-4">        
+            <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-4 sm:p-6 animate-fade-in">
+                <h2 className="text-xl sm:text-2xl font-bold mb-4 text-center text-blue-700">Crear cuenta</h2>
 
                 {/* Ingreso de datos del usuario */}
                 <form onSubmit={handleSubmit} className="space-y-4">
@@ -118,7 +118,7 @@ export default function RegisterModal({ onClose }: Props) {
                         placeholder="Nombre"
                         value={nombre}
                         onChange={(e) => setNombre(e.target.value)}
-                        className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full min-h-11 border border-gray-300 rounded px-4 py-2 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
                         required
                     />
                     <input
@@ -126,7 +126,7 @@ export default function RegisterModal({ onClose }: Props) {
                         placeholder="Apellido"
                         value={apellido}
                         onChange={(e) => setApellido(e.target.value)}
-                        className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full min-h-11 border border-gray-300 rounded px-4 py-2 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
                         required
                     />
                     <input
@@ -134,7 +134,7 @@ export default function RegisterModal({ onClose }: Props) {
                         placeholder="Número de Documento"
                         value={documento}
                         onChange={(e) => setDocumento(e.target.value)}
-                        className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full min-h-11 border border-gray-300 rounded px-4 py-2 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
                         required
                     />
                     <div>
@@ -147,7 +147,7 @@ export default function RegisterModal({ onClose }: Props) {
                             onSelect={setUbicacion}
                         />
                         {ubicacion && (
-                            <p className="mt-2 text-sm font-semibold text-blue-800">
+                            <p className="mt-2 text-sm font-semibold text-blue-800 break-words">
                                 Dirección seleccionada: {ubicacion.direccion} ({ubicacion.barrio}, {ubicacion.ciudad})
                             </p>
                         )}
@@ -157,7 +157,7 @@ export default function RegisterModal({ onClose }: Props) {
                         placeholder="Correo Electrónico"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full min-h-11 border border-gray-300 rounded px-4 py-2 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
                         required
                     />
                     <input
@@ -165,10 +165,10 @@ export default function RegisterModal({ onClose }: Props) {
                         placeholder="Contraseña"
                         value={password}
                         onChange={(e) => validarPassword(e.target.value)}
-                        className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full min-h-11 border border-gray-300 rounded px-4 py-2 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
                         required
                     />
-                    <ul className="text-sm mt-2 space-y-1">
+                    <ul className="text-sm mt-2 space-y-1 break-words">
                         <li className={"font-semibold text-gray-800"}>
                             La Contraseña debe cumplir con:
                         </li>
@@ -188,17 +188,17 @@ export default function RegisterModal({ onClose }: Props) {
                             {passwordRules.sinEspacios ? "✅" : "❌"} Sin espacios
                         </li>
                     </ul>
-                    {error && <p className="font-semibold text-red-500 text-sm">{error}</p>}
+                    {error && <p className="font-semibold text-red-500 text-sm break-words">{error}</p>}
                     <button
                         type="submit"
-                        className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition-colors"
+                        className="w-full min-h-11 bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition-colors"
                     >
                         Registrarse
                     </button>
                 </form>
                 <button
                     onClick={onClose}
-                    className="mt-4 text-sm text-blue-500 hover:underline block mx-auto"
+                    className="mt-4 min-h-11 px-4 text-sm text-blue-500 hover:underline block mx-auto"
                 >
                     Cancelar
                 </button>

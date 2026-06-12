@@ -26,38 +26,38 @@ export default function ReportCard({ report, onClick }: Props) {
     // Retornar el componente de carta de reporte con la información del mismo
     return (
         <div
-            className="report-card bg-white rounded-lg shadow-sm overflow-hidden cursor-pointer hover:shadow-md transition"
+            className="report-card min-w-0 bg-white rounded-lg shadow-sm overflow-hidden cursor-pointer hover:shadow-md transition"
             onClick={onClick}
         >
             {report.image ? (
                 <img
                     src={report.image}
                     alt={report.title}
-                    className="h-72 w-full object-contain"
+                    className="h-52 sm:h-64 lg:h-72 w-full bg-gray-50 object-contain"
                 />
             ) : (
-                <div className="h-48 bg-linear-to-br from-gray-200 to-gray-300 flex items-center justify-center">
+                <div className="h-44 sm:h-48 bg-linear-to-br from-gray-200 to-gray-300 flex items-center justify-center">
                     <svg className="w-12 h-12 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
                 </div>
             )}
 
-            <div className="p-6">
-                <div className="flex items-center justify-between mb-3">
-                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${getCategoryStyle(report.category)}`}>
+            <div className="p-4 sm:p-6">
+                <div className="flex min-w-0 items-start justify-between gap-2 mb-3">
+                    <span className={`max-w-full px-3 py-1 rounded-full text-xs sm:text-sm font-medium whitespace-normal break-words ${getCategoryStyle(report.category)}`}>
                         {getCategoryIcon(report.category)} {getCategoryName(report.category)}
                     </span>
                 </div>
 
-                <h3 className="font-semibold text-gray-800 mb-2">{report.title}</h3>
-                <p className="text-gray-600 text-sm mb-3 line-clamp-2">{report.description}</p>
+                <h3 className="font-semibold text-gray-800 mb-2 break-words">{report.title}</h3>
+                <p className="text-gray-600 text-sm mb-3 line-clamp-2 break-words">{report.description}</p>
 
-                <div className="flex items-center justify-between text-sm text-gray-500 mb-3">
-                    <span>📍 {report.location}</span>
+                <div className="flex min-w-0 items-start justify-between text-sm text-gray-500 mb-3">
+                    <span className="min-w-0 break-words">📍 {report.location}</span>
                 </div>
 
-                <div className="flex items-center justify-between text-sm text-gray-500 mb-3">
+                <div className="flex min-w-0 items-start justify-between text-sm text-gray-500 mb-3">
                     <span>Creado: {formatRelative(report.date)}</span>
                 </div>
 
@@ -65,9 +65,9 @@ export default function ReportCard({ report, onClick }: Props) {
                     <span className="text-sm text-gray-600">Estado: {report.estado}</span>
                 </div>
 
-                <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Por: {report.author}</span>
-                    <div className="flex items-center space-x-4 text-sm text-gray-500">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                    <span className="text-sm text-gray-600 break-words">Por: {report.author}</span>
+                    <div className="flex items-center gap-4 text-sm text-gray-500">
                         <span>👍 {report.likes}</span>
                         <span>💬 {report.comments}</span>
                     </div>

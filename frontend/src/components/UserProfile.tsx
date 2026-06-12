@@ -166,38 +166,38 @@ export default function UserProfile({ onBack }: Props) {
 
     // Retornar el componente de perfil del usuario
     return (
-        <div className="min-h-screen bg-linear-to-br from-blue-300 via-white to-green-300 flex items-center justify-center px-4 py-8">
-            <div className="w-full max-w-2xl bg-white rounded-xl shadow-xl p-8">
+        <div className="min-h-[100dvh] bg-linear-to-br from-blue-300 via-white to-green-300 flex items-start sm:items-center justify-center px-3 py-4 sm:px-4 sm:py-8">
+            <div className="w-full max-w-2xl overflow-hidden bg-white rounded-xl shadow-xl p-0 sm:p-6 md:p-8">
                 <header className="bg-white shadow-sm border-b border-gray-200">
-                    <div onClick={onBack} className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-                        <button className="text-gray-600 hover:text-gray-800">
+                    <div className="max-w-4xl mx-auto px-3 sm:px-4 py-4 flex items-center justify-between gap-3">
+                        <button onClick={onBack} className="-m-2 min-h-11 min-w-11 p-2 rounded-full text-gray-600 hover:bg-gray-100 hover:text-gray-800">
                             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                             </svg>
                         </button>
-                        <h1 className="text-xl font-semibold text-gray-800">Mi Perfil</h1>
+                        <h1 className="text-lg sm:text-xl font-semibold text-gray-800 text-center">Mi Perfil</h1>
                         <div className="w-6" />
                     </div>
                 </header>
 
                 {/* Datos del usuario */}
-                <div className="max-w-4xl mx-auto px-4 py-6">
-                    <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-                        <div className="flex items-center space-x-6 mb-6">
+                <div className="max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
+                    <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6 mb-6">
+                        <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:gap-6 sm:text-left mb-6">
                             {isAvatarUrl ? (
-                                <img src={user.avatar} alt="Avatar" className="w-20 h-20 rounded-full object-cover" />
+                                <img src={user.avatar} alt="Avatar" className="w-20 h-20 shrink-0 rounded-full object-cover" />
                             ) : (
-                                <div className="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center text-white text-2xl font-bold">
+                                <div className="w-20 h-20 shrink-0 bg-blue-600 rounded-full flex items-center justify-center text-white text-2xl font-bold">
                                     {user.avatar}
                                 </div>
                             )}
                             <div>
-                                <h2 className="text-2xl font-bold text-gray-800">{user.name}</h2>
+                                <h2 className="text-xl sm:text-2xl font-bold text-gray-800 break-words">{user.name}</h2>
                                 <p className="text-gray-600">
                                     Miembro desde {formatDateToLocal(user.joined)}
                                 </p>
-                                <div className="flex items-center mt-2">
-                                    <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                                <div className="flex items-center justify-center sm:justify-start mt-2">
+                                    <span className="inline-flex max-w-full bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium text-center">
                                         ⭐ Colaborador Activo
                                     </span>
                                 </div>
@@ -205,7 +205,7 @@ export default function UserProfile({ onBack }: Props) {
                         </div>
 
                         {/* Estadísticas */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6 mb-6">
                             <div className="text-center p-4 bg-blue-50 rounded-lg">
                                 <div className="text-2xl font-bold text-blue-600">{user.stats.created}</div>
                                 <div className="text-gray-700">Reportes Creados</div>
@@ -222,13 +222,13 @@ export default function UserProfile({ onBack }: Props) {
                     </div>
 
                     {/* Reportes recientes */}
-                    <div className="bg-white rounded-lg shadow-sm p-6">
+                    <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
                         <h3 className="text-lg font-semibold text-gray-800 mb-4">Mis Reportes Recientes</h3>
                         <div className="space-y-4">
                             {user.reports.map((report, index) => (
                                 <div
                                     key={index}
-                                    className="flex justify-between items-center p-4 border border-gray-200 rounded-lg"
+                                    className="flex flex-col items-stretch gap-3 p-4 border border-gray-200 rounded-lg sm:flex-row sm:items-center sm:justify-between"
                                 >
                                     {/* Columna izquierda: título + fecha */}
                                     <div>
@@ -239,7 +239,7 @@ export default function UserProfile({ onBack }: Props) {
                                     </div>
 
                                     {/* Columna derecha: estado + botón para actualizar */}
-                                    <div className="flex flex-col items-center gap-2">
+                                    <div className="flex flex-col items-stretch gap-2 sm:items-center">
                                         <span
                                             className={`px-3 py-1 rounded-full text-sm font-medium ${
                                                 report.status === "resuelto"
@@ -271,7 +271,7 @@ export default function UserProfile({ onBack }: Props) {
                                                 });
                                                 setPreviewUrl(report.soporteGrafico || null);
                                             }}
-                                            className="px-2 py-1 font-semibold bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600 transition"
+                                            className="w-full sm:w-auto min-h-10 px-3 py-2 font-semibold bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600 transition"
                                         >
                                             Editar Reporte
                                         </button>
@@ -282,7 +282,7 @@ export default function UserProfile({ onBack }: Props) {
                     </div>
 
                     {/* Reportes seguidos */}
-                    <div className="bg-white rounded-lg shadow-sm p-6 mt-6">
+                    <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6 mt-6">
                         <h3 className="text-lg font-semibold text-gray-800 mb-4">Reportes Seguidos</h3>
                         <div className="space-y-4">
                             {user?.seguidos?.length === 0 && (
@@ -295,14 +295,14 @@ export default function UserProfile({ onBack }: Props) {
                                 return (
                                     <div
                                         key={index}
-                                        className="flex items-start justify-between gap-4 p-4 border border-gray-200 rounded-lg"
+                                        className="flex flex-col items-stretch gap-3 p-4 border border-gray-200 rounded-lg sm:flex-row sm:items-start sm:justify-between"
                                     >
                                         {/* Columna izquierda: título + descripción + categoría + fecha */}
                                         <div className="flex-1 min-w-0">
                                             <h4 className="font-medium text-gray-800 truncate">{report.title}</h4>
                                             <p className="text-sm text-gray-700 mt-1">{report.description}</p>
                                             <br />
-                                            <p className={`px-3 py-1 rounded-full text-sm font-medium ${getCategoryStyle(report.category)}`}>
+                                            <p className={`inline-flex max-w-full px-3 py-1 rounded-full text-sm font-medium whitespace-normal break-words ${getCategoryStyle(report.category)}`}>
                                                 {getCategoryName(report.category)} • {formatDateToLocal(report.createdAt)}
                                             </p>
                                         </div>
@@ -336,14 +336,14 @@ export default function UserProfile({ onBack }: Props) {
                     </div>
 
                     {/* Denuncias realizadas */}
-                    <div className="bg-white rounded-lg shadow-sm p-6 mt-6">
+                    <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6 mt-6">
                         <h3 className="text-lg font-semibold text-gray-800 mb-4">Mis Denuncias Realizadas</h3>
                         {Array.isArray(user.denunciasRealizadas) && user.denunciasRealizadas.length === 0 ? (
                             <p className="text-gray-600">No has realizado ninguna denuncia.</p>
                         ) : (
                             <div className="space-y-4">
                                 {user.denunciasRealizadas?.map((denuncia, index) => (
-                                    <div key={index} className="p-4 border border-gray-200 rounded-lg bg-red-50">
+                                    <div key={index} className="p-4 border border-gray-200 rounded-lg bg-red-50 break-words">
                                         <h4 className="font-medium text-red-700">{denuncia.motivo}</h4>
                                         <p className="text-sm text-gray-700">
                                             Reporte: {denuncia.reporte} | Fecha: {formatDateToLocal(denuncia.fecha)} |
@@ -356,14 +356,14 @@ export default function UserProfile({ onBack }: Props) {
                     </div>
 
                     {/* Denuncias recibidas */}
-                    <div className="bg-white rounded-lg shadow-sm p-6 mt-6">
+                    <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6 mt-6">
                         <h3 className="text-lg font-semibold text-gray-800 mb-4">Denuncias Contra Mí</h3>
                         {Array.isArray(user.denunciasRecibidas) && user.denunciasRecibidas.length === 0 ? (
                             <p className="text-gray-600">No tienes denuncias en tu contra.</p>
                         ) : (
                             <div className="space-y-4">
                                 {user.denunciasRecibidas?.map((denuncia, index) => (
-                                    <div key={index} className="p-4 border border-gray-200 rounded-lg bg-yellow-50">
+                                    <div key={index} className="p-4 border border-gray-200 rounded-lg bg-yellow-50 break-words">
                                         <h4 className="font-medium text-yellow-700">{denuncia.motivo}</h4>
                                         <p className="text-sm text-gray-700">
                                             Realizada por: {denuncia.autor} | Fecha: {formatDateToLocal(denuncia.fecha)} |
@@ -379,9 +379,9 @@ export default function UserProfile({ onBack }: Props) {
 
             {/* Formulario para editar reporte */}
             {editingReport && (
-                <div className="fixed inset-0 z-50 overflow-auto bg-linear-to-br from-blue-300 via-white to-green-300 px-4 py-8">
-                    <div className="mx-auto w-full max-w-3xl bg-white rounded-xl shadow-2xl p-6 border border-gray-200">
-                    <h3 className="text-xl font-semibold text-gray-800 mb-6 text-center">Editar Reporte</h3>
+                <div className="fixed inset-0 z-50 overflow-auto bg-linear-to-br from-blue-300 via-white to-green-300 px-3 py-4 sm:px-4 sm:py-8">
+                    <div className="mx-auto w-full max-w-3xl bg-white rounded-xl shadow-2xl p-4 sm:p-6 border border-gray-200">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-6 text-center">Editar Reporte</h3>
 
                     <hr className="my-6 border-t border-gray-300" />
 
@@ -402,7 +402,7 @@ export default function UserProfile({ onBack }: Props) {
                                     value={formData.titulo}
                                     onChange={(e) => setFormData({ ...formData, titulo: e.target.value })}
                                     required
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                    className="w-full min-h-11 px-4 py-2 text-base border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
                                 />
                             </div>
 
@@ -414,7 +414,7 @@ export default function UserProfile({ onBack }: Props) {
                                     onChange={(e) => setFormData({ ...formData, descripcion: e.target.value })}
                                     required
                                     rows={4}
-                                    className="w-full px-6 py-6 border border-gray-300 rounded-lg shadow-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                    className="w-full px-4 py-3 text-base border border-gray-300 rounded-lg shadow-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-400"
                                 />
                             </div>
 
@@ -427,7 +427,7 @@ export default function UserProfile({ onBack }: Props) {
                                         ...formData,
                                         estado: e.target.value as Report["status"],
                                     })}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                    className="w-full min-h-11 px-4 py-2 text-base border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
                                 >
                                     <option value="pendiente">Pendiente</option>
                                     <option value="en revisión">En revisión</option>
@@ -439,7 +439,7 @@ export default function UserProfile({ onBack }: Props) {
                         {/* Columna derecha: imagen */}
                         <div className="space-y-4">
                             <label className="block text-sm font-medium text-gray-900 mb-2">Foto o Video</label>
-                            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center bg-white shadow-sm">
+                            <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 sm:p-6 text-center bg-white shadow-sm">
                                 <svg className="w-12 h-12 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                 </svg>
@@ -465,7 +465,7 @@ export default function UserProfile({ onBack }: Props) {
 
                                 {previewUrl && (
                                     <div className="mt-4">
-                                        <img src={previewUrl} alt="Vista previa" className="w-48 h-auto mx-auto rounded-lg shadow-md" />
+                                        <img src={previewUrl} alt="Vista previa" className="w-full max-w-48 h-auto mx-auto rounded-lg shadow-md" />
                                         <p className="text-sm text-gray-600 mt-1 text-center">Imagen actual del reporte</p>
                                     </div>
                                 )}
@@ -473,17 +473,17 @@ export default function UserProfile({ onBack }: Props) {
                         </div>
 
                         {/* Botones */}
-                        <div className="md:col-span-2 flex justify-end gap-3 pt-2">
+                        <div className="md:col-span-2 flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:justify-end">
                             <button
                                 type="button"
                                 onClick={() => setEditingReport(null)}
-                                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition"
+                                className="w-full sm:w-auto min-h-11 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition"
                             >
                                 Cancelar
                             </button>
                             <button
                                 type="submit"
-                                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                                className="w-full sm:w-auto min-h-11 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
                             >
                                 Guardar
                             </button>

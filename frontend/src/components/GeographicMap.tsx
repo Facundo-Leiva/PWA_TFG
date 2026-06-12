@@ -3,6 +3,9 @@ import type { LatLngExpression } from "leaflet";
 import { useEffect, useState } from "react";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
+import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
+import markerIcon from "leaflet/dist/images/marker-icon.png";
+import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import LocationSearch from "./LocationSearch";
 import { API_URL } from "../api";
 
@@ -38,14 +41,25 @@ interface UbicacionData {
     barrio: string;
 }
 
-// Marcador de la ubicación del usuario
-const redIcon = L.icon({
-    iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png",
-    shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
-    iconSize: [25, 41],      
-    iconAnchor: [12, 41],    
-    popupAnchor: [1, -34],   
-    shadowSize: [41, 41],   
+// Marcador local para los reportes.
+// Las imágenes se importan para que Vite las incluya correctamente en el build.
+const reportIcon = L.icon({
+    iconRetinaUrl: markerIcon2x,
+    iconUrl: markerIcon,
+    shadowUrl: markerShadow,
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41],
+});
+
+// Marcador de la ubicación del usuario sin depender de imágenes externas.
+const userLocationIcon = L.divIcon({
+    className: "",
+    html: '<span aria-hidden="true" style="display:block;width:18px;height:18px;border-radius:9999px;background:#dc2626;border:3px solid white;box-shadow:0 1px 5px rgba(0,0,0,.45)"></span>',
+    iconSize: [18, 18],
+    iconAnchor: [9, 9],
+    popupAnchor: [0, -10],
 });
 
 // Colores de los estados del reporte
@@ -134,17 +148,17 @@ export default function GeographicMap() {
 
     // Retornar el componente HTML
     return (
-        <div className="w-full max-w-7xl mx-auto bg-linear-to-br from-blue-300 via-white to-green-300 px-4 py-8">
+        <div className="w-full max-w-7xl mx-auto bg-linear-to-br from-blue-300 via-white to-green-300 px-0 sm:px-4 py-4 sm:py-8">
 
             {/* Título */}
-            <div className="bg-white border border-gray-300 rounded-lg shadow p-4 mb-8 text-center">
-                <h1 className="text-2xl font-semibold text-gray-800 tracking-tight">
+            <div className="bg-white border border-gray-300 rounded-lg shadow p-3 sm:p-4 mb-4 sm:mb-8 text-center">
+                <h1 className="text-xl sm:text-2xl font-semibold text-gray-800 tracking-tight">
                     Mapa Geográfico Interactivo
                 </h1>
             </div>
 
             {/* Contenedor con el mapa */}
-            <div className="h-[600px] rounded-lg shadow-md overflow-hidden mb-6">
+            <div className="h-[55vh] min-h-80 max-h-[600px] sm:h-[500px] lg:h-[600px] rounded-lg shadow-md overflow-hidden mb-6">
                 <MapContainer
                     center={position}
                     zoom={13}
@@ -162,6 +176,7 @@ export default function GeographicMap() {
                             <Marker
                                 key={reporte.id}
                                 position={[reporte.ubicacion.latitud, reporte.ubicacion.longitud] as LatLngExpression}
+                                icon={reportIcon}
                             >
                                 <Popup>
                                     <h2 className="text-base font-bold">{reporte.titulo}</h2>
@@ -170,7 +185,7 @@ export default function GeographicMap() {
                                         {reporte.ubicacion.direccion}, {reporte.ubicacion.barrio}
                                     </p>
                                     
-                                    <div className="flex items-center justify-between mt-2">
+                                    <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between mt-2">
                                         <p className="text-sm text-gray-700">
                                             <span className="text-sm font-semibold">Autor:</span> {reporte.usuario.nombre} {reporte.usuario.apellido}
                                         </p>
@@ -189,7 +204,7 @@ export default function GeographicMap() {
 
                     {/* Marcador con la ubicación del usuario */}
                     {userLocation && (
-                        <Marker position={userLocation} icon={redIcon}>
+                        <Marker position={userLocation} icon={userLocationIcon}>
                             <Popup>
                                 <strong className="text-base">Tu ubicación actual</strong>
                             </Popup>
@@ -199,12 +214,12 @@ export default function GeographicMap() {
             </div>
 
             {/* Contenedor con los filtros */}
-            <div className="bg-white p-6 rounded-lg shadow-md mb-8">
+            <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md mb-8">
                 <h2 className="text-xl text-center font-semibold text-gray-800 mb-6 border-b pb-2">
                     Filtros de búsqueda
                 </h2>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
 
                     {/* Tipo de incidencia */}
                     <div>
@@ -215,7 +230,7 @@ export default function GeographicMap() {
                             name="tipo"
                             value={filtros.tipo}
                             onChange={handleChange}
-                            className="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none transition"
+                            className="w-full min-h-11 border border-gray-300 p-2 text-base rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none transition"
                         >
                             <option value="">Todos los tipos</option>
                             <option value="Tráfico y Vía Pública">Tráfico y Vía Pública</option>
@@ -235,7 +250,7 @@ export default function GeographicMap() {
                             name="estado"
                             value={filtros.estado}
                             onChange={handleChange}
-                            className="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none transition"
+                            className="w-full min-h-11 border border-gray-300 p-2 text-base rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none transition"
                         >
                             <option value="">Todos los estados</option>
                             <option value="pendiente">Pendiente</option>
@@ -254,7 +269,7 @@ export default function GeographicMap() {
                             name="fechaInicio"
                             value={filtros.fechaInicio}
                             onChange={handleChange}
-                            className="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none transition"
+                            className="w-full min-h-11 border border-gray-300 p-2 text-base rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none transition"
                         />
                     </div>
 
@@ -263,8 +278,8 @@ export default function GeographicMap() {
                         <label className="block text-sm font-medium text-gray-700 mb-2">
                             Fecha fin
                         </label>
-                        <div className="flex items-center gap-2">
-                            <input type="date" name="fechaFin" value={filtros.fechaFin} onChange={handleChange} className="flex-1 border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none transition" />
+                        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                            <input type="date" name="fechaFin" value={filtros.fechaFin} onChange={handleChange} className="w-full min-w-0 min-h-11 flex-1 border border-gray-300 p-2 text-base rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none transition" />
                             <button onClick={() => {
                                     setFiltros({
                                         tipo: "",
@@ -277,7 +292,7 @@ export default function GeographicMap() {
                                     setUbicacion(null);
                                     setQuery("");
                                 }}
-                                className="bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-2 rounded-lg text-sm font-medium transition"
+                                className="w-full sm:w-auto bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-2 rounded-lg text-sm font-medium transition"
                             >
                                 Limpiar Filtros
                             </button>
@@ -285,7 +300,7 @@ export default function GeographicMap() {
                     </div>
 
                     {/* Ubicación del reporte */}
-                    <div className="col-span-2 lg:col-span-3">
+                    <div className="md:col-span-2 lg:col-span-3">
                         <label className="block text-sm font-medium text-gray-800 mb-2">
                             Ubicación
                         </label>
@@ -296,8 +311,8 @@ export default function GeographicMap() {
                         />
 
                         {ubicacion && (
-                            <div className="mt-3 flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg p-3">
-                                <p className="text-sm font-semibold text-blue-800">
+                            <div className="mt-3 flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between bg-blue-50 border border-blue-200 rounded-lg p-3">
+                                <p className="text-sm font-semibold text-blue-800 break-words">
                                     Dirección seleccionada: {ubicacion.direccion} ({ubicacion.barrio}, {ubicacion.ciudad})
                                 </p>
                                 <button
@@ -315,10 +330,10 @@ export default function GeographicMap() {
                 </div>
 
                 {/* Botón para aplicar filtros */}
-                <div className="mt-6 flex justify-end">
+                <div className="mt-6 flex justify-stretch sm:justify-end">
                     <button
                         onClick={fetchReportesFiltrados}
-                        className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow transition"
+                        className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow transition"
                     >
                         Aplicar filtros
                     </button>

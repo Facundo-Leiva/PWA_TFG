@@ -29,16 +29,16 @@ export default function LoginModal({ onClose, onSubmit }: Props) {
 
   // Retornar el componente de inicio de sesión
   return (
-    <div className="min-h-screen bg-linear-to-br from-blue-600 via-blue-700 to-green-600 flex items-center justify-center p-4">        
-      <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6 animate-fade-in">
-        <h2 className="text-2xl font-bold mb-4 text-center text-blue-700">Iniciar sesión</h2>
+    <div className="min-h-[100dvh] bg-linear-to-br from-blue-600 via-blue-700 to-green-600 flex items-start sm:items-center justify-center px-3 py-6 sm:p-4">        
+      <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-4 sm:p-6 animate-fade-in">
+        <h2 className="text-xl sm:text-2xl font-bold mb-4 text-center text-blue-700">Iniciar sesión</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="email"
             placeholder="Correo electrónico"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full min-h-11 border border-gray-300 rounded px-4 py-2 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           />
           <input
@@ -46,20 +46,20 @@ export default function LoginModal({ onClose, onSubmit }: Props) {
             placeholder="Contraseña"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full min-h-11 border border-gray-300 rounded px-4 py-2 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           />
-          {error && <p className="font-semibold text-red-500 text-sm">{error}</p>}
+          {error && <p className="font-semibold text-red-500 text-sm break-words">{error}</p>}
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition-colors"
+            className="w-full min-h-11 bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition-colors"
           >
             Iniciar sesión
           </button>
         </form>
         <button
           onClick={onClose}
-          className="mt-4 text-sm text-blue-500 hover:underline block mx-auto"
+          className="mt-4 min-h-11 px-4 text-sm text-blue-500 hover:underline block mx-auto"
         >
           Cancelar
         </button>
