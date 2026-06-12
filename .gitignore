@@ -25,3 +25,7 @@ frontend/dist/
 # Ignorar archivos temporales del sistema
 .DS_Store
 Thumbs.db
+
+# === Archivos cargados localmente ===
+backend/uploads/*
+!backend/uploads/.gitkeep

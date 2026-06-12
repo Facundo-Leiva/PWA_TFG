@@ -11,7 +11,6 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
 
     // Función: cerrar conexión al cerrar la App
     async enableShutdownHooks(app: INestApplication) {
-        // @ts-expect-error — el tipo 'beforeExit' está permitido en tiempo de ejecución
         this.$on('beforeExit', async () => {
             await app.close();
         });

@@ -42,7 +42,7 @@ async function bootstrap() {
     );
 
     // Levantar el servidor
-    await app.listen(configService.get<number>('port') ?? 3000);
+    await app.listen(configService.get<number>('port') ?? 3000, '0.0.0.0');
 }
 
 bootstrap();
